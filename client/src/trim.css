@@ -1,0 +1,230 @@
+.work-place {
+  border: solid 0.5px rgba(209, 205, 205, 0.2);
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.top-work-place {
+  min-height: 50px;
+  margin-top: 15px !important;
+  border-bottom: solid 0.5px rgba(209, 205, 205, 0.2);
+}
+
+.tool-setting {}
+
+.tool-setting-panel {
+  margin-top: 0px;
+  display: flex;
+}
+
+.tool-setting-header {
+  text-indent: 30px;
+  font-weight: bold;
+}
+
+.sub-tool-component {
+  text-indent: 5px;
+  height: 50px;
+}
+
+.last-sub-tool-component {
+  text-indent: 5px;
+}
+
+.icon-blue {
+  color: blue;
+}
+
+.icon-plus {
+  color: blue;
+  text-align: right;
+}
+
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fa {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.setting-screen-panel {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.margin-none {
+  margin: 0px;
+}
+
+.padding-none {
+  padding: 0px !important;
+  display: flex;
+  justify-content: center;
+}
+
+
+.time-controller {
+  text-align: left;
+}
+
+.zoom-controller {
+  text-align: right;
+}
+
+.left {
+  position: absolute;
+  right: 0;
+}
+
+.center {
+  position: absolute;
+  text-align: center;
+}
+
+.time-line-bar {
+  text-indent: 20px;
+  display: flex;
+
+  margin-top: 20px;
+}
+
+.text-bar {
+  text-indent: 20px;
+  display: flex;
+}
+
+.shape-bar {
+  text-indent: 20px;
+  display: flex;
+
+}
+
+.frame-bar {
+  text-indent: 20px;
+  display: flex;
+
+}
+
+.audio-bar {
+  text-indent: 20px;
+  display: flex;
+
+}
+
+.selected {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.setting-panel {
+  position: relative;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-top: 10px;
+}
+
+.setting-panel-close {
+  position: absolute;
+  right: 5px;
+}
+
+.setting-panel-box {
+  margin-top: 30px;
+  text-align: center;
+}
+
+input.vue__time-picker-input {
+  width: 100px;
+}
+
+.btn-tool {
+  margin-top: 30px;
+  width: 100px;
+}
+
+.btn-tool {
+  width: 100px;
+}
+
+
+.form-group {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.right {
+  text-align: right;
+}
+
+.left {
+  text-align: left;
+}
+
+.btn-div {
+  text-align: center;
+}
+
+
+body {
+  background-color: rgb(16, 16, 16);
+  color: white;
+}
+
+.secondary-color {
+  background-color: grey;
+}
+
+.primary-btn-color {
+  background-color: #0083e2;
+}
+
+.tool-side-bar {
+  border-right: solid 0.5px rgb(48, 48, 48);
+}
+
+input {
+  background-color: rgb(16, 16, 16);
+  color: white;
+}
+
+input:focus {
+  border: 1px solid #1670BE;
+  box-shadow: 0 0 3px #1670BE;
+  outline-offset: 0px;
+  outline: none;
+}
+
+textarea:focus {
+  border: 1px solid #1670BE;
+  box-shadow: 0 0 3px #1670BE;
+  outline-offset: 0px;
+  outline: none;
+}
+
+.media-selected {
+  border: 1px solid rgb(255, 255, 255);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(170, 170, 170) rgb(16, 16, 16);
+}
+
+
+*::-webkit-scrollbar {
+  width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgb(16, 16, 16);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(170, 170, 170);
+  border-radius: 20px;
+  border: 6px solid rgb(16, 16, 16);
+}

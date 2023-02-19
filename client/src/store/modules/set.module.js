@@ -52,6 +52,8 @@ export default {
     duration: { mm: 0, ss: 12, ss1: 77 },
     curTime: { mm: 0, ss: 0, ss1: 0 }, // selected or current play time
     zoom: 1,
+    fileName: "",
+    fileCount: 0
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -107,6 +109,8 @@ export default {
       state.duration = { mm: 0, ss: 12, ss1: 77 };
       state.curTime = { mm: 0, ss: 0, ss1: 0 }; // selected or current play time
       state.zoom = 1;
+      state.fileName = "";
+      state.fileCount = 0;
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -248,6 +252,10 @@ export default {
           return;
         case "zoom":
           state.zoom = payload.value;
+        case "fileName":
+          state.fileName = payload.value;
+        case "fileCount":
+          state.fileCount = payload.value;
         default:
           return;
       }
@@ -397,6 +405,10 @@ export default {
           return;
         case "zoom":
           state.zoom = 1;
+        case "fileName":
+          state.fileName = null;
+        case "fileCount":
+          state.fileCount = 0;
         default:
           return;
       }

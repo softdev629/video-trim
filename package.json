@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend part of online video editor with FFmpeg",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "child_process": "^1.0.2",

@@ -1,6 +1,5 @@
 <template>
-  <button class="save-btn"><label class="save-btn-label">Export Project</label><i
-      class="fa fa-upload save-btn-icon"></i></button>
+  <button class="save-btn"><label class="save-btn-label">Add</label><i class="fa fa-upload save-btn-icon"></i></button>
   <div class="container-fluid work-place">
     <div class="setting-screen-panel">
       <div class="tool-setting">
@@ -11,10 +10,10 @@
       </div>
     </div>
     <!-- <div class="row-fluid">
-                                        <div class="col-md-12">
-                                          <ScreenSizeXController @forceRendering="forceRendering()" />
-                                        </div>
-                                      </div> -->
+                                                        <div class="col-md-12">
+                                                          <ScreenSizeXController @forceRendering="forceRendering()" />
+                                                        </div>
+                                                      </div> -->
     <div class="row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
@@ -29,6 +28,7 @@ import ScreenPanel from './ScreenPanel.vue';
 import WorkingPanel from './WorkingPanel.vue';
 import ScreenSizeXController from './ScreenSizeXController.vue';
 import setStore from '../store/modules/set.module';
+import SetModule from '../store/modules/set.module.js'
 
 import { computed } from 'vue';
 import { useStore } from "vuex";
@@ -46,6 +46,20 @@ export default {
     return {
       width: 0
     };
+  },
+  mounted() {
+
+  },
+  created() {
+    console.log('mounted');
+    var payload = { type: 'windowWidth', value: document.body.offsetWidth };
+    this.$store.dispatch('setData', payload);
+
+    payload = { type: 'windowOuterWidth', value: window.outerWidth };
+    this.$store.dispatch('setData', payload);
+
+
+    console.log(document.body.offsetWidth, 'offsetWidth');
   },
   setup() {
     const store = useStore();

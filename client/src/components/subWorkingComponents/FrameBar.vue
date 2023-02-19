@@ -3,7 +3,6 @@ label {
   padding: 20px 0px;
 }
 </style>
-
 <template>
   <div class="frame-bar media-line"
     :style="`position:relative; width: ${100 * (3600 * 100) / (100 * (this.zoom - 6) * (-1)) + 80}px;`"
@@ -15,13 +14,9 @@ label {
       :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
       <div class="text" @mousedown="resizeSelected($event, 2)">
-        <div v-for="i in currentImageCount" :style="`background:url(fr5/00${parseInt(
-          (firstImage + ((lastImage - firstImage) / currentImageCount) * i) /
-          10
-        )}${parseInt(
-          (firstImage + ((lastImage - firstImage) / currentImageCount) * i) %
-          10
-        )}.jpg);width:120px;height:67.5px;background-size:cover;`"></div>
+        <div v-for="i in currentImageCount"
+          :style="`background:url(http://localhost:3000/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
+        </div>
       </div>
       <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
     </div>
@@ -29,13 +24,9 @@ label {
       :style="`left: ${start}px; width:${width}px;`">
       <div class="left"></div>
       <div class="text">
-        <div v-for="i in currentImageCount" :style="`background:url(fr5/00${parseInt(
-          (firstImage + ((lastImage - firstImage) / currentImageCount) * i) /
-          10
-        )}${parseInt(
-          (firstImage + ((lastImage - firstImage) / currentImageCount) * i) %
-          10
-        )}.jpg);width:120px;height:67.5px;background-size:cover;`"></div>
+        <div v-for="i in currentImageCount"
+          :style="`background:url(http://localhost:3000/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
+        </div>
       </div>
       <div class="right" :style="`left: ${width - 7}px`"></div>
     </div>
@@ -57,10 +48,10 @@ export default {
       resizeStart: 0,
       resizeState: false,
       resizeType: 0,
-      imageCount: 63,
+      imageCount: 13,
       firstImage: 0,
-      lastImage: 63,
-      currentImageCount: 0
+      lastImage: this.$store.state.set.fileCount,
+      currentImageCount: this.$store.state.set.fileCount
     };
   },
   watch: {
@@ -99,18 +90,54 @@ export default {
 
     },
   },
-  mounted() {
+  created() {
     this.width = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
 
     this.updateImages();
+    console.log(this.firstImage, 'firstImage');
+    console.log(this.lastImage, 'lastImage');
+    console.log(this.currentImageCount, 'currentImageCount');
+    console.log(`http://localhost:3000/frames/${this.$store.state.set.fileName}/${this.getFrameName(this.firstImage + ((this.lastImage - this.firstImage) / this.currentImageCount) * 3)}.png`);
   },
+  // computed: {
+  //   getFrameName(value) {
+  //     let str = "";
+  //     for (let i = 0; i < 7; i++) {
+  //       str += toString(value % 10);
+  //       value = parseInt(value / 10);
+  //     }
+  //     let newstr = "";
+  //     for (let i = 6; i >= 0; i--) {
+  //       newstr += str[i];
+  //     }
+  //     return newstr;
+  //   }
+  // },
   methods: {
+
+    getFrameName(value) {
+      let str = "";
+      console.log(value, 'value');
+      for (let i = 0; i < 7; i++) {
+        str += value % 10;
+        value = parseInt(value / 10);
+      }
+      let newstr = "";
+      for (let i = 6; i >= 0; i--) {
+        newstr += str[i];
+      }
+      console.log(newstr, 'newstr');
+      return newstr;
+    },
     updateImages() {
+
+      let oldWidth = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
+
       this.firstImage = parseInt(
-        this.imageCount * (this.start / this.zoom / 1200)
+        this.imageCount * (this.start / oldWidth)//count/width *120
       );
       this.lastImage = parseInt(
-        this.imageCount * ((this.width) / this.zoom / 1200)
+        this.imageCount * ((this.start + this.width) / oldWidth)
       );
       this.currentImageCount = parseInt(this.width / 120);
     },

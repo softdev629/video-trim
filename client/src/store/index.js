@@ -10,6 +10,5 @@ export default createStore({
   }
 });
 
-SetModule.state.windowWidth = document.body.offsetWidth;
-SetModule.state.windowOuterWidth = window.outerWidth;
+
 

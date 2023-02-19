@@ -19,21 +19,68 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 /* Upload a video */
-router.post('/upload', () => {
+router.post('/upload', function (req, res, next) {
   if (!fs.existsSync("public/videos")) {
     fs.mkdirSync("public/videos");
   }
-}, upload.single('video'), function (req, res, next) {
+  if (!fs.existsSync("public/frames")) {
+    fs.mkdirSync("public/frames");
+  }
+  next();
+}, upload.single('video'), async function (req, res, next) {
   let fname = "public/videos/" + req.file.filename;
   let dname = "public/frames/" + req.file.filename;
-  console.log(fname, " ", dname);
+  // console.log(fname, " ", dname);
   if (!fs.existsSync(dname)) {
     fs.mkdirSync(dname);
   }
   execSync("ffmpeg -i " + fname + " -vf fps=1 " + dname + "/" + "%07d.png");
-  return res.send({
+  let pw = [];
+  let cur = 1;
+  for (let i = 0; i < 7; i++) {
+    pw.push(cur);
+    cur *= 10;
+  }
+  let count = 0;
+  for (let i = 1; i <= 10000000; i++) {
+    let str = "/";
+    // if (i % 100000 == 1) console.log(i);
+    for (let j = 0; j < 7; j++) {
+      str += parseInt(i / pw[6 - j]) % 10;
+    }
+    str += ".png";
+    if (!fs.existsSync(dname + str)) {
+      // console.log('count', dname, str);
+      count = i - 1;
+      break;
+    }
+  }
+  let videoInfo = await (new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(fname, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        for (let stream of data.streams) {
+          if (stream.width) {
+            resolve(stream);
+            return;
+          }
+        }
+      }
+    });
+  }));
+  if (!videoInfo) {
+    return res.status(403).json({
+      error: "It is not a video file."
+    });
+  }
+  console.log(videoInfo);
+  let duration = videoInfo.duration;
+  return res.json({
     statusOK: true,
-    filename: req.file.filename
+    filename: req.file.filename,
+    filecount: count,
+    duration
   });
 });
 

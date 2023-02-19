@@ -81,7 +81,7 @@ export default {
             (curTime) / (100 * 60)
           ),
           ss: parseInt(
-            (curTime) / 100
+            (curTime%6000) / 100
           ),
           ss1: parseInt(
             (curTime) % 100

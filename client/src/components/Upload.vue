@@ -8,44 +8,88 @@ import { useDropZone } from '@vueuse/core'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import { throwStatement } from "@babel/types";
+import { useStore } from "vuex";
+import { baseURL } from '../constants.js';
+
 const { files, open, reset } = useFileDialog();
 
 const router = useRouter()
 const route = useRoute()
+const store = useStore();
+
+var myVideos = [];
+
+
+async function setFileInfo(file) {
+
+  var video = document.createElement('video');
+  video.preload = 'metadata';
+
+  video.onloadedmetadata = await function () {
+    window.URL.revokeObjectURL(video.src);
+    var duration = video.duration;
+    console.log(duration);
+    var payload = { type: "duration", value: { mm: (Number(duration) * 100 / 6000), ss: ((Number(duration) * 100 % 6000) / 100), ss1: ((Number(duration) * 100 % 6000) % 100) } };
+    store.dispatch("setData", payload);
+    payload = { type: "videoTo", value: { mm: (Number(duration) * 100 / 6000), ss: ((Number(duration) * 100 % 6000) / 100), ss1: ((Number(duration) * 100 % 6000) % 100) } };
+    store.dispatch("setData", payload);
+    payload = { type: "to", value: { mm: (Number(duration) * 100 / 6000), ss: ((Number(duration) * 100 % 6000) / 100), ss1: ((Number(duration) * 100 % 6000) % 100) } };
+    store.dispatch("setData", payload);
+    return true;
+  }
+
+  video.src = URL.createObjectURL(file);
+}
+
+
+
+
 
 function selectFile() {
   open();
 }
 
-function selectedFile() {
+async function selectedFile() {
   if (files) {
     console.log(files);
     const formData = new FormData();
     formData.append('video', files._value[0]);
-
-    // console.log('fileName:', files[0]);
-    // console.log(formData, 'formData');
-
-    axios.post('http://localhost:3000/api/upload',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-    ).then(function (data) {
-      console.log(data.data);
-      router.push('/workplace');
-    })
-      .catch(function () {
-        console.log('FAILURE!!');
-        //    router.push('/workplace');
-      });
-    //    this.$router.push('/workplace');
-
-
+    var ret = await setFileInfo(files._value[0]);
+    if (ret) {
+      console.log('upload');
+      upload(files._value[0]);
+    }
   }
 }
+
+
+function upload(file) {
+  const formData = new FormData();
+  formData.append('video', file);
+
+  axios.post('http://localhost:3000/api/upload',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  ).then(function (data) {
+    console.log(data.data);
+    var payload = { type: "fileName", value: data.data.filename };
+    store.dispatch("setData", payload);
+    console.log(data.data.filecount, "----------------filecount-------------------");
+    payload = { type: "fileCount", value: data.data.filecount };
+    store.dispatch("setData", payload);
+    router.push('/workplace');
+  })
+    .catch(function () {
+      console.log('FAILURE!!');
+
+    });
+
+}
+
 
 const filesData = ref<{ name: string; size: number; type: string; lastModified: number }[]>([])
 function onDrop(files: File[] | null) {
@@ -72,7 +116,10 @@ function onDrop(files: File[] | null) {
         }
       }
     ).then(function (data) {
-      console.log(data.data);
+      var payload = { type: "fileName", value: data.filename };
+      store.dispatch("setData", payload);
+      payload = { type: "fileCount", value: data.data.fileCount };
+      store.dispatch("setData", payload);
       router.push('/workplace');
     })
       .catch(function () {

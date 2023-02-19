@@ -1,12 +1,13 @@
 <template>
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
     :style="`width:${this.$store.state.set.panelWidth}px;height:${this.$store.state.set.panelHeight}px;`">
-    <video controls class="size1" @oncanplay="getDuration()" src="bear.mp4"
+    <video controls class="size1" @oncanplay="getDuration()"
+      :src="`http://localhost:3000/videos/${this.$store.state.set.fileName}`"
       :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
       type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video>
     <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"
-                                                    :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
-                                                    type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
+                                                                      :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
+                                                                      type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
     <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
@@ -58,9 +59,18 @@ export default {
     };
   },
   mounted() {
+    console.log(this.$refs.vid.duration);
+
     const store = useStore();
+
+
+    console.log('screenpanel-------84', this.$store.state.set.videoTo.mm, this.$store.state.set.videoTo.ss, this.$store.state.set.videoTo.ss1);
+    console.log('screenpanel-------85', this.$store.state.set.to.mm, this.$store.state.set.to.ss, this.$store.state.set.to.ss1);
+
+
     this.width = setStore.state.screenWidth;
     this.height = setStore.state.screenHeight;
+
 
 
     if (!setStore.state.selectedSettingTool)
@@ -342,7 +352,7 @@ export default {
       const currentTime = e.target.currentTime;
       const compare = {
         mm: parseInt((currentTime * 100) / (100 * 60)),
-        ss: parseInt((currentTime * 100) / 100),
+        ss: parseInt(((currentTime * 100) % 6000) / 100),
         ss1: parseInt((currentTime * 100) % 100),
       };
 
@@ -356,7 +366,7 @@ export default {
         type: "curTime",
         value: {
           mm: parseInt((currentTime * 100) / (100 * 60)),
-          ss: parseInt((currentTime * 100) / 100),
+          ss: parseInt(((currentTime * 100) % 6000) / 100),
           ss1: parseInt((currentTime * 100) % 100),
         },
       });
@@ -368,7 +378,7 @@ export default {
       const currentTime = this.$refs.vid.currentTime;
       const compare = {
         mm: parseInt((currentTime * 100) / (100 * 60)),
-        ss: parseInt((currentTime * 100) / 100),
+        ss: parseInt(((currentTime * 100) % 6000) / 100),
         ss1: parseInt((currentTime * 100) % 100),
       };
 

@@ -3,7 +3,7 @@ import Upload from './components/Upload.vue'
 import WorkplaceVue from './components/Workplace.vue'
 
 const routes = [
-  { path: '/upload', component: Upload },
+  { path: '/', component: Upload },
   { path: '/workplace', component: WorkplaceVue }
 ]
 

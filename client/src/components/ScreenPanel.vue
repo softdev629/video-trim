@@ -1,13 +1,12 @@
 <template>
-  <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)"
-    @mouseout="mouseOutFunc($event)"
-    :style="`width:${this.$store.state.set.panelWidth }px;height:${this.$store.state.set.panelHeight}px;`">
+  <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
+    :style="`width:${this.$store.state.set.panelWidth}px;height:${this.$store.state.set.panelHeight}px;`">
     <video controls class="size1" @oncanplay="getDuration()" src="bear.mp4"
       :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
       type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video>
     <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"
-      :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
-      type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
+                                                    :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
+                                                    type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
     <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
@@ -379,7 +378,8 @@ export default {
         compare.ss1 === this.$store.state.set.curTime.ss1
       )
         return;
-      this.$refs.vid.currentTime = (val.ss * 100 * 60 + val.ss * 100 + val.ss1) / 100;
+
+      this.$refs.vid.currentTime = (val.mm * 100 * 60 + val.ss * 100 + val.ss1) / 100;
     },
   },
 };

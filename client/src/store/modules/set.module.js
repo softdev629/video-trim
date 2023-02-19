@@ -19,6 +19,10 @@ export default {
     from: { mm: 0, ss: 0, ss1: 0 },
     to: { mm: 0, ss: 12, ss1: 77 },
 
+    videoFrom: { mm: 0, ss: 0, ss1: 0 },
+    videoTo: { mm: 0, ss: 12, ss1: 77 },
+    delay: { mm: 0, ss: 0, ss1: 0 },
+
     audioFrom: { mm: 0, ss: 0, ss1: 0 },
     audioTo: { mm: 0, ss: 0, ss1: 0 },
 
@@ -47,6 +51,7 @@ export default {
     areaHeight: 30,
     duration: { mm: 0, ss: 12, ss1: 77 },
     curTime: { mm: 0, ss: 0, ss1: 0 }, // selected or current play time
+    zoom: 1,
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -68,6 +73,10 @@ export default {
 
       state.from = { mm: "00", ss: "00", ss1: "00" };
       state.to = { mm: "12", ss: "77", ss1: "00" };
+
+      state.videoFrom = { mm: 0, ss: 0, ss1: 0 };
+      state.videoTo = { mm: 0, ss: 12, ss1: 77 };
+      state.delay = { mm: 0, ss: 0, ss1: 0 };
 
       state.audioFrom = { mm: "00", ss: "00", ss1: "00" };
       state.audioTo = { mm: "00", ss: "00", ss1: "00" };
@@ -97,7 +106,7 @@ export default {
       state.areaHeight = 30;
       state.duration = { mm: 0, ss: 12, ss1: 77 };
       state.curTime = { mm: 0, ss: 0, ss1: 0 }; // selected or current play time
-
+      state.zoom = 1;
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -147,6 +156,16 @@ export default {
           return;
         case "to":
           state.to = payload.value;
+          return;
+
+        case "videoFrom":
+          state.videoFrom = payload.value;
+          return;
+        case "videoTo":
+          state.videoTo = payload.value;
+          return;
+        case "delay":
+          state.delay = payload.value;
           return;
 
         case "audioFrom":
@@ -227,6 +246,8 @@ export default {
         case "curTime":
           state.curTime = payload.value;
           return;
+        case "zoom":
+          state.zoom = payload.value;
         default:
           return;
       }
@@ -281,6 +302,20 @@ export default {
         case "to":
           state.to = { mm: 0, ss: 0, ss1: 0 };
           return;
+
+
+
+        case "videoFrom":
+          state.from = { mm: 0, ss: 0, ss1: 0 };
+          return;
+        case "videoTo":
+          state.to = { mm: 0, ss: 0, ss1: 0 };
+          return;
+        case "delay":
+          state.to = { mm: 0, ss: 0, ss1: 0 };
+          return;
+
+
 
         case "audioFrom":
           state.audioFrom = { mm: 0, ss: 0, ss1: 0 };
@@ -360,6 +395,8 @@ export default {
         case "curTime":
           state.curTime = { mm: 0, ss: 0, ss1: 0 };
           return;
+        case "zoom":
+          state.zoom = 1;
         default:
           return;
       }

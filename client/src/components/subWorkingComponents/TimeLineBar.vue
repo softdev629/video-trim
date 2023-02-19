@@ -1,18 +1,18 @@
 <template>
   <div class="time-line" @mousemove="curPosChanged($event)" @mousedown="curPosSelected($event)"
-    :style="`position:relative; width: ${100*(3600*100)/(100 * (this.zoom - 6) * (-1))+80}px; height: 30px`">
+    :style="`position:relative; width: ${100 * (3600 * 100) / (100 * (this.zoom - 6) * (-1)) + 80}px; height: 30px`">
     <div class="start">
       <p class="scale">|</p><span class="ruler-number">0:0</span>
     </div>
     <div v-for="i in parseInt((3600 * 100) / (100 * (this.zoom - 6) * (-1)))"
       :style="`position:absolute; left:${100 * i + 80}px;font-size:12px;display:flex`">
       <p class="scale">|</p><span class="ruler-number">
-        <span v-if="parseInt(i * 100 * (this.zoom - 6) * (-1) / (60 * 100)) !== 0">{{ parseInt(i*100*(this.zoom - 6) *
-        (-1)
-        /
-        (60 * 100)) }}</span>:<span>
+        <span v-if="parseInt(i * 100 * (this.zoom - 6) * (-1) / (60 * 100)) !== 0">{{ parseInt(i * 100 * (this.zoom - 6) *
+          (-1)
+          /
+          (60 * 100)) }}</span>:<span>
           {{ parseInt((i * 100 * (this.zoom - 6) * (-1) / (100)) % 60) }}</span><span
-          v-if="parseInt(i * 100 * (this.zoom - 6) * (-1) % (100))">.{{ parseInt(i*100*(this.zoom - 6) * (-1) % (100))
+          v-if="parseInt(i * 100 * (this.zoom - 6) * (-1) % (100))">.{{ parseInt(i * 100 * (this.zoom - 6) * (-1) % (100))
           }}</span></span>
     </div>
   </div>
@@ -28,7 +28,7 @@ export default {
     curPosSelected: Function,
   },
   mounted() {
-    console.log("zoom value:", this.zoom);
+
   }
 };
 </script>

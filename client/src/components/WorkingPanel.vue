@@ -10,7 +10,6 @@
       </div>
     </div>
     <div class="setting-panel">
-      <!-- <div class="curPos" :style="`left: ${curPos}px`" @mousedown="curPosSelected($event)"></div> -->
       <div class="selectedPos"
         :style="`left: ${100 * ($store.state.set.curTime.mm * 6000 + $store.state.set.curTime.ss * 100 + $store.state.set.curTime.ss1) / ((this.zoom - 6) * (-1) * 100) + 80}px`">
       </div>
@@ -62,34 +61,18 @@ export default {
   methods: {
     setZoom(value) {
       this.zoom = value;
-      // switch (parseInt(value)) {
-      //   case 1:
-      //     this.zoom = 0.25;
-      //     break;
-      //   case 2:
-      //     this.zoom = 0.5;
-      //     break;
-      //   case 3:
-      //     this.zoom = 1;
-      //     break;
-      //   case 4:
-      //     this.zoom = 2;
-      //     break;
-      //   default:
-      //     this.zoom = 4;
-      //     break;
-      // }
+      var zoomVal = this.stateZoom;
+      payload = { type: "zoom", zoomVal };
+      this.$store.dispatch("setData", payload);
+
     },
     curPosChanged(e) {
       this.curPos = e.pageX + document.getElementsByClassName('setting-panel')[0].scrollLeft;
-      console.log(this.curPos, '---CurPos------');
     },
     curPosSelected(e) {
       this.selectedPos = this.curPos;
-      console.log(this.zoom, ((this.curPos - 100) / 100) * 100);
-      var curTime = parseInt((((this.curPos - 100) / 100) * 100) * ((-1) * (this.zoom - 6)));
 
-      console.log(curTime, '--------CurTime---------');
+      var curTime = parseInt((((this.curPos - 100) / 100) * 100) * ((-1) * (this.zoom - 6)));
 
       this.$store.dispatch("setData", {
         type: "curTime",
@@ -105,8 +88,6 @@ export default {
           ),
         },
       });
-
-
 
     },
   },

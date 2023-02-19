@@ -1,8 +1,11 @@
 export default {
   namespaced: true,
   state: {
+    from: { mm: "00", ss: "00", ss1: "00" },
+    to: { mm: "12", ss: "77", ss1: "00" },
     videoFrom: { mm: "00", ss: "00", ss1: "00" },
     videoTo: { mm: "12", ss: "77", ss1: "00" },
+    delay: { mm: "12", ss: "77", ss1: "00" },
     texts: [
       {
         textFrom: { mm: "00", ss: "00", ss1: "00" },

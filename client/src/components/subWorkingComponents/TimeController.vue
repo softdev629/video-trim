@@ -1,10 +1,11 @@
 <template>
   <div class="tControl">
-    <label style="font-weight:bold">{{ this.$store.state.set.curTime.mm }}&nbsp;:&nbsp;{{
+    <label style="font-weight:bold">{{ this.$store.state.set.curTime.mm }}{{
       this.$store.state.set.curTime.ss
-    }}&nbsp;,&nbsp;{{
+    }}.{{
   this.$store.state.set.curTime.ss1
-}}</label>&nbsp;&nbsp;/&nbsp;&nbsp;<label>{{ this.$store.state.set.duration.mm }}&nbsp;:&nbsp;{{ this.$store.state.set.duration.ss }}&nbsp;,&nbsp;{{ this.$store.state.set.duration.ss1 }}</label>
+}}</label>/<label>{{ this.$store.state.set.duration.mm }}:{{ this.$store.state.set.duration.ss }}.{{
+  this.$store.state.set.duration.ss1 }}</label>
   </div>
 </template>
 

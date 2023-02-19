@@ -5,11 +5,19 @@
     <div style="margin-right: 10px; width:70px;margin-top:10px;">
       <i class="fa fa-file-text fa-1x"></i>
     </div>
-    <div class="div-range" :style="`left: ${start}px; width:${width}px;`">
+    <div v-if="this.$store.state.set.selectedSettingTool === `text`" class="div-range active"
+      :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
       <div class="text" @mousedown="resizeSelected($event, 2)">Text</div>
-      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 11}px`"></div>
+      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
     </div>
+    <div v-if="this.$store.state.set.selectedSettingTool !== `text`" class="div-range"
+      :style="`left: ${start}px; width:${width}px;`">
+      <div class="left"></div>
+      <div class="text">Text</div>
+      <div class="right" :style="`left: ${width - 7}px`"></div>
+    </div>
+
   </div>
 </template>
 
@@ -39,12 +47,18 @@ export default {
   },
   methods: {
     resizeSelected(e, type) {
+      if (this.$store.state.set.selectedSettingTool !== 'text')
+        return;
+
       this.resizeState = true;
       this.resizeType = type;
       this.resizeStart = e.x;
 
     },
     resizeMoved(e) {
+      if (this.$store.state.set.selectedSettingTool !== 'text')
+        return;
+
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
           if (this.width + e.x - this.resizeStart < 100) return;
@@ -98,40 +112,35 @@ label {
 
 .left {
   position: absolute;
-  border: none;
-  border-left: solid 2px rgba(255, 255, 255, 0.6);
-  height: 35%;
-  left: 11px;
-  top: 8px;
-  width: 0px;
+  background-color: rgba(255, 255, 255, 0.5);
+  /* border: none; */
+  /* border-left: solid 2px rgba(255, 255, 255, 0.6); */
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  border-radius: 3px;
+  width: 6px;
 }
 
-.left:hover {
-  cursor: col-resize;
-}
 
 .text {
   text-align: center;
 }
 
-.text:hover {
-  cursor: move;
-}
 
 
 .right {
   position: absolute;
-  border: none;
-  border-left: solid 2px rgba(255, 255, 255, 0.6);
-  height: 35%;
-  left: 190px;
-  top: 8px;
-  width: 0px;
+  background-color: rgba(255, 255, 255, 0.5);
+  /* border: none; */
+  /* border-left: solid 2px rgba(255, 255, 255, 0.6); */
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  border-radius: 3px;
+  width: 6px;
 }
 
-.right:hover {
-  cursor: col-resize;
-}
 
 .text-bar {
   background-color: rgb(20, 20, 20);
@@ -141,5 +150,22 @@ label {
 
 .text-bar:hover {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.active {
+  /* border: solid 1px #1620FF; */
+  border: solid 2px #FFFFFF;
+}
+
+.active>.text:hover {
+  cursor: move;
+}
+
+.active>.left:hover {
+  cursor: col-resize;
+}
+
+.active>.right:hover {
+  cursor: col-resize;
 }
 </style>

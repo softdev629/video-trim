@@ -1,7 +1,8 @@
 <template>
-  <div style="margin-top:10px;"><i class="fa fa-minus-circle"></i>&nbsp;&nbsp;&nbsp;<input type="range" min="1" max="5"
-      v-model="stateZoom" @change="this.setZoom(stateZoom)" />&nbsp;&nbsp;&nbsp;<i
-      class="fa fa-plus-circle"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div style="margin-top:10px;"><a @click="zoomOut()" style="margin-right:20px;"><i
+        class="fa fa-minus-circle"></i></a><input type="range" min="1" max="5" v-model="stateZoom"
+      @change="this.setZoom(stateZoom)" /><a style="margin-left:20px;" @click="zoomIn()"><i
+        class="fa fa-plus-circle"></i></a></div>
 </template>
 
 
@@ -21,15 +22,38 @@ export default {
   mounted() {
     this.stateZoom = this.zoom;
   },
+  methods: {
+    zoomIn: function () {
+      if (this.stateZoom == 5)
+        return;
+      this.stateZoom++;
+      this.setZoom(this.stateZoom);
+      var zoom = this.stateZoom;
+      payload = { type: "zoom", zoom };
+      this.$store.dispatch("setData", payload);
+
+    },
+    zoomOut: function () {
+      if (this.stateZoom == 1)
+        return;
+      this.stateZoom--;
+      this.setZoom(this.stateZoom);
+      var zoom = this.stateZoom;
+      payload = { type: "zoom", zoom };
+      this.$store.dispatch("setData", payload);
+    }
+  }
 };
 </script>
 <style scoped>
 .fa-minus-circle:hover {
-  color: rgb(64, 64, 64)
+  color: rgb(64, 64, 64);
+  cursor: pointer;
 }
 
 .fa-plus-circle:hover {
-  color: rgb(64, 64, 64)
+  color: rgb(64, 64, 64);
+  cursor: pointer;
 }
 
 div {

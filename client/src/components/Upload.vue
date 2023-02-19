@@ -20,19 +20,13 @@ function selectFile() {
 function selectedFile() {
   if (files) {
     console.log(files);
-    // filesData.value = files.map(file => ({
-    //   name: file.name,
-    //   size: file.size,
-    //   type: file.type,
-    //   lastModified: file.lastModified,
-    // }))
-
     const formData = new FormData();
-    formData.append('files', files);
+    formData.append('video', files._value[0]);
 
-    console.log(formData, 'formData');
+    // console.log('fileName:', files[0]);
+    // console.log(formData, 'formData');
 
-    axios.post('https://localhost:3000/api/file',
+    axios.post('http://localhost:3000/api/upload',
       formData,
       {
         headers: {
@@ -41,12 +35,14 @@ function selectedFile() {
       }
     ).then(function (data) {
       console.log(data.data);
+      router.push('/workplace');
     })
       .catch(function () {
         console.log('FAILURE!!');
+        //    router.push('/workplace');
       });
     //    this.$router.push('/workplace');
-    router.push('/workplace');
+
 
   }
 }
@@ -64,11 +60,11 @@ function onDrop(files: File[] | null) {
     // }))
 
     const formData = new FormData();
-    formData.append('files', files);
+    formData.append('video', files);
 
     console.log(formData, 'formData');
 
-    axios.post('https://localhost:3000/api/file',
+    axios.post('http://localhost:3000/api/upload',
       formData,
       {
         headers: {
@@ -77,6 +73,7 @@ function onDrop(files: File[] | null) {
       }
     ).then(function (data) {
       console.log(data.data);
+      router.push('/workplace');
     })
       .catch(function () {
         console.log('FAILURE!!');
@@ -98,7 +95,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
   </header>
 
   <div class="flex flex-col gap-16 items-center justify-center">
-    {{ files? selectedFile(): null }}
+    {{ files ? selectedFile() : null }}
     <button
       class="border border-white text-white bg-transparent text-2xl hover:px-20 px-10 py-4 rounded-xl inline-flex items-center transition-all duration-100"
       @click="selectFile">

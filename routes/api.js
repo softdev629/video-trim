@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const multer  = require('multer');
+const multer = require('multer');
 var path = require('path');
 var fs = require('fs');
 const { execSync } = require("child_process");
@@ -19,11 +19,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 /* Upload a video */
-router.post('/upload', upload.single('video'), function(req, res, next) {
+router.post('/upload', upload.single('video'), function (req, res, next) {
   let fname = "public/videos/" + req.file.filename;
   execSync("ffmpeg -i " + fname + " -vf fps=5" + " public/frames/" + req.file.filename + "/" + "%07d.png");
   return res.send({
-    statusOK: true, 
+    statusOK: true,
     filename: req.file.filename
   });
 });
@@ -42,11 +42,11 @@ const timeSecondsToString = (time) => {
   return parseInt(time / 3600) + ":" + parseInt(parseInt(time / 60) % 60) + ":" + parseInt(time % 60);
 }
 
-router.post('/save/:fname', async function(req, res, next) {
+router.post('/save/:fname', async function (req, res, next) {
   let request = req.body;
   let fname = "public/videos/" + req.params.fname;
   let newName = "public/videos/" + generateFileName(req.params.fname);
-  let videoInfo = await(new Promise((resolve, reject) => {
+  let videoInfo = await (new Promise((resolve, reject) => {
     ffmpeg.ffprobe(fname, (err, data) => {
       if (err) {
         reject(err);
@@ -76,7 +76,7 @@ router.post('/save/:fname', async function(req, res, next) {
       }
       execSync(`ffmpeg -f lavfi -i color=black:s=1920x1080:r=24000/1001 -f lavfi -i anullsrc -ar 48000 -ac 2 -t 20 empty1.avi`);
       execSync("ffmpeg -i " + fname + " -ss " + start + " -to " + end + " -c:v copy " + newName);
-    } catch(error) {
+    } catch (error) {
       return res.status(500).json({ error });
     }
   }

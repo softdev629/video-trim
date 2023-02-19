@@ -1,4 +1,6 @@
 <template>
+  <button class="save-btn"><label class="save-btn-label">Export Project</label><i
+      class="fa fa-upload save-btn-icon"></i></button>
   <div class="container-fluid work-place">
     <div class="setting-screen-panel">
       <div class="tool-setting">
@@ -9,10 +11,10 @@
       </div>
     </div>
     <!-- <div class="row-fluid">
-      <div class="col-md-12">
-        <ScreenSizeXController @forceRendering="forceRendering()" />
-      </div>
-    </div> -->
+                                        <div class="col-md-12">
+                                          <ScreenSizeXController @forceRendering="forceRendering()" />
+                                        </div>
+                                      </div> -->
     <div class="row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
@@ -81,3 +83,30 @@ export default {
   }
 }
 </script>
+<style scoped>
+.save-btn {
+  position: fixed;
+  top: 2px;
+  right: 10px;
+  margin-left: 20px;
+  background: #34eae1;
+  border: solid 1px white;
+  border-radius: 5px;
+}
+
+.save-btn:hover {
+  background: rgba(46, 185, 66, 1);
+}
+
+.save-btn-label {
+  margin-left: 20px;
+  color: black;
+  font-weight: bold;
+}
+
+.save-btn-icon {
+  margin-left: 20px;
+  margin-right: 20px;
+  color: black;
+}
+</style>

@@ -9,8 +9,6 @@ import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import { throwStatement } from "@babel/types";
 import { useStore } from "vuex";
-import { baseURL } from '../constants.js';
-import bodyParser from "body-parser";
 //import CubeSpin from 'vue-loading-spinner/components/Cube';
 
 
@@ -20,25 +18,28 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 
-const loader = ref(0);
-const body = ref(0);
+const loader = ref();
+const body = ref();
 
 function selectFile() {
   open();
 }
 
-function selectedFile() {
-  if (files) {
+const selectedFile = () => {
+  if (files && files.value && files.value.length > 0) {
     console.log(files);
     const formData = new FormData();
-    formData.append('video', files._value[0]);
+    formData.append('video', files.value[0]);
 
     // console.log('fileName:', files[0]);
     // console.log(formData, 'formData');
+
+    // loader.className = "loader";
+    // body.style.display = "none";
     loader.value.className = "loader";
     body.value.style.display = "none";
 
-    axios.post('http://localhost:3000/api/upload',
+    axios.post('/api/upload',
       formData,
       {
         headers: {
@@ -56,25 +57,25 @@ function selectedFile() {
 
       payload = {
         type: "duration", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);
       payload = {
         type: "videoTo", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);
       payload = {
         type: "to", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);
@@ -90,8 +91,9 @@ function selectedFile() {
   }
 }
 
-const filesData = ref<{ name: string; size: number; type: string; lastModified: number }[]>([])
-function onDrop(files: File[] | null) {
+const filesData = ref<{ name: string; size: number; type: string; lastModified: number }[]>([]);
+
+const onDrop = (files: File[] | null) => {
   filesData.value = []
   if (files) {
     console.log(files[0]);
@@ -114,7 +116,7 @@ function onDrop(files: File[] | null) {
     body.value.style.display = "none";
 
 
-    axios.post('http://localhost:3000/api/upload',
+    axios.post('/api/upload',
       formData,
       {
         headers: {
@@ -128,29 +130,29 @@ function onDrop(files: File[] | null) {
       console.log(data.data.filecount, "----------------filecount-------------------");
       payload = { type: "fileCount", value: data.data.filecount };
       store.dispatch("setData", payload);
-      var duration = Number(data.data.duration) * 100;
+      let duration = Number(data.data.duration) * 100;
 
       payload = {
         type: "duration", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);
       payload = {
         type: "videoTo", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);
       payload = {
         type: "to", value: {
-          mm: parseInt(duration / 6000),
-          ss: parseInt((duration % 6000) / 100),
-          ss1: parseInt((duration % 6000) % 100),
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
         }
       };
       store.dispatch("setData", payload);

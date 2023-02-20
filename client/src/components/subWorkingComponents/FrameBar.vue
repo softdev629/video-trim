@@ -14,7 +14,7 @@ label {
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
       <div class="text">
         <div v-for="i in currentImageCount"
-          :style="`background:url(http://localhost:3000/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
+          :style="`background:url(/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
         </div>
       </div>
       <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
@@ -93,7 +93,7 @@ export default {
     console.log(this.firstImage, 'firstImage');
     console.log(this.lastImage, 'lastImage');
     console.log(this.currentImageCount, 'currentImageCount');
-    console.log(`http://localhost:3000/frames/${this.$store.state.set.fileName}/${this.getFrameName(this.firstImage + ((this.lastImage - this.firstImage) / this.currentImageCount) * 3)}.png`);
+    console.log(`/frames/${this.$store.state.set.fileName}/${this.getFrameName(this.firstImage + ((this.lastImage - this.firstImage) / this.currentImageCount) * 3)}.png`);
   },
   // computed: {
   //   getFrameName(value) {

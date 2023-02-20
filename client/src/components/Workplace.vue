@@ -13,10 +13,10 @@
       </div>
     </div>
     <!-- <div class="row-fluid">
-                                                                                                                                                                            <div class="col-md-12">
-                                                                                                                                                                              <ScreenSizeXController @forceRendering="forceRendering()" />
-                                                                                                                                                                            </div>
-                                                                                                                                                                          </div> -->
+                                                                                                                                                                              <div class="col-md-12">
+                                                                                                                                                                                <ScreenSizeXController @forceRendering="forceRendering()" />
+                                                                                                                                                                              </div>
+                                                                                                                                                                            </div> -->
     <div class="row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
@@ -111,7 +111,7 @@ export default {
       console.log(data.trim.new_end, "data.new_end");
 
       var fname = this.$store.state.set.fileName;
-      axios.post('http://localhost:3000/api/save/' + fname, data).then(ret => {
+      axios.post('/api/save/' + fname, data).then(ret => {
 
 
         console.log(ret.data.filename);

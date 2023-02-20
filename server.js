@@ -11,6 +11,8 @@ var app = express();
 var debug = require('debug')('video-editor-backend:server');
 var http = require('http');
 
+require('dotenv').config()
+
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
@@ -19,8 +21,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', apiRouter);
 
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('client/dist'));
+
+  app.get('*', (req, res) => {
+    console.log(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  });
+}
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
@@ -39,7 +51,8 @@ app.use(function(req, res, next) {
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
+console.log(port)
 app.set('port', port);
 
 /**

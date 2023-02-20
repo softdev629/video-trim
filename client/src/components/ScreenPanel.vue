@@ -2,7 +2,7 @@
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
     :style="`width:${this.$store.state.set.panelWidth}px;height:${this.$store.state.set.panelHeight}px;`">
     <video controls class="size1" @oncanplay="getDuration()"
-      :src="`http://localhost:3000/videos/${this.$store.state.set.fileName}`"
+      :src="`/videos/${this.$store.state.set.fileName}`"
       :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
       type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video>
     <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"

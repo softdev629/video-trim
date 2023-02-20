@@ -1,8 +1,8 @@
 export default [
-  {
-    toolType: 'trim',
-    selected: ''
-  },
+  // {
+  //   toolType: 'trim',
+  //   selected: ''
+  // },
   {
     toolType: 'text',
     selected: ''
@@ -18,5 +18,5 @@ export default [
   {
     toolType: 'reserved-menu',
     selected: ''
-  }
+  },
 ]

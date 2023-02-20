@@ -1,7 +1,18 @@
 <template>
   <div>
     <div class="row-fluid" style="display: flex;height: 30px;">
-      <div class="col-md-3"></div>
+      <div class="col-md-3">
+        <button
+          class="btn btn-primary"
+          style="margin-left: 15px"
+          @click="onPlayPause"
+        >
+          <i
+            class="fa text-light"
+            :class="[isPlay ? 'fa-pause' : 'fa-play']"
+          ></i>
+        </button>
+      </div>
       <div class="col-md-6 time-controller d-flex" style="justify-content: center; align-items: center">
         <TimeController />
       </div>
@@ -11,7 +22,7 @@
     </div>
     <div class="setting-panel">
       <div class="selectedPos"
-        :style="`left: ${100 * ($store.state.set.curTime.mm * 6000 + $store.state.set.curTime.ss * 100 + $store.state.set.curTime.ss1) / ((this.zoom - 6) * (-1) * 100) + 80}px`">
+        :style="`left: ${100 * (($store.state.set.curTime.mm) * 6000 + ($store.state.set.curTime.ss) * 100 + ($store.state.set.curTime.ss1)) / ((this.zoom - 6) * (-1) * 100) + 80}px`">
       </div>
       <TimeLineBar :zoom="this.zoom" :duration="this.duration" :curPosChanged="this.curPosChanged"
         :curPosSelected="this.curPosSelected" />
@@ -34,7 +45,7 @@ import TimeMovedBar from "./subWorkingComponents/TimeMovedBar.vue";
 import TimeController from "./subWorkingComponents/TimeController.vue";
 import ZoomController from "./subWorkingComponents/ZoomController.vue";
 
-import { useStore } from "vuex";
+import {mapState, useStore } from "vuex";
 
 export default {
   name: "WorkingPanel",
@@ -70,8 +81,8 @@ export default {
       this.curPos = e.pageX + document.getElementsByClassName('setting-panel')[0].scrollLeft;
     },
     curPosSelected(e) {
-      this.selectedPos = this.curPos;
-
+      //      this.selectedPos = this.curPos;
+      if (this.isPlay) this.onPlayPause();
       var curTime = parseInt((((this.curPos - 100) / 100) * 100) * ((-1) * (this.zoom - 6)));
 
       this.$store.dispatch("setData", {
@@ -81,17 +92,49 @@ export default {
             (curTime) / (100 * 60)
           ),
           ss: parseInt(
-            (curTime%6000) / 100
+            (curTime % 6000) / 100
           ),
           ss1: parseInt(
             (curTime) % 100
           ),
-        },
+},
       });
-
+    },
+ onPlayPause() {
+      this.$store.dispatch("setData", { type: "isPlay", value: !this.isPlay });
+      if (this.isPlay) this.timerId = setInterval(this.onPlaying, 100);
+      else clearInterval(this.timerId);
+    },
+    onPlaying() {
+      const tempTime = { ...this.curTime };
+      tempTime.ss1 += 10;
+      tempTime.ss += parseInt(tempTime.ss1 / 100);
+      tempTime.ss1 %= 100;
+      tempTime.mm += parseInt(tempTime.ss / 60);
+      tempTime.ss %= 60;
+      this.$store.dispatch("setData", {
+        type: "curTime",
+        value: { ...tempTime },
+      });
+      if (
+        tempTime.mm > this.videoLength.mm ||
+        (tempTime.mm === this.videoLength.mm &&
+          (tempTime.ss > this.videoLength.ss ||
+            (tempTime.ss === this.videoLength.ss &&
+              tempTime.ss1 > this.videoLength.ss1)))
+      )
+        this.onPlayPause();
     },
   },
+  computed: {
+    ...mapState({
+      isPlay: (state) => state.set.isPlay,
+      curTime: (state) => state.set.curTime,
+      videoLength: (state) => state.set.duration,
+    }),
+  },
 };
+
 </script>
 
 <style scoped>

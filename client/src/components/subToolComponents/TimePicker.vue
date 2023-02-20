@@ -37,70 +37,70 @@ export default {
         };
 
         //to -from > 125
-        var diff = 100 * ((this.$store.state.set.videoTo.mm - this.$store.state.set.videoFrom.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.$store.state.set.videoFrom.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.$store.state.set.videoFrom.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
+        // var diff = 100 * ((this.$store.state.set.videoTo.mm - this.$store.state.set.videoFrom.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.$store.state.set.videoFrom.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.$store.state.set.videoFrom.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-        console.log('diff stimedata', diff, this.$store.state.set.zoom);
+        // console.log('diff stimedata', diff, this.$store.state.set.zoom);
 
-        if (diff < 125) {
-          //set to-from 126
-          console.log('diff < 126, timesdata reset');
+        // if (diff < 125) {
+        //   //set to-from 126
+        //   console.log('diff < 126, timesdata reset');
 
-          var pixel = ((100 * ((this.$store.state.set.videoTo.mm) * 6000 + (this.$store.state.set.videoTo.ss) * 100 + (this.$store.state.set.videoTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 126;
+        //   var pixel = ((100 * ((this.$store.state.set.videoTo.mm) * 6000 + (this.$store.state.set.videoTo.ss) * 100 + (this.$store.state.set.videoTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 126;
 
-          console.log('pixel', pixel);
+        //   console.log('pixel', pixel);
 
-          var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
+        //   var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-          console.log('time', time);
-          var prevFrom1 = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
+        //   console.log('time', time);
+        //   var prevFrom1 = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
 
-          var dOffset = prevFrom1 - time;
+        //   var dOffset = prevFrom1 - time;
 
-          this.$store.dispatch("setData", {
-            type: "videoFrom",
-            value: {
-              mm: parseInt((time) / (100 * 60)),
-              ss: parseInt(((time) % (100 * 60)) / 100),
-              ss1: parseInt(((time) % (100 * 60)) % 100),
-            },
-          });
+        //   this.$store.dispatch("setData", {
+        //     type: "videoFrom",
+        //     value: {
+        //       mm: parseInt((time) / (100 * 60)),
+        //       ss: parseInt(((time) % (100 * 60)) / 100),
+        //       ss1: parseInt(((time) % (100 * 60)) % 100),
+        //     },
+        //   });
 
-          var delay = (this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1);
+        //   // var delay = (this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1);
 
-          console.log(delay, dOffset, 'delay--------offset');
-
-
-          this.$store.dispatch("setData", {
-            type: "delay",
-            value: {
-              mm: parseInt((delay - dOffset) / (100 * 60)),
-              ss: parseInt(((delay - dOffset) % (100 * 60)) / 100),
-              ss1: parseInt(((delay - dOffset) % (100 * 60)) % 100),
-            },
-          });
-
-          console.log(this.$store.state.set.delay, 'store ------ delay');
+        //   // console.log(delay, dOffset, 'delay--------offset');
 
 
-          return;
-        }
+        //   // this.$store.dispatch("setData", {
+        //   //   type: "delay",
+        //   //   value: {
+        //   //     mm: parseInt((delay - dOffset) / (100 * 60)),
+        //   //     ss: parseInt(((delay - dOffset) % (100 * 60)) / 100),
+        //   //     ss1: parseInt(((delay - dOffset) % (100 * 60)) % 100),
+        //   //   },
+        //   // });
+
+        //   // console.log(this.$store.state.set.delay, 'store ------ delay');
+
+
+        //   return;
+        // }
 
 
 
         var prevFrom = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
 
 
-        var mm = this.$store.state.set.delay.mm + value.mm - this.$store.state.set.videoFrom.mm;
-        var ss = this.$store.state.set.delay.ss + value.ss - this.$store.state.set.videoFrom.ss;
-        var ss1 = this.$store.state.set.delay.ss1 + value.ss1 - this.$store.state.set.videoFrom.ss1;
+        // var mm = this.$store.state.set.delay.mm + value.mm - this.$store.state.set.videoFrom.mm;
+        // var ss = this.$store.state.set.delay.ss + value.ss - this.$store.state.set.videoFrom.ss;
+        // var ss1 = this.$store.state.set.delay.ss1 + value.ss1 - this.$store.state.set.videoFrom.ss1;
 
-        let payload = {
-          type: "delay", value: {
-            mm: mm,
-            ss: ss,
-            ss1: ss1
-          }
-        };
+        // let payload = {
+        //   type: "delay", value: {
+        //     mm: mm,
+        //     ss: ss,
+        //     ss1: ss1
+        //   }
+        // };
 
         this.$store.dispatch("setData", payload);
 
@@ -162,15 +162,15 @@ export default {
         this.$store.dispatch("setData", payload);
 
       }
-      if (this.timeData == 'delay') {
-        console.log('delay--------------150------');
+      // if (this.timeData == 'delay') {
+      //   console.log('delay--------------150------');
 
-        let value = {
-          mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
-        };
-        let payload = { type: "delay", value };
-        this.$store.dispatch("setData", payload);
-      }
+      //   let value = {
+      //     mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
+      //   };
+      //   let payload = { type: "delay", value };
+      //   this.$store.dispatch("setData", payload);
+      // }
 
     }
   }

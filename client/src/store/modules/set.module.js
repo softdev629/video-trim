@@ -53,7 +53,12 @@ export default {
     curTime: { mm: 0, ss: 0, ss1: 0 }, // selected or current play time
     zoom: 1,
     fileName: "",
-    fileCount: 0
+    fileCount: 0,
+    fileName: "",
+    fileCount: 0,
+    loader: "none",
+    all: "block",
+    isPlay: false, // play or pause
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -111,6 +116,9 @@ export default {
       state.zoom = 1;
       state.fileName = "";
       state.fileCount = 0;
+      state.loader = "none";
+      state.all = "block";
+      state.isPlay = false;
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -256,6 +264,15 @@ export default {
           state.fileName = payload.value;
         case "fileCount":
           state.fileCount = payload.value;
+        case "loader":
+          state.loader = payload.value;
+          break;
+        case "all":
+          state.all = payload.value;
+          break;
+        case "isPlay":
+          state.isPlay = payload.value;
+          break;
         default:
           return;
       }
@@ -405,10 +422,22 @@ export default {
           return;
         case "zoom":
           state.zoom = 1;
+          return;
         case "fileName":
           state.fileName = null;
+          return;
         case "fileCount":
           state.fileCount = 0;
+          return;
+        case "loader":
+          state.loader = "none";
+          return;
+        case "all":
+          state.all = "block";
+          return;
+        case "isPlay":
+          state.isPlay = false;
+          break;
         default:
           return;
       }

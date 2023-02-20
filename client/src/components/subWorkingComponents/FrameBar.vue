@@ -10,26 +10,16 @@ label {
     <div style="margin-right: 10px; width:70px;margin-top:20px;">
       <i class="fa fa-video-camera"></i>
     </div>
-    <div v-if="this.$store.state.set.selectedSettingTool === `trim`" class="div-range active"
-      :style="`left: ${start}px; width:${width}px;`">
+    <div class="div-range active" :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
-      <div class="text" @mousedown="resizeSelected($event, 2)">
+      <div class="text">
         <div v-for="i in currentImageCount"
           :style="`background:url(http://localhost:3000/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
         </div>
       </div>
       <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
     </div>
-    <div v-if="this.$store.state.set.selectedSettingTool !== `trim`" class="div-range "
-      :style="`left: ${start}px; width:${width}px;`">
-      <div class="left"></div>
-      <div class="text">
-        <div v-for="i in currentImageCount"
-          :style="`background:url(http://localhost:3000/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
-        </div>
-      </div>
-      <div class="right" :style="`left: ${width - 7}px`"></div>
-    </div>
+
 
   </div>
 </template>
@@ -48,13 +38,19 @@ export default {
       resizeStart: 0,
       resizeState: false,
       resizeType: 0,
-      imageCount: 13,
+      imageCount: this.$store.state.set.fileCount,
       firstImage: 0,
       lastImage: this.$store.state.set.fileCount,
-      currentImageCount: this.$store.state.set.fileCount
+      currentImageCount: this.$store.state.set.fileCount,
+      onlyDelay: 0
     };
   },
   watch: {
+    "$store.state.set.delay": function (val, oldVal) {
+      console.log('111111111111111111111111111111!!!!!!!!!!!!!!!!!!!!!!!');
+      this.start = 100 * (val.mm * 6000 + val.ss * 100 + val.ss1) / (100 * (this.zoom - 6) * (-1));
+
+    },
     zoom: function (newZoom, oldZoom) {
       //      this.start = this.start / oldZoom;
       this.width = 100 * (this.duration) / (100 * (newZoom - 6) * (-1));
@@ -75,20 +71,20 @@ export default {
       var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
       this.width = 100 * (to - from) / (100 * (this.zoom - 6) * (-1));
     },
-    "$store.state.set.delay": function (newVal, oldVal) {
-      //delay to pixel
-      var delay = this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1;
-      this.start = 100 * (delay) / (100 * (this.zoom - 6) * (-1));
+    // "$store.state.set.delay": function (newVal, oldVal) {
+    //   //delay to pixel
+    //   var delay = this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1;
+    //   this.start = 100 * (delay) / (100 * (this.zoom - 6) * (-1));
 
-      var to = this.$store.state.set.videoTo.mm * 6000 + this.$store.state.set.videoTo.ss * 100 + this.$store.state.set.videoTo.ss1;
-      var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
+    //   var to = this.$store.state.set.videoTo.mm * 6000 + this.$store.state.set.videoTo.ss * 100 + this.$store.state.set.videoTo.ss1;
+    //   var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
 
-      var diff = (newVal.mm - oldVal.mm) * 6000 + (newVal.ss - oldVal.ss) * 100 + (newVal.ss1 - oldVal.ss1)
+    //   var diff = (newVal.mm - oldVal.mm) * 6000 + (newVal.ss - oldVal.ss) * 100 + (newVal.ss1 - oldVal.ss1)
 
-      this.width = 100 * (to - from - diff) / (100 * (this.zoom - 6) * (-1));
+    //   this.width = 100 * (to - from - diff) / (100 * (this.zoom - 6) * (-1));
 
 
-    },
+    // },
   },
   created() {
     this.width = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
@@ -134,25 +130,23 @@ export default {
       let oldWidth = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
 
       this.firstImage = parseInt(
-        this.imageCount * (this.start / oldWidth)//count/width *120
+        this.imageCount * (this.onlyDelay / oldWidth)//count/width *120
       );
       this.lastImage = parseInt(
-        this.imageCount * ((this.start + this.width) / oldWidth)
+        this.imageCount * ((this.onlyDelay + this.width) / oldWidth)
       );
       this.currentImageCount = parseInt(this.width / 120);
     },
     resizeSelected(e, type) {
 
-      if (this.$store.state.set.selectedSettingTool !== 'trim')
-        return;
+
       this.resizeState = true;
       this.resizeType = type;
       this.resizeStart = e.x;
 
     },
     resizeMoved(e) {
-      if (this.$store.state.set.selectedSettingTool !== 'trim')
-        return;
+
 
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
@@ -223,18 +217,18 @@ export default {
             },
           });
 
-          var prevDelay = this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1;
+          // var prevDelay = this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1;
 
-          console.log('----------------delay---------------');
+          // console.log('----------------delay---------------');
 
-          this.$store.dispatch("setData", {
-            type: "delay",
-            value: {
-              mm: parseInt((prevDelay + offset) / (100 * 60)),
-              ss: parseInt(((prevDelay + offset) % (100 * 60)) / 100),
-              ss1: parseInt(((prevDelay + offset) % (100 * 60)) % 100),
-            },
-          });
+          // this.$store.dispatch("setData", {
+          //   type: "delay",
+          //   value: {
+          //     mm: parseInt((prevDelay + offset) / (100 * 60)),
+          //     ss: parseInt(((prevDelay + offset) % (100 * 60)) / 100),
+          //     ss1: parseInt(((prevDelay + offset) % (100 * 60)) % 100),
+          //   },
+          // });
 
 
 
@@ -244,6 +238,8 @@ export default {
 
 
         } else {
+          return;
+
           if (this.start + e.x - this.resizeStart < 0) {
             this.resizeState = false;
             return;

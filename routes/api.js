@@ -17,24 +17,18 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage: storage })
-/* Upload a video */
-router.post('/upload', function (req, res, next) {
-  if (!fs.existsSync("public/videos")) {
-    fs.mkdirSync("public/videos");
-  }
-  if (!fs.existsSync("public/frames")) {
-    fs.mkdirSync("public/frames");
-  }
-  next();
-}, upload.single('video'), async function (req, res, next) {
-  let fname = "public/videos/" + req.file.filename;
-  let dname = "public/frames/" + req.file.filename;
+const generateThumbnails = filename => {
+  let fname = "public/videos/" + filename;
+  let dname = "public/frames/" + filename;
   // console.log(fname, " ", dname);
   if (!fs.existsSync(dname)) {
     fs.mkdirSync(dname);
   }
   execSync("ffmpeg -i " + fname + " -vf fps=1 " + dname + "/" + "%07d.png");
+}
+
+const getFileCount = filename => {
+  let dname = "public/frames/" + filename;
   let pw = [];
   let cur = 1;
   for (let i = 0; i < 7; i++) {
@@ -55,6 +49,11 @@ router.post('/upload', function (req, res, next) {
       break;
     }
   }
+  return count;
+}
+
+const getDuration = async filename => {
+  let fname = "public/videos/" + filename;
   let videoInfo = await (new Promise((resolve, reject) => {
     ffmpeg.ffprobe(fname, (err, data) => {
       if (err) {
@@ -69,17 +68,33 @@ router.post('/upload', function (req, res, next) {
       }
     });
   }));
-  if (!videoInfo) {
-    return res.status(403).json({
-      error: "It is not a video file."
+  if (!videoInfo) return -1;
+  return videoInfo.duration;
+}
+
+const upload = multer({ storage: storage })
+/* Upload a video */
+router.post('/upload', function (req, res, next) {
+  if (!fs.existsSync("public/videos")) {
+    fs.mkdirSync("public/videos");
+  }
+  if (!fs.existsSync("public/frames")) {
+    fs.mkdirSync("public/frames");
+  }
+  next();
+}, upload.single('video'), async function (req, res, next) {
+  generateThumbnails(req.file.filename);
+  let filecount = getFileCount(req.file.filename);
+  let duration = await getDuration(req.file.filename);
+  if (duration < 0) {
+    return res.status(500).json({
+      error: "Invalid video file."
     });
   }
-  console.log(videoInfo);
-  let duration = videoInfo.duration;
   return res.json({
     statusOK: true,
     filename: req.file.filename,
-    filecount: count,
+    filecount,
     duration
   });
 });
@@ -101,7 +116,8 @@ const timeSecondsToString = (time) => {
 router.post('/save/:fname', async function (req, res, next) {
   let request = req.body;
   let fname = "public/videos/" + req.params.fname;
-  let newName = "public/videos/" + generateFileName(req.params.fname);
+  let nname = generateFileName(req.params.fname);
+  let newName = "public/videos/" + nname;
   let videoInfo = await (new Promise((resolve, reject) => {
     ffmpeg.ffprobe(fname, (err, data) => {
       if (err) {
@@ -163,28 +179,36 @@ router.post('/save/:fname', async function (req, res, next) {
         concatList.push("emptyTo.mp4");
         fs.unlinkSync('output.mp4');
       }
-      let commandString = "ffmpeg ";
-      for (let filename of concatList) {
-        commandString += ` -i ${filename} `;
+      if (front_length > 0 || back_length > 0) {
+        let commandString = "ffmpeg ";
+        for (let filename of concatList) {
+          commandString += ` -i ${filename} `;
+        }
+        commandString += '-filter_complex "';
+        width = 1280, height = 720;
+        for (let index in concatList) {
+          commandString += `[${index}:v]scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:-1:-1,setsar=1,fps=30,format=yuv420p[v${index}];`;
+        }
+        for (let index in concatList) {
+          commandString += `[${index}:a]aformat=sample_rates=48000:channel_layouts=stereo[a${index}];`;
+        }
+        for (let index in concatList) {
+          commandString += `[v${index}][a${index}]`;
+        }
+        commandString += `concat=n=${concatList.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart output.mp4`;
+        execSync(commandString);
+        fs.unlinkSync(newName);
+        fs.copyFileSync("output.mp4", newName);
       }
-      commandString += '-filter_complex "';
-      width = 1280, height = 720;
-      for (let index in concatList) {
-        commandString += `[${index}:v]scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:-1:-1,setsar=1,fps=30,format=yuv420p[v${index}];`;
+      if (fs.existsSync("output.mp4")) {
+        fs.unlinkSync("output.mp4");
       }
-      for (let index in concatList) {
-        commandString += `[${index}:a]aformat=sample_rates=48000:channel_layouts=stereo[a${index}];`;
+      if (fs.existsSync("emptyFrom.mp4")) {
+        fs.unlinkSync("emptyFrom.mp4");
       }
-      for (let index in concatList) {
-        commandString += `[v${index}][a${index}]`;
+      if (fs.existsSync("emptyTo.mp4")) {
+        fs.unlinkSync("emptyTo.mp4");
       }
-      commandString += `concat=n=${concatList.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart output.mp4`;
-      execSync(commandString);
-      fs.unlinkSync(newName);
-      fs.copyFileSync("output.mp4", newName);
-      fs.unlinkSync("output.mp4");
-      fs.unlinkSync("emptyFrom.mp4");
-      fs.unlinkSync("emptyTo.mp4");
     } catch (error) {
       return res.status(500).json({ error });
     }
@@ -195,9 +219,14 @@ router.post('/save/:fname', async function (req, res, next) {
       return a.start - b.start;
     });
   }
+  generateThumbnails(nname);
+  let filecount = getFileCount(nname);
+  let duration = await getDuration(nname);
   return res.json({
     statusOK: true,
-    filename: newName
+    filename: nname,
+    filecount,
+    duration
   });
 });
 

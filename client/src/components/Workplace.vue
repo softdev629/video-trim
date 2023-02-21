@@ -16,10 +16,10 @@
       </div>
     </div>
     <!-- <div class="row-fluid">
-                                                                                                                                                                                              <div class="col-md-12">
-                                                                                                                                                                                                <ScreenSizeXController @forceRendering="forceRendering()" />
-                                                                                                                                                                                              </div>
-                                                                                                                                                                                            </div> -->
+                                                                                                                                                                                                        <div class="col-md-12">
+                                                                                                                                                                                                          <ScreenSizeXController @forceRendering="forceRendering()" />
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                      </div> -->
     <div class="row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
@@ -67,6 +67,26 @@ export default {
     this.$store.dispatch('setData', payload);
 
 
+    payload = {
+      type: 'cutFrom', value: {
+        mm: this.$store.state.set.videoFrom.mm,
+        ss: this.$store.state.set.videoFrom.ss,
+        ss1: this.$store.state.set.videoFrom.ss1
+      }
+    };
+    this.$store.dispatch('setData', payload);
+
+    payload = {
+      type: 'cutTo', value: {
+        mm: this.$store.state.set.videoTo.mm,
+        ss: this.$store.state.set.videoTo.ss,
+        ss1: this.$store.state.set.videoTo.ss1
+      }
+    };
+    this.$store.dispatch('setData', payload);
+
+
+
     console.log(document.body.offsetWidth, 'offsetWidth');
   },
   setup() {
@@ -80,21 +100,22 @@ export default {
       alert(this.width);
     },
     trim: function () {
-      var length = parseInt(this.$store.state.set.videoTo.mm) * 60 + parseInt(this.$store.state.set.videoTo.ss) - parseInt(this.$store.state.set.videoFrom.mm) * 60 - parseInt(this.$store.state.set.videoFrom.ss);
-      var start = "00:" + this.$store.state.set.videoFrom.mm.toString() + ":" + this.$store.state.set.videoFrom.ss.toString();
-      var end = "00:" + this.$store.state.set.videoTo.mm.toString() + ":" + this.$store.state.set.videoTo.ss.toString();
-      var newStart = "00:" + this.$store.state.set.delay.mm.toString() + ":" + this.$store.state.set.delay.ss.toString();
-      //      var newEnd = "00:" + (parseInt(this.$store.state.set.videoTo.mm) + parseInt(this.$store.state.set.delay.mm)).toString() + ":" + (parseInt(this.$store.state.set.videoTo.ss) + parseInt(this.$store.state.set.delay.ss)).toString();
-      var newEnd = "00:" + parseInt((parseInt(this.$store.state.set.videoTo.mm * 60) + parseInt(this.$store.state.set.videoTo.ss) - parseInt(this.$store.state.set.videoFrom.mm * 60) - parseInt(this.$store.state.set.videoFrom.ss)) / 60).toString() + ":" + parseInt((parseInt(this.$store.state.set.videoTo.mm * 60) + parseInt(this.$store.state.set.videoTo.ss) - parseInt(this.$store.state.set.videoFrom.mm * 60) - parseInt(this.$store.state.set.videoFrom.ss)) % 60).toString();
+
+      var t_start = "00:" + this.$store.state.set.videoFrom.mm.toString() + ":" + this.$store.state.set.videoFrom.ss.toString();
+      var t_end = "00:" + this.$store.state.set.videoTo.mm.toString() + ":" + this.$store.state.set.videoTo.ss.toString();
+
+      var c_start = "00:" + this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
+      var c_end = "00:" + this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
 
 
       var data = {
-        "length": length,
         "trim": {
-          "start": start,
-          "end": end,
-          "new_start": newStart,
-          "new_end": newEnd
+          "start": t_start,
+          "end": t_end,
+        },
+        "cut": {
+          "start": c_start,
+          "end": c_end,
         }
       };
 
@@ -113,11 +134,10 @@ export default {
 
 
 
-      console.log(data.length, "data.length");
-      console.log(data.trim.start, "data.start");
-      console.log(data.trim.end, "data.end");
-      console.log(data.trim.new_start, "data.new_start");
-      console.log(data.trim.new_end, "data.new_end");
+      console.log(data.trim.start, "trim.start");
+      console.log(data.trim.end, "trim.end");
+      console.log(data.cut.start, "cut.start");
+      console.log(data.cut.end, "cut.end");
 
       var fname = this.$store.state.set.fileName;
       axios.post('/api/save/' + fname, data).then(ret => {
@@ -152,6 +172,25 @@ export default {
         this.$store.dispatch("setData", payload);
         payload = {
           type: "videoFrom", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+
+        this.$store.dispatch("setData", payload);
+        payload = {
+          type: "cutTo", value: {
+            mm: parseInt(duration / 6000),
+            ss: parseInt((duration % 6000) / 100),
+            ss1: parseInt((duration % 6000) % 100),
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+        payload = {
+          type: "cutFrom", value: {
             mm: 0,
             ss: 0,
             ss1: 0,
@@ -253,6 +292,7 @@ export default {
   background: #34eae1;
   border: solid 1px white;
   border-radius: 5px;
+
 }
 
 .save-btn:hover {

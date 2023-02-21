@@ -31,7 +31,7 @@ label {
           :style="`background:url(/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;overflow:hidden;`">
         </div>
       </div>
-      <div class="right" :style="`left: ${width - 10}px`"></div>
+      <div class="right" :style="`left: ${width - 7}px`"></div>
     </div>
 
   </div>
@@ -39,6 +39,8 @@ label {
 
 <script>
 import CutFrameBar from "./CutFrameBar.vue";
+import { useStore } from "vuex";
+
 
 
 export default {
@@ -110,6 +112,7 @@ export default {
     // },
   },
   created() {
+    const store = useStore();
     this.width = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
 
     this.updateImages();
@@ -161,7 +164,8 @@ export default {
       this.currentImageCount = parseInt(this.width / 120) + 1;
     },
     resizeSelected(e, type) {
-
+      var payload = { type: "relaseFlag", value: false }
+      this.$store.dispatch("setData", payload);
 
       this.resizeState = true;
       this.resizeType = type;
@@ -207,6 +211,15 @@ export default {
             },
           });
 
+          this.$store.dispatch("setData", {
+            type: "cutTo",
+            value: {
+              mm: parseInt((videoEnd) / (100 * 60)),
+              ss: parseInt(((videoEnd) % (100 * 60)) / 100),
+              ss1: parseInt(((videoEnd) % (100 * 60)) % 100),
+            },
+          });
+
         } else if (this.resizeType == 0) {
           //resizeStart -e.x + width > to -from
 
@@ -233,6 +246,15 @@ export default {
 
           this.$store.dispatch("setData", {
             type: "videoFrom",
+            value: {
+              mm: parseInt((videoStart) / (100 * 60)),
+              ss: parseInt(((videoStart) % (100 * 60)) / 100),
+              ss1: parseInt(((videoStart) % (100 * 60)) % 100),
+            },
+          });
+
+          this.$store.dispatch("setData", {
+            type: "cutFrom",
             value: {
               mm: parseInt((videoStart) / (100 * 60)),
               ss: parseInt(((videoStart) % (100 * 60)) / 100),
@@ -301,6 +323,9 @@ export default {
 
     },
     resizeReleased(e) {
+      var payload = { type: "relaseFlag", value: true }
+      this.$store.dispatch("setData", payload);
+
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
           if (this.width + e.x - this.resizeStart < 0) {

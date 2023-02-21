@@ -1,13 +1,12 @@
 <template>
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
     :style="`width:${this.$store.state.set.panelWidth}px;height:${this.$store.state.set.panelHeight}px;`">
-    <video controls class="size1" @oncanplay="getDuration()"
-      :src="`/videos/${this.$store.state.set.fileName}`"
+    <video controls class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
       :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
       type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video>
     <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"
-                                                                      :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
-                                                                      type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
+                                                                                    :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
+                                                                                    type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
     <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
@@ -40,7 +39,7 @@
 <script >
 import { useStore } from "vuex";
 import setStore from "../store/modules/set.module";
-
+import { useRouter, useRoute } from 'vue-router'
 export default {
   name: "ScreenPanel",
   data() {
@@ -54,6 +53,7 @@ export default {
         x: 0,
         y: 0
       },
+      fileName: "",
       selectState: 0,
       show: 'none'
     };
@@ -62,7 +62,17 @@ export default {
     console.log(this.$refs.vid.duration);
 
     const store = useStore();
+    const router = useRouter();
+    const route = useRoute();
 
+
+
+    if (!this.$store.state.set.fileName) {
+      console.log(this.fileName);
+      router.push('/');
+    }
+
+    this.fileName = this.$store.state.set.fileName;
 
     console.log('screenpanel-------84', this.$store.state.set.videoTo.mm, this.$store.state.set.videoTo.ss, this.$store.state.set.videoTo.ss1);
     console.log('screenpanel-------85', this.$store.state.set.to.mm, this.$store.state.set.to.ss, this.$store.state.set.to.ss1);
@@ -391,7 +401,13 @@ export default {
 
       this.$refs.vid.currentTime = (val.mm * 100 * 60 + val.ss * 100 + val.ss1) / 100;
     },
+    "$store.state.set.fileName": function (val, oldVal) {
+      this.fileName = this.$store.state.set.fileName;
+    },
+
   },
+
+
 };
 </script>
 

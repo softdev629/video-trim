@@ -2,7 +2,7 @@
   <div>
     <div class="row-fluid" style="display: flex;height: 30px;">
       <div class="col-md-3">
-        <button class="btn btn-primary" style="margin-left: 15px" @click="onPlayPause">
+        <button class="btn btn-primary btn-play" @click="onPlayPause">
           <i class="fa text-light" :class="[isPlay ? 'fa-pause' : 'fa-play']"></i>
         </button>
       </div>
@@ -153,5 +153,16 @@ export default {
   height: 98%;
   top: 10px;
   z-index: 51;
+}
+
+.btn-play {
+  margin-left: 15px;
+  margin-top: 5px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-left: 15px;
+  position: absolute;
+  z-index: 10;
+
 }
 </style>

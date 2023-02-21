@@ -1,6 +1,6 @@
 <template>
   <div class="tControl">
-    <label style="font-weight:bold">{{ this.$store.state.set.curTime.mm }}{{
+    <label style="font-weight:bold">{{ this.$store.state.set.curTime.mm }}:{{
       this.$store.state.set.curTime.ss
     }}.{{
   this.$store.state.set.curTime.ss1

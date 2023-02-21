@@ -69,6 +69,26 @@ export default {
       var payload = { type: "selectedSettingTool", value: toolType };
       this.$store.dispatch("setData", payload);
 
+      if (toolType == "cut") {
+        payload = {
+          type: "cutFrom", value: {
+            mm: this.$store.state.set.videoFrom.mm,
+            ss: this.$store.state.set.videoFrom.ss,
+            ss1: this.$store.state.set.videoFrom.ss1
+          }
+        }
+        this.$store.dispatch("setData", payload);
+
+        payload = {
+          type: "cutTo", value: {
+            mm: this.$store.state.set.videoTo.mm,
+            ss: this.$store.state.set.videoTo.ss,
+            ss1: this.$store.state.set.videoTo.ss1
+          }
+        }
+        this.$store.dispatch("setData", payload);
+      }
+
       payload = { type: "settingBoxWidth", value: 260 };
       this.$store.dispatch("setData", payload);
       this.$emit("forceRendering");

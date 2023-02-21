@@ -15,13 +15,13 @@
         <Timepicker :tmm="this.$store.state.set.videoTo.mm" :tss="this.$store.state.set.videoTo.ss"
           :tss1="this.$store.state.set.videoTo.ss1" :timeData="`etimeData`" @timeChange="etimeChange" />
       </div><!-- 
-                    <div style="display:flex; margin-top:10px;justify-content: center;">
-                      <label style="width:50px;text-align: right;">Delay&nbsp;&nbsp;:</label>
-                      <Timepicker :timeData="`delay`" :tmm="this.$store.state.set.delay.mm" :tss="this.$store.state.set.delay.ss"
-                        :tss1="this.$store.state.set.delay.ss1" @timeChange="delay" />
-                    </div> -->
+                                <div style="display:flex; margin-top:10px;justify-content: center;">
+                                  <label style="width:50px;text-align: right;">Delay&nbsp;&nbsp;:</label>
+                                  <Timepicker :timeData="`delay`" :tmm="this.$store.state.set.delay.mm" :tss="this.$store.state.set.delay.ss"
+                                    :tss1="this.$store.state.set.delay.ss1" @timeChange="delay" />
+                                </div> -->
       <div>
-        <button class="btn btn-success btn-tool" @click="trim()">Save</button>
+        <!-- <button class="btn btn-success btn-tool" @click="trim()">Save</button> -->
       </div>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `audio`">
@@ -62,45 +62,45 @@
           </div>
         </div>
         <!-- <div class="form-group">
-                                                                                              <div class="col-md-7 right">
-                                                                                                <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
-                                                                                              </div>
-                                                                                              <div class="col-md-5 left">
-                                                                                                <input v-model="this.$store.state.set.textOffsetWidth" @change="change(`textOffsetWidth`)" type="number"
-                                                                                                  min="0" max="1000" />
-                                                                                              </div>
-                                                                                            </div>
-                                                                                            <div class="form-group">
-                                                                                              <div class="col-md-7 right">
-                                                                                                <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
-                                                                                              </div>
-                                                                                              <div class="col-md-5 left">
-                                                                                                <input v-model="this.$store.state.set.textOffsetHeight" @change="change(`textOffsetHeight`)" type="number"
-                                                                                                  min="0" max="1000" />
-                                                                                              </div>
-                                                                                            </div>
-                                                                                            <div class="form-group">
-                                                                                              <div class="col-md-7 right">
-                                                                                                <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
-                                                                                              </div>
-                                                                                              <div class="col-md-5 left">
-                                                                                                <input v-model="this.$store.state.set.textOffsetTop" @change="change(`textOffsetTop`)" type="number" min="0"
-                                                                                                  max="1000" />
-                                                                                              </div>
-                                                                                            </div>
-                                                                                            <div class="form-group">
-                                                                                              <div class="col-md-7 right">
-                                                                                                <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
-                                                                                              </div>
-                                                                                              <div class="col-md-5 left">
-                                                                                                <input v-model="this.$store.state.set.textOffsetLeft" @change="change(`textOffsetLeft`)" type="number"
-                                                                                                  min="0" max="1000" />
-                                                                                              </div>
-                                                                                            </div> -->
+                                                                                                          <div class="col-md-7 right">
+                                                                                                            <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
+                                                                                                          </div>
+                                                                                                          <div class="col-md-5 left">
+                                                                                                            <input v-model="this.$store.state.set.textOffsetWidth" @change="change(`textOffsetWidth`)" type="number"
+                                                                                                              min="0" max="1000" />
+                                                                                                          </div>
+                                                                                                        </div>
+                                                                                                        <div class="form-group">
+                                                                                                          <div class="col-md-7 right">
+                                                                                                            <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
+                                                                                                          </div>
+                                                                                                          <div class="col-md-5 left">
+                                                                                                            <input v-model="this.$store.state.set.textOffsetHeight" @change="change(`textOffsetHeight`)" type="number"
+                                                                                                              min="0" max="1000" />
+                                                                                                          </div>
+                                                                                                        </div>
+                                                                                                        <div class="form-group">
+                                                                                                          <div class="col-md-7 right">
+                                                                                                            <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
+                                                                                                          </div>
+                                                                                                          <div class="col-md-5 left">
+                                                                                                            <input v-model="this.$store.state.set.textOffsetTop" @change="change(`textOffsetTop`)" type="number" min="0"
+                                                                                                              max="1000" />
+                                                                                                          </div>
+                                                                                                        </div>
+                                                                                                        <div class="form-group">
+                                                                                                          <div class="col-md-7 right">
+                                                                                                            <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
+                                                                                                          </div>
+                                                                                                          <div class="col-md-5 left">
+                                                                                                            <input v-model="this.$store.state.set.textOffsetLeft" @change="change(`textOffsetLeft`)" type="number"
+                                                                                                              min="0" max="1000" />
+                                                                                                          </div>
+                                                                                                        </div> -->
       </div>
       <!-- <div class="btn-div">
-                                                                                            <button class="btn btn-primary btn-tool" @click="textContent(`textContent`)">commit</button>
-                                                                                          </div> -->
+                                                                                                        <button class="btn btn-primary btn-tool" @click="textContent(`textContent`)">commit</button>
+                                                                                                      </div> -->
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `shape`">
       <div class="form-group">
@@ -124,10 +124,10 @@
           </div>
 
           <!-- <select v-model="this.$store.state.set.shapeContent" @change="change(`shapeContent`)">
-                                                                                                <option value="line">Line</option>
-                                                                                                <option value="circle">Ellipse</option>
-                                                                                                <option value="rectangle">Rectangle</option>
-                                                                                              </select> -->
+                                                                                                            <option value="line">Line</option>
+                                                                                                            <option value="circle">Ellipse</option>
+                                                                                                            <option value="rectangle">Rectangle</option>
+                                                                                                          </select> -->
         </div>
       </div>
 
@@ -180,8 +180,8 @@
         </div>
       </div>
       <!-- <div class="btn-div">
-                                                                                            <button class="btn btn-primary btn-tool" @click="shapeContent()">commit</button>
-                                                                                          </div> -->
+                                                                                                        <button class="btn btn-primary btn-tool" @click="shapeContent()">commit</button>
+                                                                                                      </div> -->
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `cut`">
       <div style="display:flex;justify-content: center;">
@@ -194,13 +194,13 @@
         <Timepicker :tmm="this.$store.state.set.cutTo.mm" :tss="this.$store.state.set.cutTo.ss"
           :tss1="this.$store.state.set.cutTo.ss1" :timeData="`ectimeData`" @timeChange="etimeChange" />
       </div><!-- 
-                    <div style="display:flex; margin-top:10px;justify-content: center;">
-                      <label style="width:50px;text-align: right;">Delay&nbsp;&nbsp;:</label>
-                      <Timepicker :timeData="`delay`" :tmm="this.$store.state.set.delay.mm" :tss="this.$store.state.set.delay.ss"
-                        :tss1="this.$store.state.set.delay.ss1" @timeChange="delay" />
-                    </div> -->
+                                <div style="display:flex; margin-top:10px;justify-content: center;">
+                                  <label style="width:50px;text-align: right;">Delay&nbsp;&nbsp;:</label>
+                                  <Timepicker :timeData="`delay`" :tmm="this.$store.state.set.delay.mm" :tss="this.$store.state.set.delay.ss"
+                                    :tss1="this.$store.state.set.delay.ss1" @timeChange="delay" />
+                                </div> -->
       <div>
-        <button class="btn btn-success btn-tool" @click="trim()">Save</button>
+        <!-- <button class="btn btn-success btn-tool" @click="cut()">Save</button> -->
       </div>
     </div>
   </div>
@@ -457,6 +457,24 @@ export default {
 
         this.$store.dispatch("setData", payload);
         payload = {
+          type: "cutTo", value: {
+            mm: parseInt(duration / 6000),
+            ss: parseInt((duration % 6000) / 100),
+            ss1: parseInt((duration % 6000) % 100),
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+        payload = {
+          type: "cutFrom", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+        payload = {
           type: "delay", value: {
             mm: 0,
             ss: 0,
@@ -572,9 +590,15 @@ export default {
       var payload = { type: "videoFrom", value: { mm: mm, ss: ss, ss1: ss1 } };
       this.$store.dispatch("setData", payload);
 
+      payload = { type: "cutFrom", value: { mm: mm, ss: ss, ss1: ss1 } };
+      this.$store.dispatch("setData", payload);
+
     },
     etimeChange: function (mm, ss, ss1) {
       var payload = { type: "videoTo", value: { mm: mm, ss: ss, ss1: ss1 } };
+      this.$store.dispatch("setData", payload);
+
+      payload = { type: "cutTo", value: { mm: mm, ss: ss, ss1: ss1 } };
       this.$store.dispatch("setData", payload);
 
     },

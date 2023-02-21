@@ -74,6 +74,15 @@ const selectedFile = () => {
       };
       store.dispatch("setData", payload);
       payload = {
+        type: "cutTo", value: {
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
+        }
+      };
+      store.dispatch("setData", payload);
+
+      payload = {
         type: "to", value: {
           mm: Math.trunc(duration / 6000),
           ss: Math.trunc((duration % 6000) / 100),
@@ -150,6 +159,16 @@ const onDrop = (files: File[] | null) => {
         }
       };
       store.dispatch("setData", payload);
+
+      payload = {
+        type: "cutTo", value: {
+          mm: Math.trunc(duration / 6000),
+          ss: Math.trunc((duration % 6000) / 100),
+          ss1: Math.trunc((duration % 6000) % 100),
+        }
+      };
+      store.dispatch("setData", payload);
+
       payload = {
         type: "to", value: {
           mm: Math.trunc(duration / 6000),
@@ -178,9 +197,9 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
   <div ref="comment" class="loading-text" :style="`display:none;`">Loading file.&nbsp;&nbsp;&nbsp;Wait a moment...</div>
   <div ref="body">
     <header class="py-16">
-      <h1 class="text-5xl font-bold text-center mb-6 tracking-widest	">Trim Video</h1>
+      <h1 class="text-5xl font-bold text-center mb-6 tracking-widest	">Video Editor</h1>
       <p className="text-center mb-6 text-xl">
-        Trim or cut video of any format
+        You can trim or cut video appended voices, several shapes and subtitles.
       </p>
     </header>
     <div class="flex flex-col gap-16 items-center justify-center">

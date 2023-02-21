@@ -64,7 +64,8 @@ export default {
     all: "block",
     isPlay: false, // play or pause
     comment: "none",
-    commentDisplay: "none"
+    commentDisplay: "none",
+    relaseFlag: false,
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -131,6 +132,7 @@ export default {
       state.isPlay = false;
       state.comment = "none";
       state.commentDisplay = "none";
+      state.relaseFlag = false;
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -300,6 +302,9 @@ export default {
           break;
         case "commentDisplay":
           state.commentDisplay = payload.value;
+          break;
+        case "relaseFlag":
+          state.relaseFlag = payload.value;
           break;
         default:
           return;
@@ -482,6 +487,8 @@ export default {
         case "commentDisplay":
           state.commentDisplay = "none";
           break;
+        case "relaseFlag":
+          state.relaseFlag = false;
         default:
           return;
       }

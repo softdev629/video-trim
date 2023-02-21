@@ -101,12 +101,17 @@ export default {
     },
     trim: function () {
 
-      var t_start = "00:" + this.$store.state.set.videoFrom.mm.toString() + ":" + this.$store.state.set.videoFrom.ss.toString();
-      var t_end = "00:" + this.$store.state.set.videoTo.mm.toString() + ":" + this.$store.state.set.videoTo.ss.toString();
+      var t_start = this.$store.state.set.videoFrom.mm.toString() + ":" + this.$store.state.set.videoFrom.ss.toString();
+      var t_end = this.$store.state.set.videoTo.mm.toString() + ":" + this.$store.state.set.videoTo.ss.toString();
 
-      var c_start = "00:" + this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
-      var c_end = "00:" + this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
+      // var cutFlag = 1;
+      // if (t_start == c_start && t_end == c_end) {
+      //   cutFlag = 0;
+      // }
 
+
+      var c_start = this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
+      var c_end = this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
 
       var data = {
         "trim": {
@@ -118,6 +123,9 @@ export default {
           "end": c_end,
         }
       };
+
+
+
 
       var data1;
       data1 = { type: 'loader', value: "loader" };

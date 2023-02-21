@@ -153,8 +153,19 @@ router.post('/save/:fname', async function (req, res, next) {
     c_start = timeInSeconds(request.cut.start);
     c_end = timeInSeconds(request.cut.end);
   }
+  // console.log(t_start, c_start, c_end, t_end);
   let concatList = [];
   try {
+    if (fs.existsSync("output1.mp4")) {
+      fs.unlinkSync('output1.mp4');
+    }
+
+    // console.log('ffffffffffffffffff');
+
+    if (fs.existsSync("output2.mp4")) {
+      fs.unlinkSync('output2.mp4');
+    }
+    // console.log('ggggggggggggggggggg');
     if (c_start > t_start) {
       execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v copy " + "output1.mp4");
       concatList.push("output1.mp4");
@@ -163,6 +174,7 @@ router.post('/save/:fname', async function (req, res, next) {
       execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v copy " + "output2.mp4");
       concatList.push("output2.mp4");
     }
+
     if (concatList.length > 1) {
       let commandString = "ffmpeg ";
       for (let filename of concatList) {
@@ -170,23 +182,53 @@ router.post('/save/:fname', async function (req, res, next) {
       }
       commandString += '-filter_complex "';
       width = 1280, height = 720;
+
+      // console.log('bbbbbbbbbbbbbbbbbbbbbbb');
+
       for (let index in concatList) {
         commandString += `[${index}:v]scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:-1:-1,setsar=1,fps=30,format=yuv420p[v${index}];`;
       }
+
+      // console.log('ccccccccccccccccccccc');
+
       for (let index in concatList) {
         commandString += `[${index}:a]aformat=sample_rates=48000:channel_layouts=stereo[a${index}];`;
       }
+
+      // console.log('dddddddddddddddddddd');
+
       for (let index in concatList) {
         commandString += `[v${index}][a${index}]`;
       }
+
+      // console.log('eeeeeeeeeeeeeeeeeeeeee');
+
       commandString += `concat=n=${concatList.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart ${newName}`;
       execSync(commandString);
-      fs.unlinkSync('output1.mp4');
-      fs.unlinkSync('output2.mp4');
     } else {
       fs.copyFileSync(concatList[0], newName);
     }
+    if (fs.existsSync("output1.mp4")) {
+      fs.unlinkSync('output1.mp4');
+    }
+
+    // console.log('ffffffffffffffffff');
+
+    if (fs.existsSync("output2.mp4")) {
+      fs.unlinkSync('output2.mp4');
+    }
+    // console.log('ggggggggggggggggggg');
   } catch (error) {
+    if (fs.existsSync("output1.mp4")) {
+      fs.unlinkSync('output1.mp4');
+    }
+
+    // console.log('ffffffffffffffffff');
+
+    if (fs.existsSync("output2.mp4")) {
+      fs.unlinkSync('output2.mp4');
+    }
+    // console.log('ggggggggggggggggggg');
     return res.status(500).json({ error });
   }
   // let new_start = request.trim.new_start || "0";

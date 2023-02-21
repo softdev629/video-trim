@@ -10,23 +10,42 @@ label {
     <div style="margin-right: 10px; width:70px;margin-top:20px;">
       <i class="fa fa-video-camera"></i>
     </div>
-    <div class="div-range active" :style="`left: ${start}px; width:${width}px;`">
+
+    <div v-if="this.$store.state.set.selectedSettingTool === `trim`" class="div-range active"
+      :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
       <div class="text">
         <div v-for="i in currentImageCount"
-          :style="`background:url(/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;`">
+          :style="`background:url(/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;overflow:hidden;`">
         </div>
       </div>
-      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
+      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 10}px`"></div>
     </div>
 
+    <div v-if="this.$store.state.set.selectedSettingTool !== `trim`" class="div-range "
+      :style="`left: ${start}px; width:${width}px;`">
+      <CutFrameBar :start="`${this.start}`" :width="`${this.width}`" />
+      <div class="left"></div>
+      <div class="text">
+        <div v-for="i in currentImageCount"
+          :style="`background:url(/frames/${this.$store.state.set.fileName}/${getFrameName(firstImage + parseInt(((lastImage - firstImage) / currentImageCount) * i))}.png);width:120px;height:67.5px;background-size:cover;overflow:hidden;`">
+        </div>
+      </div>
+      <div class="right" :style="`left: ${width - 10}px`"></div>
+    </div>
 
   </div>
 </template>
 
 <script>
+import CutFrameBar from "./CutFrameBar.vue";
+
+
 export default {
   name: "FrameBar",
+  components: {
+    CutFrameBar
+  },
   props: {
     zoom: Number,
     duration: Number
@@ -47,9 +66,11 @@ export default {
   },
   watch: {
     "$store.state.set.delay": function (val, oldVal) {
-      console.log('111111111111111111111111111111!!!!!!!!!!!!!!!!!!!!!!!');
       this.start = 100 * (val.mm * 6000 + val.ss * 100 + val.ss1) / (100 * (this.zoom - 6) * (-1));
 
+    },
+    width: function (newZoom, oldZoom) {
+      this.updateImages();
     },
     zoom: function (newZoom, oldZoom) {
       //      this.start = this.start / oldZoom;
@@ -57,18 +78,20 @@ export default {
 
       this.updateImages();
     },
-    // "$store.state.set.videoFrom": function (newVal, oldVal) {
-    //   //to-from to pixel
-    //   //calc width
-    //   var to = this.$store.state.set.videoTo.mm * 6000 + this.$store.state.set.videoTo.ss * 100 + this.$store.state.set.videoTo.ss1;
-    //   var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
-    //   this.width = 100 * (to - from) / (100 * (this.zoom - 6) * (-1));
-    // },
+    "$store.state.set.videoFrom": function (newVal, oldVal) {
+      //to-from to pixel
+      //calc width
+      var to = this.$store.state.set.videoTo.mm * 6000 + this.$store.state.set.videoTo.ss * 100 + this.$store.state.set.videoTo.ss1;
+      var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
+      this.start = 100 * (from) / (100 * (this.zoom - 6) * (-1));
+      this.width = 100 * (to - from) / (100 * (this.zoom - 6) * (-1));
+    },
     "$store.state.set.videoTo": function (newVal, oldVal) {
       //to-from to pixel
       //calc width
       var to = this.$store.state.set.videoTo.mm * 6000 + this.$store.state.set.videoTo.ss * 100 + this.$store.state.set.videoTo.ss1;
       var from = this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1;
+      this.start = 100 * (from) / (100 * (this.zoom - 6) * (-1));
       this.width = 100 * (to - from) / (100 * (this.zoom - 6) * (-1));
     },
     // "$store.state.set.delay": function (newVal, oldVal) {
@@ -135,7 +158,7 @@ export default {
       this.lastImage = parseInt(
         this.imageCount * ((this.onlyDelay + this.width) / oldWidth)
       );
-      this.currentImageCount = parseInt(this.width / 120);
+      this.currentImageCount = parseInt(this.width / 120) + 1;
     },
     resizeSelected(e, type) {
 
@@ -280,14 +303,26 @@ export default {
     resizeReleased(e) {
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
-          if (this.width + e.x - this.resizeStart < 0) return;
+          if (this.width + e.x - this.resizeStart < 0) {
+            this.resizeState = false;
+            return;
+          }
+
           this.width += e.x - this.resizeStart;
-        } else if (this.resizeType == 1) {
-          if (this.start + e.x - this.resizeStart < 0) return;
+        } else if (this.resizeType == 0) {
+          if (this.start + e.x - this.resizeStart < 0) {
+            this.resizeState = false;
+            return;
+          }
+
           this.start += e.x - this.resizeStart;
           this.width -= e.x - this.resizeStart;
         } else {
-          if (this.start + e.x - this.resizeStart < 0) return;
+          if (this.start + e.x - this.resizeStart < 0) {
+            this.resizeState = false;
+            return;
+          }
+
           this.start += e.x - this.resizeStart;
         }
       }

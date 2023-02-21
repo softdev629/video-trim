@@ -29,7 +29,7 @@ export default {
         { audio: `` },
         { text: `` },
         { shape: `` },
-        { "reserved-menu": `` },
+        { cut: `` },
       ],
     };
   },
@@ -63,7 +63,7 @@ export default {
         { audio: `` },
         { text: `` },
         { shape: `` },
-        { "reserved-menu": `` },
+        { cut: `` },
       ];
       this.selected[toolType] = `selected`;
       var payload = { type: "selectedSettingTool", value: toolType };

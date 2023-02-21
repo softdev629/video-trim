@@ -36,58 +36,61 @@ export default {
           mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
         };
 
-        //to -from > 125
-        // var diff = 100 * ((this.$store.state.set.videoTo.mm - this.$store.state.set.videoFrom.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.$store.state.set.videoFrom.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.$store.state.set.videoFrom.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
+        //        to -from > 125
+        var diff = 100 * ((this.$store.state.set.videoTo.mm - this.tData.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.tData.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.tData.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
         // console.log('diff stimedata', diff, this.$store.state.set.zoom);
 
-        // if (diff < 125) {
-        //   //set to-from 126
-        //   console.log('diff < 126, timesdata reset');
+        if (diff < 125) {
+          //set to-from 126
+          console.log('diff < 126, timesdata reset');
 
-        //   var pixel = ((100 * ((this.$store.state.set.videoTo.mm) * 6000 + (this.$store.state.set.videoTo.ss) * 100 + (this.$store.state.set.videoTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 126;
+          var pixel = ((100 * ((this.$store.state.set.videoTo.mm) * 6000 + (this.$store.state.set.videoTo.ss) * 100 + (this.$store.state.set.videoTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 126;
 
-        //   console.log('pixel', pixel);
+          console.log('pixel', pixel);
 
-        //   var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
+          var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-        //   console.log('time', time);
-        //   var prevFrom1 = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
+          console.log('time', time);
+          // var prevFrom1 = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
 
-        //   var dOffset = prevFrom1 - time;
-
-        //   this.$store.dispatch("setData", {
-        //     type: "videoFrom",
-        //     value: {
-        //       mm: parseInt((time) / (100 * 60)),
-        //       ss: parseInt(((time) % (100 * 60)) / 100),
-        //       ss1: parseInt(((time) % (100 * 60)) % 100),
-        //     },
-        //   });
-
-        //   // var delay = (this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1);
-
-        //   // console.log(delay, dOffset, 'delay--------offset');
-
-
-        //   // this.$store.dispatch("setData", {
-        //   //   type: "delay",
-        //   //   value: {
-        //   //     mm: parseInt((delay - dOffset) / (100 * 60)),
-        //   //     ss: parseInt(((delay - dOffset) % (100 * 60)) / 100),
-        //   //     ss1: parseInt(((delay - dOffset) % (100 * 60)) % 100),
-        //   //   },
-        //   // });
-
-        //   // console.log(this.$store.state.set.delay, 'store ------ delay');
-
-
-        //   return;
-        // }
+          // var dOffset = prevFrom1 - time;
+          if (time > 0) {
+            this.$store.dispatch("setData", {
+              type: "videoFrom",
+              value: {
+                mm: parseInt((time) / (100 * 60)),
+                ss: parseInt(((time) % (100 * 60)) / 100),
+                ss1: parseInt(((time) % (100 * 60)) % 100),
+              },
+            });
+          }
 
 
 
-        var prevFrom = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
+          // var delay = (this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1);
+
+          // console.log(delay, dOffset, 'delay--------offset');
+
+
+          // this.$store.dispatch("setData", {
+          //   type: "delay",
+          //   value: {
+          //     mm: parseInt((delay - dOffset) / (100 * 60)),
+          //     ss: parseInt(((delay - dOffset) % (100 * 60)) / 100),
+          //     ss1: parseInt(((delay - dOffset) % (100 * 60)) % 100),
+          //   },
+          // });
+
+          // console.log(this.$store.state.set.delay, 'store ------ delay');
+
+
+          return;
+        }
+
+
+
+        // var prevFrom = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
 
 
         // var mm = this.$store.state.set.delay.mm + value.mm - this.$store.state.set.videoFrom.mm;
@@ -102,12 +105,13 @@ export default {
         //   }
         // };
 
+        // this.$store.dispatch("setData", payload);
+
+        var payload = { type: "videoFrom", value };
+
+        console.log(payload, 'change payload');
+
         this.$store.dispatch("setData", payload);
-
-        payload = { type: "videoFrom", value };
-        this.$store.dispatch("setData", payload);
-
-
 
 
       }
@@ -150,10 +154,50 @@ export default {
         console.log('diff etimedata', diff);
 
         if (diff < 125) {
-          this.tData.mm = this.$store.state.set.videoTo.mm;
-          this.tData.ss = this.$store.state.set.videoTo.ss;
-          this.tData.ss1 = this.$store.state.set.videoTo.ss1;
-          return;
+          //from + 125 < video To
+          console.log('diff');
+
+
+          var newTo = 100 * (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1)) + 126;
+
+          console.log("newTo", newTo);
+
+          var prevTo = 100 * (this.$store.state.set.to.mm * 6000 + this.$store.state.set.to.ss * 100 + this.$store.state.set.to.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1));
+
+          console.log("prevTo", prevTo);
+
+
+          if (newTo < prevTo) {
+            //newTo pixel to time
+
+
+            var newToTime = Math.trunc((((newTo) / 100) * 100) * ((-1) * (this.$store.state.set.zoom - 6)));
+
+
+            this.$store.dispatch("setData", {
+              type: "videoTo",
+              value: {
+                mm: Math.trunc((newToTime) / (100 * 60)),
+                ss: Math.trunc(((newToTime) % (100 * 60)) / 100),
+                ss1: Math.trunc(((newToTime) % (100 * 60)) % 100),
+              },
+            });
+
+            this.tData.mm = Math.trunc((newToTime) / (100 * 60));
+            this.tData.ss = Math.trunc(((newToTime) % (100 * 60)) / 100);
+            this.tData.ss1 = Math.trunc(((newToTime) % (100 * 60)) % 100);
+
+            return;
+          }
+          else {
+            console.log("newTo > prevTo");
+
+            this.tData.mm = this.$store.state.set.to.mm;
+            this.tData.ss = this.$store.state.set.to.ss;
+            this.tData.ss1 = this.$store.state.set.to.ss1;
+            return;
+          }
+
         }
 
 

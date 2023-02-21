@@ -9,7 +9,7 @@
       :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
       <div class="text" @mousedown="resizeSelected($event, 2)">Shape</div>
-      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 7}px`"></div>
+      <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 10}px`"></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `shape`" class="div-range"
       :style="`left: ${start}px; width:${width}px;`">
@@ -59,11 +59,11 @@ export default {
         return;
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
-          if (this.width + e.x - this.resizeStart < 100) return;
+          if (this.width + e.x - this.resizeStart < 125) return;
           this.width += e.x - this.resizeStart;
         } else if (this.resizeType == 0) {
           if (this.start + e.x - this.resizeStart < 0) return;
-          if (this.width - (e.x - this.resizeStart) < 100) return;
+          if (this.width - (e.x - this.resizeStart) < 125) return;
           this.start += e.x - this.resizeStart;
           this.width -= e.x - this.resizeStart;
         } else {
@@ -76,15 +76,31 @@ export default {
     resizeReleased(e) {
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
-          if (this.width + e.x - this.resizeStart < 100) return;
+          if (this.width + e.x - this.resizeStart < 125) {
+            this.resizeState = false;
+            return;
+          }
+
           this.width += e.x - this.resizeStart;
-        } else if (this.resizeType == 1) {
-          if (this.start + e.x - this.resizeStart < 0) return;
-          if (this.width - (e.x - this.resizeStart) < 200) return;
+        } else if (this.resizeType == 0) {
+          if (this.start + e.x - this.resizeStart < 0) {
+            this.resizeState = false;
+            return;
+          }
+
+          if (this.width - (e.x - this.resizeStart) < 125) {
+            this.resizeState = false;
+            return;
+          }
+
           this.start += e.x - this.resizeStart;
           this.width -= e.x - this.resizeStart;
         } else {
-          if (this.start + e.x - this.resizeStart < 0) return;
+          if (this.start + e.x - this.resizeStart < 0) {
+            this.resizeState = false;
+            return;
+          }
+
           this.start += e.x - this.resizeStart;
         }
       }
@@ -104,7 +120,7 @@ label {
   width: 200px;
   text-indent: 0px;
   background-color: rgb(46, 185, 66);
-  margin: 10px 0px;
+  margin: 3px 0px;
   border-radius: 5px;
   z-index: 2;
 }

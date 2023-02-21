@@ -20,6 +20,7 @@ const store = useStore();
 
 const loader = ref();
 const body = ref();
+const comment = ref();
 
 function selectFile() {
   open();
@@ -38,6 +39,7 @@ const selectedFile = () => {
     // body.style.display = "none";
     loader.value.className = "loader";
     body.value.style.display = "none";
+    comment.value.style.display = "block";
 
     axios.post('/api/upload',
       formData,
@@ -114,7 +116,7 @@ const onDrop = (files: File[] | null) => {
     // console.log(formData, 'formData');
     loader.value.className = "loader";
     body.value.style.display = "none";
-
+    comment.value.style.display = "block";
 
     axios.post('/api/upload',
       formData,
@@ -173,6 +175,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
 
 <template>
   <div ref="loader"></div>
+  <div ref="comment" class="loading-text" :style="`display:none;`">Loading file.&nbsp;&nbsp;&nbsp;Wait a moment...</div>
   <div ref="body">
     <header class="py-16">
       <h1 class="text-5xl font-bold text-center mb-6 tracking-widest	">Trim Video</h1>
@@ -213,6 +216,13 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
   top: 300px;
 
 }
+
+.loading-text {
+  position: fixed;
+  right: 42%;
+  top: 450px;
+}
+
 
 @keyframes spin {
   0% {

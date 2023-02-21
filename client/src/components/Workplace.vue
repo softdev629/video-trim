@@ -2,6 +2,9 @@
   <button class="save-btn" @click="trim()"><label class="save-btn-label">Save</label><i
       class="fa fa-upload save-btn-icon"></i></button>
   <div :class="`${this.$store.state.set.loader}`"></div>
+  <div :class="`${this.$store.state.set.comment}`" :style="`display:${this.$store.state.set.commentDisplay}`">Saving
+    file.&nbsp;&nbsp;&nbsp;Wait a moment...
+  </div>
   <div class="container-fluid work-place" :style="`display:${this.$store.state.set.all}`">
     <div class="setting-screen-panel">
       <div class="tool-setting">
@@ -13,10 +16,10 @@
       </div>
     </div>
     <!-- <div class="row-fluid">
-                                                                                                                                                                              <div class="col-md-12">
-                                                                                                                                                                                <ScreenSizeXController @forceRendering="forceRendering()" />
-                                                                                                                                                                              </div>
-                                                                                                                                                                            </div> -->
+                                                                                                                                                                                              <div class="col-md-12">
+                                                                                                                                                                                                <ScreenSizeXController @forceRendering="forceRendering()" />
+                                                                                                                                                                                              </div>
+                                                                                                                                                                                            </div> -->
     <div class="row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
@@ -49,7 +52,6 @@ export default {
   data() {
     return {
       width: 0
-
     };
   },
   mounted() {
@@ -97,11 +99,18 @@ export default {
       };
 
       var data1;
-      // data1 = { type: 'loader', value: "loader" };
-      // this.$store.dispatch('setData', data1);
+      data1 = { type: 'loader', value: "loader" };
+      this.$store.dispatch('setData', data1);
 
-      // data1 = { type: 'all', value: "none" };
-      // this.$store.dispatch('setData', data1);
+      data1 = { type: 'all', value: "none" };
+      this.$store.dispatch('setData', data1);
+
+      data1 = { type: "comment", value: "loading-text" };
+      this.$store.dispatch('setData', data1);
+
+      data1 = { type: "commentDisplay", value: "block" };
+      this.$store.dispatch('setData', data1);
+
 
 
       console.log(data.length, "data.length");
@@ -186,11 +195,22 @@ export default {
         };
         this.$store.dispatch("setData", payload);
 
+
+        payload = { type: 'comment', value: "none" };
+        this.$store.dispatch('setData', payload);
+
+
         payload = { type: 'loader', value: "none" };
         this.$store.dispatch('setData', payload);
 
         payload = { type: 'all', value: "block" };
         this.$store.dispatch('setData', payload);
+
+        payload = { type: 'commentDisplay', value: "none" };
+        this.$store.dispatch('setData', payload);
+
+
+
         this.$router.push('/workplace');
       }).catch(function () {
         console.log('FAILURE!!');
@@ -266,6 +286,13 @@ export default {
   right: 45%;
   top: 300px;
 
+}
+
+
+.loading-text {
+  position: fixed;
+  right: 42%;
+  top: 450px;
 }
 
 @keyframes spin {

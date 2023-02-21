@@ -1,8 +1,12 @@
 export default [
-  // {
-  //   toolType: 'trim',
-  //   selected: ''
-  // },
+  {
+    toolType: 'trim',
+    selected: ''
+  },
+  {
+    toolType: 'cut',
+    selected: ''
+  },
   {
     toolType: 'text',
     selected: ''
@@ -13,10 +17,6 @@ export default [
   },
   {
     toolType: 'audio',
-    selected: ''
-  },
-  {
-    toolType: 'reserved-menu',
     selected: ''
   },
 ]

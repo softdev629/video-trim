@@ -7,15 +7,15 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost',
         changeOrigin: true,
       },
       '/frames': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost',
         changeOrigin: true,
       },
       '/videos': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost',
         changeOrigin: true,
       }
     }

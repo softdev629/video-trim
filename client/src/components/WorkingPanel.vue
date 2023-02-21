@@ -2,15 +2,8 @@
   <div>
     <div class="row-fluid" style="display: flex;height: 30px;">
       <div class="col-md-3">
-        <button
-          class="btn btn-primary"
-          style="margin-left: 15px"
-          @click="onPlayPause"
-        >
-          <i
-            class="fa text-light"
-            :class="[isPlay ? 'fa-pause' : 'fa-play']"
-          ></i>
+        <button class="btn btn-primary" style="margin-left: 15px" @click="onPlayPause">
+          <i class="fa text-light" :class="[isPlay ? 'fa-pause' : 'fa-play']"></i>
         </button>
       </div>
       <div class="col-md-6 time-controller d-flex" style="justify-content: center; align-items: center">
@@ -38,14 +31,14 @@
 import TimeLineBar from "./subWorkingComponents/TimeLineBar.vue";
 import AudioBar from "./subWorkingComponents/AudioBar.vue";
 import FrameBar from "./subWorkingComponents/FrameBar.vue";
+
 import ShapeBar from "./subWorkingComponents/ShapeBar.vue";
 import TextBar from "./subWorkingComponents/TextBar.vue";
-import TimeSelectedBar from "./subWorkingComponents/TimeSelectedBar.vue";
-import TimeMovedBar from "./subWorkingComponents/TimeMovedBar.vue";
+
 import TimeController from "./subWorkingComponents/TimeController.vue";
 import ZoomController from "./subWorkingComponents/ZoomController.vue";
 
-import {mapState, useStore } from "vuex";
+import { mapState, useStore } from "vuex";
 
 export default {
   name: "WorkingPanel",
@@ -56,8 +49,6 @@ export default {
     FrameBar,
     ShapeBar,
     TextBar,
-    TimeSelectedBar,
-    TimeMovedBar,
     ZoomController,
   },
   data() {
@@ -97,10 +88,10 @@ export default {
           ss1: parseInt(
             (curTime) % 100
           ),
-},
+        },
       });
     },
- onPlayPause() {
+    onPlayPause() {
       this.$store.dispatch("setData", { type: "isPlay", value: !this.isPlay });
       if (this.isPlay) this.timerId = setInterval(this.onPlaying, 100);
       else clearInterval(this.timerId);

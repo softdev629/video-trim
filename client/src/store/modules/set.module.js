@@ -23,6 +23,10 @@ export default {
     videoTo: { mm: 0, ss: 12, ss1: 77 },
     delay: { mm: 0, ss: 0, ss1: 0 },
 
+    cutFrom: { mm: 0, ss: 0, ss1: 0 },
+    cutTo: { mm: 0, ss: 0, ss1: 0 },
+    cutDelay: { mm: 0, ss: 0, ss1: 0 },
+
     audioFrom: { mm: 0, ss: 0, ss1: 0 },
     audioTo: { mm: 0, ss: 0, ss1: 0 },
 
@@ -59,6 +63,8 @@ export default {
     loader: "none",
     all: "block",
     isPlay: false, // play or pause
+    comment: "none",
+    commentDisplay: "none"
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -84,6 +90,10 @@ export default {
       state.videoFrom = { mm: 0, ss: 0, ss1: 0 };
       state.videoTo = { mm: 0, ss: 12, ss1: 77 };
       state.delay = { mm: 0, ss: 0, ss1: 0 };
+
+      state.cutFrom = { mm: 0, ss: 0, ss1: 0 };
+      state.cutTo = { mm: 0, ss: 0, ss1: 0 };
+      state.cutDelay = { mm: 0, ss: 0, ss1: 0 };
 
       state.audioFrom = { mm: "00", ss: "00", ss1: "00" };
       state.audioTo = { mm: "00", ss: "00", ss1: "00" };
@@ -119,6 +129,8 @@ export default {
       state.loader = "none";
       state.all = "block";
       state.isPlay = false;
+      state.comment = "none";
+      state.commentDisplay = "none";
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -178,6 +190,16 @@ export default {
           return;
         case "delay":
           state.delay = payload.value;
+          return;
+
+        case "cutFrom":
+          state.cutFrom = payload.value;
+          return;
+        case "cutTo":
+          state.cutTo = payload.value;
+          return;
+        case "cutDelay":
+          state.cutDelay = payload.value;
           return;
 
         case "audioFrom":
@@ -273,6 +295,12 @@ export default {
         case "isPlay":
           state.isPlay = payload.value;
           break;
+        case "comment":
+          state.comment = payload.value;
+          break;
+        case "commentDisplay":
+          state.commentDisplay = payload.value;
+          break;
         default:
           return;
       }
@@ -340,6 +368,16 @@ export default {
           state.to = { mm: 0, ss: 0, ss1: 0 };
           return;
 
+
+        case "cutFrom":
+          state.cutFrom = { mm: 0, ss: 0, ss1: 0 };
+          return;
+        case "cutTo":
+          state.cutTo = { mm: 0, ss: 0, ss1: 0 };
+          return;
+        case "cutDelay":
+          state.cutDelay = { mm: 0, ss: 0, ss1: 0 };
+          return;
 
 
         case "audioFrom":
@@ -437,6 +475,12 @@ export default {
           return;
         case "isPlay":
           state.isPlay = false;
+          return;
+        case "comment":
+          state.comment = "none";
+          break;
+        case "commentDisplay":
+          state.commentDisplay = "none";
           break;
         default:
           return;

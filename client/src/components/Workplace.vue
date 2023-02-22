@@ -113,6 +113,32 @@ export default {
       var c_start = this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
       var c_end = this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
 
+      var temp = [];
+
+      const timeToString = value => {
+        return Math.trunc(value.mm / 60) + ":" + value.mm % 60 + ":" + value.ss;
+      }
+      // for (var text of this.$store.state.upload.texts) {
+      //   temp.push({
+      //     from: timeToString(text.value.textFrom),
+      //     to: timeToString(text.value.textTo),
+      //     text: text.value.textContent
+      //   });
+      // }
+
+      temp.push({
+        from: timeToString(this.$store.state.set.textFrom),
+        to: timeToString(this.$store.state.set.textTo),
+        text: this.$store.state.set.textContent
+      });
+
+
+      if (t_start == c_start && t_end == c_end) {
+        c_start = t_start;
+        c_end = c_start;
+      }
+
+
       var data = {
         "trim": {
           "start": t_start,
@@ -121,7 +147,8 @@ export default {
         "cut": {
           "start": c_start,
           "end": c_end,
-        }
+        },
+        "subtitles": temp
       };
 
 
@@ -256,7 +283,8 @@ export default {
         payload = { type: 'commentDisplay', value: "none" };
         this.$store.dispatch('setData', payload);
 
-
+        payload = { type: 'texts', value: [] };
+        this.$store.dispatch('addToUploadDatas', payload);
 
         this.$router.push('/workplace');
       }).catch(function () {

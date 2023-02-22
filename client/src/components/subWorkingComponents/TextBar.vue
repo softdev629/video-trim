@@ -104,7 +104,9 @@ export default {
       if (this.$store.state.set.selectedSettingTool !== 'text')
         return;
 
-
+        const update = () => {
+          
+        }
       console.log(this.resizeId, 'resizeMoved');
       if (this.resizeState == true) {//right
         if (this.resizeType == 1) {
@@ -118,6 +120,7 @@ export default {
 
 
               this.width[this.resizeId] = this.start[this.resizeId + 1] - 1 - this.start[this.resizeId];
+
 
 
               this.resizeState = false;

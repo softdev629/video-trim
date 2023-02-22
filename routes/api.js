@@ -156,49 +156,70 @@ router.post('/save/:fname', async function (req, res, next) {
   // console.log(t_start, c_start, c_end, t_end);
   let concatList = [];
   try {
-    if (fs.existsSync("output1.mp4")) {
-      fs.unlinkSync('output1.mp4');
-    }
-
-    // console.log('ffffffffffffffffff');
-
-    if (fs.existsSync("output2.mp4")) {
-      fs.unlinkSync('output2.mp4');
-    }
     // console.log('ggggggggggggggggggg');
-/*
-    if (fs.existsSync("subtitles.srt")) {
-      fs.unlinkSync('subtitles.srt');
-    }
 
-    fs.writeFileSync("subtitles.srt", "");
-    request.subtitles.sort((a, b) => a.from.localeCompare(b.from));
-    let index = 0;
-    for (let subtitle of request.subtitles) {
-      let from = subtitle.from;
-      let to = subtitle.to;
-      index++;
-      fs.appendFileSync("subtitles.srt", "" + index + "\n");
-      fs.appendFileSync("subtitles.srt", from + ",000 ---> " + to + ",000\n");
-      fs.appendFileSync("subtitles.srt", subtitle.text + "\n" + "\n");
+    if (request.subtitles && request.subtitles.length > 0) {
+      // console.log(request.subtitles);
+      if (fs.existsSync("subtitles.srt")) {
+        fs.unlinkSync('subtitles.srt');
+      }
+      request.subtitles.sort((a, b) => a.from.localeCompare(b.from));
+      let index = 0;
+      for (let subtitle of request.subtitles) {
+        let from = subtitle.from;
+        let to = subtitle.to;
+        index++;
+        fs.appendFileSync("subtitles.srt", "" + index + "\n");
+        fs.appendFileSync("subtitles.srt", from + ",000 --> " + to + ",000\n");
+        fs.appendFileSync("subtitles.srt", subtitle.text + "\n" + "\n");
+      }
+      execSync(`ffmpeg -i ${fname} -vf subtitles=subtitles.srt subtitles.mp4 -y`);
+      videoInfo = await (new Promise((resolve, reject) => {
+        ffmpeg.ffprobe(fname, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data.streams);
+            // for (let stream of data.streams) {
+            //   if (stream.width) {
+            //     resolve(stream);
+            //     return;
+            //   }
+            // }
+          }
+        });
+      }));
+      // console.log(videoInfo);
+
+      fname = 'subtitles.mp4';
+      videoInfo = await (new Promise((resolve, reject) => {
+        ffmpeg.ffprobe(fname, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data.streams);
+            // for (let stream of data.streams) {
+            //   if (stream.width) {
+            //     resolve(stream);
+            //     return;
+            //   }
+            // }
+          }
+        });
+      }));
+      // console.log(videoInfo);
     }
-*/
-    if (c_start > t_start) {
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v copy " + "output1.mp4");
+    // console.log(t_start, c_start, c_end, t_end);
+    if (c_start > t_start && c_end < t_end) {
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v copy -c:a copy " + "output1.mp4 -y");
       concatList.push("output1.mp4");
-    }
-    if (c_end < t_end) {
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v copy " + "output2.mp4");
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v copy -c:a copy " + "output2.mp4 -y");
       concatList.push("output2.mp4");
-    }
-
-    if (concatList.length > 1) {
       let commandString = "ffmpeg ";
       for (let filename of concatList) {
         commandString += ` -i ${filename} `;
       }
       commandString += '-filter_complex "';
-      width = 1280, height = 720;
 
       // console.log('bbbbbbbbbbbbbbbbbbbbbbb');
 
@@ -222,29 +243,40 @@ router.post('/save/:fname', async function (req, res, next) {
 
       commandString += `concat=n=${concatList.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart ${newName}`;
       execSync(commandString);
-    } else {
-      fs.copyFileSync(concatList[0], newName);
-    }
-    if (fs.existsSync("output1.mp4")) {
-      fs.unlinkSync('output1.mp4');
+    } else if (c_end < t_end) {
+      // console.log(c_end, t_end);
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a copy " + newName);
+    } else if (t_start < c_start) {
+      // console.log(t_start, c_start);
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a copy " + newName);
     }
 
-    // console.log('ffffffffffffffffff');
+    // if (fs.existsSync("output1.mp4")) {
+    //   fs.unlinkSync('output1.mp4');
+    // }
 
-    if (fs.existsSync("output2.mp4")) {
-      fs.unlinkSync('output2.mp4');
-    }
+    // // console.log('ffffffffffffffffff');
+
+    // if (fs.existsSync("output2.mp4")) {
+    //   fs.unlinkSync('output2.mp4');
+    // }
+    // if (fs.existsSync('subtitles.mp4')) {
+    //   fs.unlinkSync('subtitles.mp4');
+    // }
     // console.log('ggggggggggggggggggg');
   } catch (error) {
-    if (fs.existsSync("output1.mp4")) {
-      fs.unlinkSync('output1.mp4');
-    }
+    // if (fs.existsSync("output1.mp4")) {
+    //   fs.unlinkSync('output1.mp4');
+    // }
 
-    // console.log('ffffffffffffffffff');
+    // // console.log('ffffffffffffffffff');
 
-    if (fs.existsSync("output2.mp4")) {
-      fs.unlinkSync('output2.mp4');
-    }
+    // if (fs.existsSync("output2.mp4")) {
+    //   fs.unlinkSync('output2.mp4');
+    // }
+    // if (fs.existsSync('subtitles.mp4')) {
+    //   fs.unlinkSync('subtitles.mp4');
+    // }
     // console.log('ggggggggggggggggggg');
     return res.status(500).json({ error });
   }

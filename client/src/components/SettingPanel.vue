@@ -48,8 +48,8 @@
         <div class="form-group" style="margin:0px;">
           <div class="col-md-12  relative-div" style="position:relative;">
             <i class="fa fa-close text-close absolute-div" style="display:none"></i>
-            <textarea v-model="this.$store.state.set.textContent" @keyup="change(`textContent`)"
-              class="sub-title-text absolute-div" placeholder="sub title"></textarea>
+            <textarea v-model="this.$store.state.set.textContent" class="sub-title-text absolute-div"
+              placeholder="sub title"></textarea>
           </div>
         </div>
         <div class="form-group" style="display:flex;justify-content: space-between;">
@@ -58,7 +58,7 @@
               :tss1="this.$store.state.set.textFrom.ss1" :timeData="`sttimeData`" />
           </div>
           <div>
-            <input type="color" v-model="this.$store.state.set.textColor" @change="change(`textColor`)" />
+            <input type="color" v-model="this.$store.state.set.textColor" />
           </div>
           <div style="display:flex;">
             <Timepicker :tmm="this.$store.state.set.textTo.mm" :tss="this.$store.state.set.textTo.ss"
@@ -97,7 +97,7 @@
             :tss1="this.$store.state.set.shapeFrom.ss1" :timeData="`sstimeData`" @timeChange="sShapeTimeChange" />
         </div>
         <div>
-          <input v-model="this.$store.state.set.shapeBorderColor" @change="change('shapeBorderColor')" type="color" />
+          <input v-model="this.$store.state.set.shapeBorderColor" type="color" />
         </div>
         <div style="display:flex;">
           <Timepicker :tmm="this.$store.state.set.shapeTo.mm" :tss="this.$store.state.set.shapeTo.ss"
@@ -112,8 +112,7 @@
           <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left ">
-          <input v-model="this.$store.state.set.shapeOffsetWidth" @change="change(`shapeOffsetWidth`)" type="number"
-            min="0" max="1000" />
+          <input v-model="this.$store.state.set.shapeOffsetWidth" type="number" min="0" max="1000" />
         </div>
       </div>
       <div class="form-group" style="margin-bottom: 5px;" v-if="this.$store.state.set.shapeContent === `rectangle`">
@@ -121,8 +120,7 @@
           <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
-          <input v-model="this.$store.state.set.shapeOffsetHeight" @change="change(`shapeOffsetHeight`)" type="number"
-            min="0" max="1000" />
+          <input v-model="this.$store.state.set.shapeOffsetHeight" type="number" min="0" max="1000" />
         </div>
       </div>
       <div class="form-group" style="margin-bottom: 5px;">
@@ -130,8 +128,7 @@
           <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
-          <input v-model="this.$store.state.set.shapeOffsetTop" @change="change(`shapeContent`)" type="number" min="0"
-            max="1000" />
+          <input v-model="this.$store.state.set.shapeOffsetTop" type="number" min="0" max="1000" />
         </div>
       </div>
       <div class="form-group" style="margin-bottom: 5px;">
@@ -139,8 +136,7 @@
           <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
-          <input v-model="this.$store.state.set.shapeOffsetLeft" @change="change(`shapeContent`)" type="number" min="0"
-            max="1000" />
+          <input v-model="this.$store.state.set.shapeOffsetLeft" type="number" min="0" max="1000" />
         </div>
       </div>
 
@@ -378,20 +374,12 @@ export default {
 
 
 
-      console.log(data.length, "data.length");
-      console.log(data.trim.start, "data.start");
-      console.log(data.trim.end, "data.end");
-      console.log(data.trim.new_start, "data.new_start");
-      console.log(data.trim.new_end, "data.new_end");
-
       var fname = this.$store.state.set.fileName;
       axios.post('/api/save/' + fname, data).then(ret => {
 
 
-        console.log(ret.data.filename);
         var payload = { type: "fileName", value: ret.data.filename };
         this.$store.dispatch("setData", payload);
-        console.log(payload);
 
         payload = { type: "fileCount", value: ret.data.filecount };
         this.$store.dispatch("setData", payload);
@@ -616,18 +604,7 @@ export default {
 
     },
     addShape: function () {
-      // console.log(this.$store.state.set.shapeFrom, 'this.$store.state.set.shapeFrom');
-      // console.log(this.$store.state.set.shapeTo, 'this.$store.state.set.shapeTo');
-      // console.log(this.$store.state.set.shapeContent, 'this.$store.state.set.shapeContent');
-      // console.log(this.$store.state.set.shapeBorderColor, 'this.$store.state.set.shapeBorderColor');
-      // console.log(this.$store.state.set.shapeBorderWidth, 'this.$store.state.set.shapeBorderWidth');
-      // console.log(this.$store.state.set.shapeColor, 'this.$store.state.set.shapeColor');
-      // console.log(this.$store.state.set.shapeOffsetWidth, 'this.$store.state.set.shapeOffsetWidth');
-      // console.log(this.$store.state.set.shapeOffsetHeight, 'this.$store.state.set.shapeOffsetHeight');
-      // console.log(this.$store.state.set.shapeOffsetTop, 'this.$store.state.set.shapeOffsetTop');
-      // console.log(this.$store.state.set.shapeOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2, 'this.$store.state.set.shapeOffsetLeft');
 
-      //from >= to 0,0  available slot return;
       if (this.$store.state.set.shapeFrom.mm * 6000 + this.$store.state.set.shapeFrom.ss * 100 + this.$store.state.set.shapeFrom.ss1 >= this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1) {
 
         this.$store.dispatch("setData", {
@@ -653,7 +630,6 @@ export default {
         return;
       }
 
-      //to > maxtime max, max return;
       if (this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1 > this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1) {
 
         this.$store.dispatch("setData", {
@@ -775,9 +751,7 @@ export default {
       }
 
 
-      console.log(payload, 'payload to add in shapes');
 
-      //changeState
       var changeState = this.$store.state.set.changeState + 1;
 
       this.$store.dispatch("setData", {
@@ -859,16 +833,7 @@ export default {
 
     },
     addSubTitle: function () {
-      // console.log(this.$store.state.set.textFrom, 'this.$store.state.set.textFrom');
-      // console.log(this.$store.state.set.textTo, 'this.$store.state.set.textTo');
-      // console.log(this.$store.state.set.textContent, 'this.$store.state.set.textContent');
-      // console.log(this.$store.state.set.textColor, 'this.$store.state.set.textColor');
-      // console.log(this.$store.state.set.textOffsetWidth, 'this.$store.state.set.textOffsetWidth');
-      // console.log(this.$store.state.set.textOffsetHeight, 'this.$store.state.set.textOffsetHeight');
-      // console.log(this.$store.state.set.textOffsetTop, 'this.$store.state.set.textOffsetTop');
-      // console.log(this.$store.state.set.textOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2, 'this.$store.state.set.textOffsetLeft');
 
-      //from >= to 0,0  available slot return;
       if (this.$store.state.set.textFrom.mm * 6000 + this.$store.state.set.textFrom.ss * 100 + this.$store.state.set.textFrom.ss1 >= this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1) {
 
         this.$store.dispatch("setData", {
@@ -894,7 +859,6 @@ export default {
         return;
       }
 
-      //to > maxtime max, max return;
       if (this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1 > this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1) {
 
         this.$store.dispatch("setData", {
@@ -919,7 +883,6 @@ export default {
         return;
       }
 
-      //from<= to>= from search 0,0
       for (var i = 0; i < this.$store.state.upload.texts.length; i++) {
         var tStart = this.$store.state.upload.texts[i].value.textFrom.mm * 6000 + this.$store.state.upload.texts[i].value.textFrom.ss * 100 + this.$store.state.upload.texts[i].value.textFrom.ss1;
 
@@ -1014,16 +977,13 @@ export default {
       }
 
 
-      // console.log(payload, 'payload to add in texts');
 
       this.$store.dispatch("addToUploadDatas", payload);
-      //changeState
       var changeState = this.$store.state.set.changeState + 1;
       this.$store.dispatch("setData", {
         type: "changeState",
         value: changeState
       });
-      /*-------------------------    add success     -----------------------------*/
 
 
 
@@ -1128,11 +1088,19 @@ textarea {
   background-color: rgb(48, 48, 48);
 }
 
+.shape-item:hover {
+  cursor: pointer;
+}
+
 .shape-rectangle {
   width: 40px;
   height: 40px;
   background-color: #FFFFFF;
   margin: 5px;
+}
+
+input[type="color"] {
+  cursor: pointer;
 }
 
 .shape-circle {

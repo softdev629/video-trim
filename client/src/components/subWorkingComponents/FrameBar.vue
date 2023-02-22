@@ -116,10 +116,7 @@ export default {
     this.width = 100 * (this.duration) / (100 * (this.zoom - 6) * (-1));
 
     this.updateImages();
-    console.log(this.firstImage, 'firstImage');
-    console.log(this.lastImage, 'lastImage');
-    console.log(this.currentImageCount, 'currentImageCount');
-    console.log(`/frames/${this.$store.state.set.fileName}/${this.getFrameName(this.firstImage + ((this.lastImage - this.firstImage) / this.currentImageCount) * 3)}.png`);
+
   },
   // computed: {
   //   getFrameName(value) {
@@ -139,7 +136,6 @@ export default {
 
     getFrameName(value) {
       let str = "";
-      console.log(value, 'value');
       for (let i = 0; i < 7; i++) {
         str += value % 10;
         value = parseInt(value / 10);
@@ -148,7 +144,6 @@ export default {
       for (let i = 6; i >= 0; i--) {
         newstr += str[i];
       }
-      console.log(newstr, 'newstr');
       return newstr;
     },
     updateImages() {
@@ -264,7 +259,6 @@ export default {
 
           // var prevDelay = this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1;
 
-          // console.log('----------------delay---------------');
 
           // this.$store.dispatch("setData", {
           //   type: "delay",
@@ -305,7 +299,6 @@ export default {
 
 
 
-          console.log('----------------delay---------------');
 
           this.$store.dispatch("setData", {
             type: "delay",

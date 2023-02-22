@@ -86,13 +86,11 @@ export default {
 
         var payload = { type: "videoFrom", value };
 
-        console.log(payload, 'change payload');
 
         this.$store.dispatch("setData", payload);
 
         payload = { type: "cutFrom", value };
 
-        console.log(payload, 'change payload');
 
         this.$store.dispatch("setData", payload);
 
@@ -133,24 +131,18 @@ export default {
         //to -from > 125
         var diff = 100 * ((this.$store.state.set.videoTo.mm - this.$store.state.set.videoFrom.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.$store.state.set.videoFrom.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.$store.state.set.videoFrom.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1))
 
-        console.log('diff etimedata', diff);
 
         if (diff < 125) {
-          //from + 125 < video To
-          console.log('diff');
 
 
           var newTo = 100 * (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1)) + 126;
 
-          console.log("newTo", newTo);
 
           var prevTo = 100 * (this.$store.state.set.to.mm * 6000 + this.$store.state.set.to.ss * 100 + this.$store.state.set.to.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-          console.log("prevTo", prevTo);
 
 
           if (newTo < prevTo) {
-            //newTo pixel to time
 
 
             var newToTime = Math.trunc((((newTo) / 100) * 100) * ((-1) * (this.$store.state.set.zoom - 6)));
@@ -181,7 +173,6 @@ export default {
             return;
           }
           else {
-            console.log("newTo > prevTo");
 
             this.tData.mm = this.$store.state.set.to.mm;
             this.tData.ss = this.$store.state.set.to.ss;
@@ -207,21 +198,16 @@ export default {
           mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
         };
 
-        //        to -from > 125
         var diff = 100 * ((this.$store.state.set.cutTo.mm - this.tData.mm) * 6000 + (this.$store.state.set.cutTo.ss - this.tData.ss) * 100 + (this.$store.state.set.cutTo.ss1 - this.tData.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
 
         if (diff < 5) {
-          //set to-from 126
-          console.log('diff < 6, timesdata reset');
 
           var pixel = ((100 * ((this.$store.state.set.cutTo.mm) * 6000 + (this.$store.state.set.cutTo.ss) * 100 + (this.$store.state.set.cutTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 6;
 
-          console.log('pixel', pixel);
 
           var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-          console.log('time', time);
 
           if (this.$store.state.set.cutFrom.mm * 6000 + this.$store.state.set.cutFrom.ss * 100 + this.$store.state.set.cutFrom.ss1 == 0) {
             this.tData.mm = 0;
@@ -252,7 +238,6 @@ export default {
 
         var payload = { type: "cutFrom", value };
 
-        console.log(payload, 'change payload');
 
         this.$store.dispatch("setData", payload);
       }
@@ -289,28 +274,20 @@ export default {
           }
         }
 
-        //to - from > 125
-        //to -from > 125
         var diff = 100 * ((this.$store.state.set.cutTo.mm - this.$store.state.set.cutFrom.mm) * 6000 + (this.$store.state.set.cutTo.ss - this.$store.state.set.cutFrom.ss) * 100 + (this.$store.state.set.cutTo.ss1 - this.$store.state.set.cutFrom.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1))
 
-        console.log('diff etimedata', diff);
 
         if (diff < 5) {
-          //from + 125 < video To
-          console.log('diff');
 
 
           var newTo = 100 * (this.$store.state.set.cutFrom.mm * 6000 + this.$store.state.set.cutFrom.ss * 100 + this.$store.state.set.cutFrom.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1)) + 6;
 
-          console.log("newTo", newTo);
 
           var prevTo = 100 * (this.$store.state.set.to.mm * 6000 + this.$store.state.set.to.ss * 100 + this.$store.state.set.to.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-          console.log("prevTo", prevTo);
 
 
           if (newTo < prevTo) {
-            //newTo pixel to time
 
 
             var newToTime = Math.trunc((((newTo) / 100) * 100) * ((-1) * (this.$store.state.set.zoom - 6)));
@@ -332,7 +309,6 @@ export default {
             return;
           }
           else {
-            console.log("newTo > prevTo");
 
             this.tData.mm = this.$store.state.set.to.mm;
             this.tData.ss = this.$store.state.set.to.ss;

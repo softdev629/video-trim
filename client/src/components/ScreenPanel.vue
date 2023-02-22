@@ -1,20 +1,17 @@
 <template>
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
     :style="`width:100%;height:100%;`">
-    <video controls class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
+    <video class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
       :style="`width:800px; height:600px; max-width: 100%; max-height: 100%;`" type="video/mp4" ref="vid"
       @timeupdate="curTimeChange($event)"></video>
-    <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"
-                                                                                    :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
-                                                                                    type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
-    <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
+    <!-- <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
       {{ this.$store.state.set.textContent }}
       <div class="text-resize" id="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"
         :style="`display:${show}`">
       </div>
-    </div>
+  </div> -->
     <div class="shape-section"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `rectangle`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};`"
@@ -59,8 +56,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$refs.vid.duration);
-
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
@@ -68,15 +63,10 @@ export default {
 
 
     if (!this.$store.state.set.fileName) {
-      console.log(this.fileName);
       router.push('/');
     }
 
     this.fileName = this.$store.state.set.fileName;
-
-    console.log('screenpanel-------84', this.$store.state.set.videoTo.mm, this.$store.state.set.videoTo.ss, this.$store.state.set.videoTo.ss1);
-    console.log('screenpanel-------85', this.$store.state.set.to.mm, this.$store.state.set.to.ss, this.$store.state.set.to.ss1);
-
 
     this.width = setStore.state.screenWidth;
     this.height = setStore.state.screenHeight;
@@ -129,7 +119,7 @@ export default {
 
     },
     getDuration: function () {
-      //      console.log(document.getElementsByTagName('video')[0].duration, '---------video duration------');
+
     },
     selectText: function (e) {
 

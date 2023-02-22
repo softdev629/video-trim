@@ -126,8 +126,6 @@ export default {
     resizeMoved: function (e, type) {
       if (this.resizeState == true) {
         if (this.resizeType == 1) {
-          console.log('I am a right');
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart1', this.resizeStart);
 
 
 
@@ -137,9 +135,7 @@ export default {
             return;
           }
 
-          console.log(this.durationWidth, "durationWidth", this.cutStart, "this.cutStart");
           if (this.cutWdith > this.durationWidth) {
-            console.log("mouse pointer is outside of div");
             this.resizeState = false;
             this.resizeStart = e.x;
             return;
@@ -147,29 +143,21 @@ export default {
 
           if (parseInt(this.cutWidth) > this.durationWidth) {
 
-            console.log("cutWidth", parseInt(this.cutWidth), "durationWidth", this.durationWidth);
             this.resizeState = false;
             this.resizeStart = e.x;
             this.cutWidth = this.durationWidth;
             return;
           }
 
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart2', this.resizeStart);
           this.cutWidth = parseInt(this.cutWidth) + e.x - this.resizeStart;
 
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart3', this.resizeStart);
-          //this.cutStart + this.cutWidth to time
-
-          //          videoFrom + cutStart + cutWidth
 
           var videoFromWidth = 100 * (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-          console.log(videoFromWidth, "videoFromWidth");
 
 
           var cutToTime = parseInt((((videoFromWidth + this.cutStart + this.cutWidth) / 100) * 100) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-          console.log(cutToTime, "cutToTime");
 
           this.$store.dispatch("setData", {
             type: "cutTo",
@@ -182,8 +170,6 @@ export default {
 
 
         } else if (this.resizeType == 0) {
-          console.log('I am a left');
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart4', this.resizeStart);
           if (parseInt(this.cutStart) + e.x - this.resizeStart < 0) {
             this.resizeState = false;
             this.resizeStart = e.x;
@@ -194,18 +180,14 @@ export default {
             this.resizeStart = e.x;
             return;
           }
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart5', this.resizeStart);
           this.cutStart += e.x - this.resizeStart;
           this.cutWidth = parseInt(this.cutWidth) - e.x + this.resizeStart;
-          console.log('cutWidth', parseInt(this.cutWidth), 'e.x', e.x, 'this.resizeStart6', this.resizeStart);
 
           var videoFromWidth = 100 * (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-          console.log(videoFromWidth, this.cutStart, "videoFromWidth, cutStart");
 
           var cutFromTime = parseInt((((videoFromWidth + this.cutStart) / 100) * 100) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-          console.log(cutFromTime, "cutFromTime");
 
           this.$store.dispatch("setData", {
             type: "cutFrom",

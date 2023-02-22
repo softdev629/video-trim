@@ -45,10 +45,8 @@ export default {
 
     for (var i = 0; i < this.$store.state.upload.shapes.length; i++) {
       start.push(100 * (this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 + this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
-      console.log("each start ", i, start[i]);
-      width.push(100 * (this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1 - this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 - this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 - this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
-      console.log("each  width", i, width[i]);
 
+      width.push(100 * (this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1 - this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 - this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 - this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
 
 
     }
@@ -69,17 +67,15 @@ export default {
     "$store.state.upload.shapes.length": function (newZoom, oldZoom) {
       var start = [], width = [];
 
-      console.log("I am a watch, -----------------shapebar.vue 59-----------------");
       for (var i = 0; i < this.$store.state.upload.shapes.length; i++) {
         start.push(100 * (this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 + this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
-        console.log("each start width", i, start[i]);
+
         width.push(100 * (this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1 - this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 - this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 - this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
-        console.log("each start width", i, width[i]);
 
       }
       this.start = start;
       this.width = width;
-      console.log(this.$store.state.upload.shapes, 'this.$store.state.upload.shapes', this.width);
+
     },
   },
   methods: {
@@ -103,45 +99,80 @@ export default {
       if (this.$store.state.set.selectedSettingTool !== 'shape')
         return;
 
+      const timeToObject = value => {
+        return {
+          mm: Math.trunc(value / 6000),
+          ss: Math.trunc((value % 6000) / 100),
+          ss1: Math.trunc((value % 6000) % 100)
+        }
+      }
 
-      console.log(this.resizeId, 'resizeMoved');
+      const pixelToTime = pixel => {
+        return parseInt(((pixel / 100) * 100) * ((-1) * (this.zoom - 6)));
+      }
+
+      const update = (type, value, index) => {
+        var shapes = this.$store.state.upload.shapes;
+
+        var time = pixelToTime(value);
+
+        var timeObject = timeToObject(time);
+
+        if (type == "textFrom") {
+          shapes[index].value.textFrom.mm = timeObject.mm;
+          shapes[index].value.textFrom.ss = timeObject.ss;
+          shapes[index].value.textFrom.ss1 = timeObject.ss1;
+        }
+        else if (type == "textTo") {
+          shapes[index].value.textTo.mm = timeObject.mm;
+          shapes[index].value.textTo.ss = timeObject.ss;
+          shapes[index].value.textTo.ss1 = timeObject.ss1;
+        }
+
+        var payload = { type: "shapes", value: shapes };
+
+
+        this.$store.dispatch("updateToUploadDatas", payload);
+
+
+      }
+
+
+
       if (this.resizeState == true) {//right
         if (this.resizeType == 1) {
           //check conflict
           if (this.resizeId + 1 != this.width.length) {
 
-            console.log('----------1111----------------', this.start[this.resizeId], this.width[this.resizeId], e.x, this.resizeStart, this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart, this.start[this.resizeId + 1]);
 
             if (this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart >= this.start[this.resizeId + 1]) {
-              console.log('----------2222----------------');
 
 
               this.width[this.resizeId] = this.start[this.resizeId + 1] - 1 - this.start[this.resizeId];
-
+              update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
 
               this.resizeState = false;
               this.resizeStart = 0;
               return;
             }
           }
-          console.log('----------3333----------------', this.width[this.resizeId], e.x, this.resizeStart, this.width[this.resizeId] + e.x - this.resizeStart);
+
           if (this.width[this.resizeId] + e.x - this.resizeStart < 50) {
 
             this.width[this.resizeId] = 50;
+            update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
 
-            console.log('----------4444----------------');
             this.resizeState = false;
             this.resizeStart = 0;
             return;
           }
 
-          console.log('----------5555----------------');
           this.width[this.resizeId] += e.x - this.resizeStart;
+          update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
+
           if (this.resizeId + 1 == this.width.length) {
-            console.log('----------6666----------------');
             var shapeFrom = parseInt((((this.start[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
             var shapeTo = parseInt((((this.start[this.resizeId] + this.width[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
-            console.log('----------7777----------------');
 
             var payload = {
               type: "shapeFrom", value: {
@@ -151,6 +182,7 @@ export default {
               }
             };
             this.$store.dispatch("setData", payload);
+            update("shapeFrom", this.start[this.resizeId], this.resizeId);
 
             payload = {
               type: "shapeTo", value: {
@@ -160,21 +192,19 @@ export default {
               }
             };
             this.$store.dispatch("setData", payload);
-
+            update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
           }
 
         }
         else if (this.resizeType == 0) //left
         {
           //check conflict
-          console.log('----------8888----------------', this.resizeId);
           if (this.resizeId != 0) {
-            console.log('----------9999----------------', this.start[this.resizeId - 1] + this.width[this.resizeId - 1], this.start[this.resizeId] - e.x + this.resizeStart);
+
             if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] + e.x - this.resizeStart) {
-              console.log('----------aaaa----------------', this.start[this.resizeId - 1], this.width[this.resizeId - 1], this.start[this.resizeId], e.x, this.resizeStart, this.start[this.resizeId - 1] + this.width[this.resizeId - 1], this.start[this.resizeId] - e.x + this.resizeStart);
 
               this.start[this.resizeId] = this.width[this.resizeId - 1] + this.start[this.resizeId - 1] + 1;
-
+              update("shapeFrom", this.start[this.resizeId], this.resizeId);
 
               this.resizeState = false;
               this.resizeStart = 0;
@@ -184,32 +214,31 @@ export default {
 
 
           if (this.start[this.resizeId] + e.x - this.resizeStart < 0) {
-            console.log('----------bbbb----------------', this.start[this.resizeId], e.x - this.resizeStart);
+
             this.resizeState = false;
             this.resizeStart = 0;
             return;
           }
           if (this.width[this.resizeId] - (e.x - this.resizeStart) < 50) {
-            console.log('----------cccc----------------', this.width[this.resizeId], e.x - this.resizeStart);
             this.resizeState = false;
             this.resizeStart = 0;
             return;
           }
 
-          console.log('----------dddd----------------');
           this.start[this.resizeId] += e.x - this.resizeStart;
           this.width[this.resizeId] -= e.x - this.resizeStart;
+          update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
+          update("shapeFrom", this.start[this.resizeId], this.resizeId);
+
         }
         else//move s
         {
-          console.log('----------eeee----------------');
           //check conflict
           if (this.resizeId + 1 != this.width.length) {
-            console.log('----------ffff----------------');
             if (this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart >= this.start[this.resizeId + 1] && e.x - this.resizeStart > 0) {
-              console.log('----------gggg----------------');
 
               this.width[this.resizeId] = this.start[this.resizeId + 1] - this.start[this.resizeId] - 1;
+              update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
 
               this.resizeState = false;
               this.resizeStart = 0;
@@ -218,12 +247,11 @@ export default {
           }
 
           if (this.resizeId != 0) {
-            console.log('----------hhhh----------------');
             if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] + e.x - this.resizeStart) {
-              console.log('----------iiii----------------', this.start[this.resizeId], this.start[this.resizeId - 1], this.width[this.resizeId], 1);
-              this.start[this.resizeId] = this.start[this.resizeId - 1] + this.width[this.resizeId - 1] + 1;
 
-              console.log('----------iiii----------------');
+              this.start[this.resizeId] = this.start[this.resizeId - 1] + this.width[this.resizeId - 1] + 1;
+              update("shapeFrom", this.start[this.resizeId], this.resizeId);
+
               this.resizeState = false;
               this.resizeStart = 0;
               return;
@@ -233,20 +261,20 @@ export default {
 
           if (this.start[this.resizeId] + e.x - this.resizeStart < 0) {
             this.start[this.resizeId] = 0;
-            console.log('----------jjjj----------------');
+
+            update("shapeFrom", this.start[this.resizeId], this.resizeId);
+
             this.resizeState = false;
             this.resizeStart = 0;
             return;
           }
           this.start[this.resizeId] += e.x - this.resizeStart;
-          console.log(this.start[this.resizeId], 'this.start[this.resizeId]');
+          update("shapeFrom", this.start[this.resizeId], this.resizeId);
 
           if (this.resizeId + 1 == this.width.length) {
-            console.log('----------kkkk----------------');
             var shapeFrom = parseInt((((this.start[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
             var shapeTo = parseInt((((this.start[this.resizeId] + this.width[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
 
-            console.log('----------llll----------------');
             var payload = {
               type: "shapeFrom", value: {
                 mm: parseInt((shapeFrom) / (100 * 60)),
@@ -255,6 +283,7 @@ export default {
               }
             };
             this.$store.dispatch("setData", payload);
+            update("shapeFrom", this.start[this.resizeId], this.resizeId);
 
             payload = {
               type: "shapeTo", value: {
@@ -264,7 +293,7 @@ export default {
               }
             };
             this.$store.dispatch("setData", payload);
-            console.log('----------mmmm----------------');
+            update("shapeTo", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
           }
 
         }
@@ -309,6 +338,8 @@ label {
 
 .text {
   text-align: center;
+  overflow: hidden;
+  padding: 0px 5px;
 }
 
 

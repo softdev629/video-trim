@@ -64,7 +64,6 @@ export default {
   },
   created() {
 
-    console.log('mounted');
     var payload = { type: 'windowWidth', value: document.body.offsetWidth };
     this.$store.dispatch('setData', payload);
 
@@ -92,7 +91,6 @@ export default {
 
 
 
-    console.log(document.body.offsetWidth, 'offsetWidth');
   },
   setup() {
     const store = useStore();
@@ -109,34 +107,40 @@ export default {
       var t_start = this.$store.state.set.videoFrom.mm.toString() + ":" + this.$store.state.set.videoFrom.ss.toString();
       var t_end = this.$store.state.set.videoTo.mm.toString() + ":" + this.$store.state.set.videoTo.ss.toString();
 
-      // var cutFlag = 1;
-      // if (t_start == c_start && t_end == c_end) {
-      //   cutFlag = 0;
-      // }
-
 
       var c_start = this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
       var c_end = this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
 
-      var temp = [];
+      var tempTitles = [], tempShapes = [];
 
       const timeToString = value => {
         return Math.trunc(value.mm / 60) + ":" + value.mm % 60 + ":" + value.ss;
       }
-      // for (var text of this.$store.state.upload.texts) {
-      //   temp.push({
-      //     from: timeToString(text.value.textFrom),
-      //     to: timeToString(text.value.textTo),
-      //     text: text.value.textContent
-      //   });
-      // }
 
-      temp.push({
-        from: timeToString(this.$store.state.set.textFrom),
-        to: timeToString(this.$store.state.set.textTo),
-        text: this.$store.state.set.textContent
-      });
+      for (var text of this.$store.state.upload.texts) {
+        tempTitles.push({
+          from: timeToString(text.value.textFrom),
+          to: timeToString(text.value.textTo),
+          text: text.value.textContent
+        });
+      }
 
+      for (var shape of this.$store.state.upload.shapes) {
+        tempShapes.push({
+          from: timeToString(shape.value.shapeFrom),
+          to: timeToString(shape.value.shapeTo),
+          // color: shape.value.shapeColor,
+          // borderWidth: shape.value.shapeBorderWidth,
+          type: shape.value.shapeContent,
+          borderColor: shape.value.shapeBorderColor,
+          width: shape.value.shapeOffsetWidth,
+          height: shape.value.shapeOffsetHeight,
+          top: shape.value.shapeOffsetTop,
+          left: shape.value.shapeOffsetLeft,
+        });
+      }
+
+      console.log(tempShapes, "tempShapes");
 
       if (t_start == c_start && t_end == c_end) {
         c_start = t_start;
@@ -153,9 +157,11 @@ export default {
           "start": c_start,
           "end": c_end,
         },
-        "subtitles": temp
+        "subtitles": tempTitles,
+        //        "shapes": tempShapes,
       };
 
+      console.log(data, 'uploading');
 
 
 
@@ -174,19 +180,13 @@ export default {
 
 
 
-      console.log(data.trim.start, "trim.start");
-      console.log(data.trim.end, "trim.end");
-      console.log(data.cut.start, "cut.start");
-      console.log(data.cut.end, "cut.end");
 
       var fname = this.$store.state.set.fileName;
       axios.post('/api/save/' + fname, data).then(ret => {
 
 
-        console.log(ret.data.filename);
         var payload = { type: "fileName", value: ret.data.filename };
         this.$store.dispatch("setData", payload);
-        console.log(payload);
 
         payload = { type: "fileCount", value: ret.data.filecount };
         this.$store.dispatch("setData", payload);
@@ -274,6 +274,90 @@ export default {
         };
         this.$store.dispatch("setData", payload);
 
+        payload = {
+          type: "textFrom", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+
+        if (this.$store.state.set.textTo.ss >= 5) {
+          payload = {
+            type: "textTo", value: {
+              mm: 0,
+              ss: 5,
+              ss1: 0,
+            }
+          };
+        }
+        else if (this.$store.state.set.textTo.ss == 0) {
+          payload = {
+            type: "textTo", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          }
+        }
+        else {
+          payload = {
+            type: "textTo", value: {
+              mm: 0,
+              ss: this.$store.state.set.duration.ss,
+              ss1: 0,
+            }
+          };
+        }
+
+
+        this.$store.dispatch("setData", payload);
+
+
+        payload = {
+          type: "shapeFrom", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+
+        if (this.$store.state.set.shapeTo.ss >= 5) {
+          payload = {
+            type: "shapeTo", value: {
+              mm: 0,
+              ss: 5,
+              ss1: 0,
+            }
+          };
+        }
+        else if (this.$store.state.set.shapeTo.ss == 0) {
+          payload = {
+            type: "shapeTo", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          }
+        }
+        else {
+          payload = {
+            type: "shapeTo", value: {
+              mm: 0,
+              ss: this.$store.state.set.duration.ss,
+              ss1: 0,
+            }
+          };
+        }
+
+
+        this.$store.dispatch("setData", payload);
+
+
 
         payload = { type: 'comment', value: "none" };
         this.$store.dispatch('setData', payload);
@@ -289,7 +373,10 @@ export default {
         this.$store.dispatch('setData', payload);
 
         payload = { type: 'texts', value: [] };
-        this.$store.dispatch('addToUploadDatas', payload);
+        this.$store.dispatch('updateToUploadDatas', payload);
+
+        payload = { type: 'shapes', value: [] };
+        this.$store.dispatch('updateToUploadDatas', payload);
 
         this.$router.push('/workplace');
       }).catch(function () {

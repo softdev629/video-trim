@@ -28,15 +28,9 @@ function selectFile() {
 
 const selectedFile = () => {
   if (files && files.value && files.value.length > 0) {
-    console.log(files);
     const formData = new FormData();
     formData.append('video', files.value[0]);
 
-    // console.log('fileName:', files[0]);
-    // console.log(formData, 'formData');
-
-    // loader.className = "loader";
-    // body.style.display = "none";
     loader.value.className = "loader";
     body.value.style.display = "none";
     comment.value.style.display = "block";
@@ -49,10 +43,8 @@ const selectedFile = () => {
         }
       }
     ).then(function (data) {
-      console.log(data);
       var payload = { type: "fileName", value: data.data.filename };
       store.dispatch("setData", payload);
-      console.log(data.data.filecount, "----------------filecount-------------------");
       payload = { type: "fileCount", value: data.data.filecount };
       store.dispatch("setData", payload);
       var duration = Number(data.data.duration) * 100;
@@ -107,22 +99,12 @@ const filesData = ref<{ name: string; size: number; type: string; lastModified: 
 const onDrop = (files: File[] | null) => {
   filesData.value = []
   if (files) {
-    console.log(files[0]);
-    // filesData.value = files.map(file => ({
-    //   name: file.name,
-    //   size: file.size,
-    //   type: file.type,
-    //   lastModified: file.lastModified,
-    // }))
 
     const formData = new FormData();
     formData.append('video', files[0]);
 
-    console.log(formData, 'formData');
 
 
-    // console.log('fileName:', files[0]);
-    // console.log(formData, 'formData');
     loader.value.className = "loader";
     body.value.style.display = "none";
     comment.value.style.display = "block";
@@ -135,10 +117,8 @@ const onDrop = (files: File[] | null) => {
         }
       }
     ).then(function (data) {
-      console.log(data);
       var payload = { type: "fileName", value: data.data.filename };
       store.dispatch("setData", payload);
-      console.log(data.data.filecount, "----------------filecount-------------------");
       payload = { type: "fileCount", value: data.data.filecount };
       store.dispatch("setData", payload);
       let duration = Number(data.data.duration) * 100;
@@ -182,7 +162,6 @@ const onDrop = (files: File[] | null) => {
       .catch(function () {
         console.log('FAILURE!!');
       });
-    //    this.$router.push('/workplace');
 
   }
 

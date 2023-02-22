@@ -1,3 +1,21 @@
+/*state: {
+  items: []
+},
+
+mutations: {
+  MUTATE_ITEMS: (state, items) => {
+      Vue.set(state, 'items', items);
+      // or, better yet create a copy of the array
+      Vue.set(state, 'items', [...items]);
+  }
+},
+
+actions: {
+  loadItems: (context, items) => {
+      context.commit('MUTATE_ITEMS', items);
+  }
+}
+*/
 export default {
   state: {
     from: { mm: 0, ss: 0, ss1: 0 },
@@ -47,6 +65,21 @@ export default {
         default:
           return;
       }
+    },
+    UPDATE_ITEMS(state, payload) {
+      switch (payload.type) {
+        case "texts":
+          state.texts = [...payload.value];
+          break;
+        case "shapes":
+          state.shapes = [...payload.value];
+          break;
+        case "audios":
+          state.audios = [...payload.value];
+          break;
+        default:
+          break;
+      }
     }
   },
   actions: {
@@ -88,6 +121,9 @@ export default {
         default:
           return;
       }
+    },
+    updateToUploadDatas(context, payload) {
+      context.commit('UPDATE_ITEMS', payload);
     }
   }
 }

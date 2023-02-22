@@ -1,7 +1,7 @@
 
 
 <template>
-  <div
+  <div class="splitter-horizontal"
     :style="`background-color: ${bkColor};width:${this.$store.state.set.windowOuterWidth - 1}px; height:5px; position:relative`"
     @mousemove="moveSizeController($event)" @mousedown="selectSizeController($event)" @mouseup="selectRelease($event)"
     @mouseover="changeBkColor($event)" @mouseout="rechangeBkColor($event)">
@@ -18,7 +18,7 @@ export default {
     return {
       width: 0,
       height: 450,
-      bkColor: 'rgb(48, 48, 48)',
+      bkColor: 'rgb(16, 16, 16)',
       selectState: 0,
       startPos: {
         x: 0,
@@ -82,7 +82,7 @@ export default {
       this.bkColor = '#0d6efd';
     },
     rechangeBkColor: function (e) {
-      this.bkColor = 'rgb(48, 48, 48)';
+      this.bkColor = 'rgb(16, 16, 16)';
     },
   }
 }
@@ -98,7 +98,7 @@ export default {
 .screenX {
   width: 100%;
   height: 10px;
-  color: solid 2px rgb(48, 48, 48);
+  color: solid 2px rgb(16, 16, 16);
 }
 
 .screenX:hover,

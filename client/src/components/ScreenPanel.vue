@@ -1,10 +1,12 @@
 <template>
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
-    :style="`width:${this.$store.state.set.panelWidth}px;height:${this.$store.state.set.panelHeight}px;`">
+    :style="`width:100%;height:100%;`">
     <video controls class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
-      :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
-      type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video>
-    
+      :style="`width:800px; height:600px; max-width: 100%; max-height: 100%;`" type="video/mp4" ref="vid"
+      @timeupdate="curTimeChange($event)"></video>
+    <!-- <video controls class="size1" @oncanplay="getDuration()" src="localhost:3000/videos/bear.mp4"
+                                                                                    :style="`width:${this.$store.state.set.screenWidth}px;height:${this.$store.state.set.screenHeight}px;`"
+                                                                                    type="video/mp4" ref="vid" @timeupdate="curTimeChange($event)"></video> -->
     <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
@@ -417,8 +419,9 @@ export default {
 }
 
 .size1 {
-  width: 600px;
-  height: 450px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
 }
 
 .size2 {

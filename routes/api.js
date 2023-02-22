@@ -166,6 +166,23 @@ router.post('/save/:fname', async function (req, res, next) {
       fs.unlinkSync('output2.mp4');
     }
     // console.log('ggggggggggggggggggg');
+/*
+    if (fs.existsSync("subtitles.srt")) {
+      fs.unlinkSync('subtitles.srt');
+    }
+
+    fs.writeFileSync("subtitles.srt", "");
+    request.subtitles.sort((a, b) => a.from.localeCompare(b.from));
+    let index = 0;
+    for (let subtitle of request.subtitles) {
+      let from = subtitle.from;
+      let to = subtitle.to;
+      index++;
+      fs.appendFileSync("subtitles.srt", "" + index + "\n");
+      fs.appendFileSync("subtitles.srt", from + ",000 ---> " + to + ",000\n");
+      fs.appendFileSync("subtitles.srt", subtitle.text + "\n" + "\n");
+    }
+*/
     if (c_start > t_start) {
       execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v copy " + "output1.mp4");
       concatList.push("output1.mp4");

@@ -1,6 +1,5 @@
 <template>
-  <div class="tool-side-bar"
-    :style="`width:${this.$store.state.set.toolSideBar}px; height:${this.$store.state.set.panelHeight}px`">
+  <div class="tool-side-bar" :style="`width:${this.$store.state.set.toolSideBar}px; height:100%`">
     <div v-for="subTool in subTools" :key="subTool.toolType">
       <SubTool :toolType="subTool.toolType" @subToolSelect="subToolSelect(subTool.toolType)"
         :active="selected[subTool.toolType]" />

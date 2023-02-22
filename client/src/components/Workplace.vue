@@ -5,22 +5,26 @@
   <div :class="`${this.$store.state.set.comment}`" :style="`display:${this.$store.state.set.commentDisplay}`">Saving
     file.&nbsp;&nbsp;&nbsp;Wait a moment...
   </div>
-  <div class="container-fluid work-place" :style="`display:${this.$store.state.set.all}`">
-    <div class="setting-screen-panel">
-      <div class="tool-setting">
+  <div class="panel-container-vertical container-fluid work-place" :style="`display:${this.$store.state.set.all}`">
+    <div class="panel-container setting-screen-panel">
+      <div class="panel-left tool-setting"
+        :style="[this.$store.state.set.selectedSettingTool ? 'min-width: 400px; width:400px;' : 'min-width: 75px; width:75px;']">
         <ToolSettingPanel @forceRendering="forceRendering()" />
       </div>
-
-      <div class="padding-none">
+      <ScreenSizeYController @forceRendering="forceRendering()" />
+      <!-- <div class="splitter"></div> -->
+      <div class="panel-right padding-none">
         <ScreenPanel @forceRendering="forceRendering()" />
       </div>
     </div>
     <!-- <div class="row-fluid">
-                                                                                                                                                                                                        <div class="col-md-12">
-                                                                                                                                                                                                          <ScreenSizeXController @forceRendering="forceRendering()" />
-                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                      </div> -->
-    <div class="row-fluid">
+      <div class="col-md-12">
+        <ScreenSizeXController @forceRendering="forceRendering()" />
+      </div>
+    </div> -->
+    <ScreenSizeXController @forceRendering="forceRendering()" />
+    <!-- <div class="splitter-horizontal"></div> -->
+    <div class="panel-bottom row-fluid">
       <div class="col-md-12">
         <WorkingPanel @forceRendering="forceRendering()" />
       </div>
@@ -33,6 +37,7 @@ import ToolSettingPanel from './ToolSettingPanel.vue';
 import ScreenPanel from './ScreenPanel.vue';
 import WorkingPanel from './WorkingPanel.vue';
 import ScreenSizeXController from './ScreenSizeXController.vue';
+import ScreenSizeYController from './ScreenSizeYController.vue';
 import setStore from '../store/modules/set.module';
 import SetModule from '../store/modules/set.module.js'
 import axios from 'axios'
@@ -47,6 +52,7 @@ export default {
     ToolSettingPanel,
     ScreenPanel,
     ScreenSizeXController,
+    ScreenSizeYController,
     WorkingPanel
   },
   data() {
@@ -55,7 +61,6 @@ export default {
     };
   },
   mounted() {
-
   },
   created() {
 

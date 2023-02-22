@@ -1,3 +1,71 @@
+.panel-container {
+  display: flex;
+  flex: 0 0 auto;
+  border: 1px solid silver;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.panel-left {
+  flex: 0 0 auto;
+  padding: 10px;
+  min-height: 200px;
+  white-space: nowrap;
+  color: white;
+}
+
+.splitter {
+  flex: 0 0 auto;
+  width: 5px;
+  background: url(../assets/vsizegrip.png) center center no-repeat #535353;
+  min-height: 200px;
+  cursor: col-resize;
+}
+
+.panel-right {
+  flex: 1 1 auto;
+  padding: 10px;
+  width: 100%;
+  min-height: 200px;
+  min-width: 200px !important;
+  /* background: #eee; */
+}
+
+.panel-top {
+  flex: 0 0 auto;
+  padding: 10px;
+  min-height: 250px;
+  width: 100%;
+  white-space: nowrap;
+
+  /* background: #838383; */
+  color: white;
+}
+
+.splitter-horizontal {
+  flex: 0 0 auto;
+  height: 4px;
+  background: url(../assets/hsizegrip.png) center center no-repeat #535353;
+  cursor: row-resize;
+}
+
+.panel-bottom {
+  flex: 1 1 auto;
+  padding: 10px;
+  min-height: 250px !important;
+  /* background: #eee; */
+}
+
+.panel-container-vertical {
+  display: flex;
+  flex-direction: column;
+  height: 1024px;
+  border: 1px solid silver;
+  overflow: hidden;
+}
+
+
+
 .work-place {
   border: solid 0.5px rgba(209, 205, 205, 0.2);
   padding-left: 0px !important;
@@ -15,6 +83,7 @@
 .tool-setting-panel {
   margin-top: 0px;
   display: flex;
+  height: 100%;
 }
 
 .tool-setting-header {
@@ -120,8 +189,6 @@
 
 .setting-panel {
   position: relative;
-  margin-left: 20px;
-  margin-right: 20px;
   margin-bottom: 0px;
   margin-top: 0px;
   padding-top: 10px;
@@ -130,6 +197,7 @@
 .setting-panel-close {
   position: absolute;
   right: 5px;
+  cursor: pointer;
 }
 
 .setting-panel-box {
@@ -183,7 +251,7 @@ body {
 }
 
 .tool-side-bar {
-  border-right: solid 0.5px rgb(48, 48, 48);
+  border-right: solid 0.5px rgb(16, 16, 16);
 }
 
 input {

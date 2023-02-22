@@ -2,7 +2,7 @@
   <div class="tool-setting-panel">
     <Tools @forceRendering="forceRender()" />
     <SettingPanel />
-    <ScreenSizeYController @forceRendering="forceRender()" />
+    <!-- <ScreenSizeYController @forceRendering="forceRender()" /> -->
   </div>
 </template>
 

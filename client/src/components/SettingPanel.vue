@@ -1,6 +1,5 @@
 <template>
-  <div class="setting-panel"
-    :style="` width:${this.$store.state.set.settingBoxWidth}px; height:${this.$store.state.set.panelHeight}px`"
+  <div class="setting-panel" :style="` width:100%; height:${this.$store.state.set.panelHeight}px`"
     v-if="this.$store.state.set.selectedSettingTool !== 0">
     <div class="setting-panel-close" v-if="this.$store.state.set.selectedSettingTool !== 0"><a @click="close()">
         <i class="fa fa-chevron-left"></i></a></div>
@@ -28,7 +27,7 @@
       </div>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `audio`">
-      <div style="display:flex;justify-content: space-between;">
+      <div style="display:flex;justify-content: space-around;">
         <button class="btn btn-info btn-tool" style="margin-top:0px;" @click="record()"><i
             class="fa fa-microphone"></i></button>
         <label style="margin-top:5px;">{{ `${recordTime.mm}:${recordTime.ss}.${recordTime.ss1}
@@ -42,7 +41,7 @@
       </div>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `text`">
-      <div class="row">
+      <div class="row" style="padding-left: 20px; padding-right: 20px;">
         <div class="col-md-12">
           <button class="btn my-btn btn-success" @click="addSubTitle()">Add Subtitle</button>
         </div>

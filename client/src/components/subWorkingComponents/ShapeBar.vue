@@ -169,8 +169,8 @@ export default {
           //check conflict
           console.log('----------8888----------------', this.resizeId);
           if (this.resizeId != 0) {
-            console.log('----------9999----------------');
-            if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] - e.x + this.resizeStart) {
+            console.log('----------9999----------------', this.start[this.resizeId - 1] + this.width[this.resizeId - 1], this.start[this.resizeId] - e.x + this.resizeStart);
+            if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] + e.x - this.resizeStart) {
               console.log('----------aaaa----------------', this.start[this.resizeId - 1], this.width[this.resizeId - 1], this.start[this.resizeId], e.x, this.resizeStart, this.start[this.resizeId - 1] + this.width[this.resizeId - 1], this.start[this.resizeId] - e.x + this.resizeStart);
 
               this.start[this.resizeId] = this.width[this.resizeId - 1] + this.start[this.resizeId - 1] + 1;
@@ -206,7 +206,7 @@ export default {
           //check conflict
           if (this.resizeId + 1 != this.width.length) {
             console.log('----------ffff----------------');
-            if (this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart >= this.start[this.resizeId + 1]) {
+            if (this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart >= this.start[this.resizeId + 1] && e.x - this.resizeStart > 0) {
               console.log('----------gggg----------------');
 
               this.width[this.resizeId] = this.start[this.resizeId + 1] - this.start[this.resizeId] - 1;
@@ -219,9 +219,9 @@ export default {
 
           if (this.resizeId != 0) {
             console.log('----------hhhh----------------');
-            if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] - e.x + this.resizeStart) {
-
-              this.start[this.resizeId] = this.start[this.resizeId - 1] + this.width[this.resizeId] + 1
+            if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] + e.x - this.resizeStart) {
+              console.log('----------iiii----------------', this.start[this.resizeId], this.start[this.resizeId - 1], this.width[this.resizeId], 1);
+              this.start[this.resizeId] = this.start[this.resizeId - 1] + this.width[this.resizeId - 1] + 1;
 
               console.log('----------iiii----------------');
               this.resizeState = false;
@@ -239,6 +239,7 @@ export default {
             return;
           }
           this.start[this.resizeId] += e.x - this.resizeStart;
+          console.log(this.start[this.resizeId], 'this.start[this.resizeId]');
 
           if (this.resizeId + 1 == this.width.length) {
             console.log('----------kkkk----------------');

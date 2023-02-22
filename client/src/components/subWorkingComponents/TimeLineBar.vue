@@ -47,7 +47,7 @@ export default {
 
 .time-line {
   background-color: rgb(16, 16, 16);
-  color: white;
+  color: #FFFFFF;
   cursor: pointer
 }
 

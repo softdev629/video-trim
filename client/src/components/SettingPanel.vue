@@ -4,6 +4,9 @@
     v-if="this.$store.state.set.selectedSettingTool !== 0">
     <div class="setting-panel-close" v-if="this.$store.state.set.selectedSettingTool !== 0"><a @click="close()">
         <i class="fa fa-chevron-left"></i></a></div>
+    <div v-if="this.$store.state.set.selectedSettingTool === `shape`" style="text-align:center">
+      <button class="btn my-btn btn-success" style="margin-bottom:5px;width:50%" @click="addShape()">Add Shape</button>
+    </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `trim`">
       <div style="display:flex;justify-content: center;">
         <label style="width:50px;text-align: right;">From&nbsp;&nbsp;:</label>
@@ -41,7 +44,7 @@
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `text`">
       <div class="row">
         <div class="col-md-12">
-          <button class="btn my-btn btn-success">Add Subtitle</button>
+          <button class="btn my-btn btn-success" @click="addSubTitle()">Add Subtitle</button>
         </div>
         <div class="form-group" style="margin:0px;">
           <div class="col-md-12  relative-div" style="position:relative;">
@@ -52,98 +55,60 @@
         </div>
         <div class="form-group" style="display:flex;justify-content: space-between;">
           <div style="display:flex;">
-            <Timepicker :timeData="stimeData" @timeChange="sTextTimeChange" />
+            <Timepicker :tmm="this.$store.state.set.textFrom.mm" :tss="this.$store.state.set.textFrom.ss"
+              :tss1="this.$store.state.set.textFrom.ss1" :timeData="`sttimeData`" />
           </div>
           <div>
             <input type="color" v-model="this.$store.state.set.textColor" @change="change(`textColor`)" />
           </div>
           <div style="display:flex;">
-            <Timepicker :timeData="etimeData" @timeChange="eTextTimeChange" />
+            <Timepicker :tmm="this.$store.state.set.textTo.mm" :tss="this.$store.state.set.textTo.ss"
+              :tss1="this.$store.state.set.textTo.ss1" :timeData="`ettimeData`" />
           </div>
         </div>
-        <!-- <div class="form-group">
-                                                                                                          <div class="col-md-7 right">
-                                                                                                            <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
-                                                                                                          </div>
-                                                                                                          <div class="col-md-5 left">
-                                                                                                            <input v-model="this.$store.state.set.textOffsetWidth" @change="change(`textOffsetWidth`)" type="number"
-                                                                                                              min="0" max="1000" />
-                                                                                                          </div>
-                                                                                                        </div>
-                                                                                                        <div class="form-group">
-                                                                                                          <div class="col-md-7 right">
-                                                                                                            <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
-                                                                                                          </div>
-                                                                                                          <div class="col-md-5 left">
-                                                                                                            <input v-model="this.$store.state.set.textOffsetHeight" @change="change(`textOffsetHeight`)" type="number"
-                                                                                                              min="0" max="1000" />
-                                                                                                          </div>
-                                                                                                        </div>
-                                                                                                        <div class="form-group">
-                                                                                                          <div class="col-md-7 right">
-                                                                                                            <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
-                                                                                                          </div>
-                                                                                                          <div class="col-md-5 left">
-                                                                                                            <input v-model="this.$store.state.set.textOffsetTop" @change="change(`textOffsetTop`)" type="number" min="0"
-                                                                                                              max="1000" />
-                                                                                                          </div>
-                                                                                                        </div>
-                                                                                                        <div class="form-group">
-                                                                                                          <div class="col-md-7 right">
-                                                                                                            <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
-                                                                                                          </div>
-                                                                                                          <div class="col-md-5 left">
-                                                                                                            <input v-model="this.$store.state.set.textOffsetLeft" @change="change(`textOffsetLeft`)" type="number"
-                                                                                                              min="0" max="1000" />
-                                                                                                          </div>
-                                                                                                        </div> -->
       </div>
-      <!-- <div class="btn-div">
-                                                                                                        <button class="btn btn-primary btn-tool" @click="textContent(`textContent`)">commit</button>
-                                                                                                      </div> -->
     </div>
-    <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `shape`">
+    <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `shape`" style="margin-top:10px;">
+
       <div class="form-group">
         <div class="col-md-12">
           <div class="shape-box">
-            <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change(`rectangle`)" data-type="rectangle">
-              <!-- <i class="fa fa-check text-close absolute-div" style="display:none"></i> -->
+            <div class="shape-item relative-div"
+              style="position:relative;background-color: rgba(15,15,15,0.5); border:solid 1px #0d6efd"
+              @mouseover="showIcon($event)" @mouseout="notShowIcon($event)" @click="change1(`rectangle`, $event)"
+              data-type="rectangle">
               <div class="shape-rectangle absolute-div"></div>
             </div>
             <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change(`circle`)" data-type="circle">
-              <!-- <i class="fa fa-check text-close absolute-div" style="display:none"></i> -->
+              @mouseout="notShowIcon($event)" @click="change1(`circle`, $event)" data-type="circle">
               <div class="shape-circle absolute-div"></div>
             </div>
             <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change(`line`)" data-type="line">
-              <!-- <i class="fa fa-check text-close absolute-div" style="display:none"></i> -->
+              @mouseout="notShowIcon($event)" @click="change1(`line`, $event)" data-type="line">
+
               <div class="shape-line absolute-div"></div>
             </div>
           </div>
-
-          <!-- <select v-model="this.$store.state.set.shapeContent" @change="change(`shapeContent`)">
-                                                                                                            <option value="line">Line</option>
-                                                                                                            <option value="circle">Ellipse</option>
-                                                                                                            <option value="rectangle">Rectangle</option>
-                                                                                                          </select> -->
         </div>
       </div>
 
-      <div class="form-group" style="display:flex;justify-content: space-between;">
+      <div class="form-group" style="display:flex;justify-content: space-between;margin-bottom: 5px;">
         <div style="display:flex;">
-          <Timepicker :timeData="stimeData" @timeChange="sShapeTimeChange" />
+          <Timepicker :tmm="this.$store.state.set.shapeFrom.mm" :tss="this.$store.state.set.shapeFrom.ss"
+            :tss1="this.$store.state.set.shapeFrom.ss1" :timeData="`sstimeData`" @timeChange="sShapeTimeChange" />
         </div>
         <div>
           <input v-model="this.$store.state.set.shapeBorderColor" @change="change('shapeBorderColor')" type="color" />
         </div>
         <div style="display:flex;">
-          <Timepicker :timeData="etimeData" @timeChange="eShapeTimeChange" />
+          <Timepicker :tmm="this.$store.state.set.shapeTo.mm" :tss="this.$store.state.set.shapeTo.ss"
+            :tss1="this.$store.state.set.shapeTo.ss1" :timeData="`estimeData`" @timeChange="sShapeTimeChange" />
+          <!-- <Timepicker :tmm="this.$store.state.set.shapeTo.mm" :tss="this.$store.state.set.shpaeTo.ss"
+            :tss1="this.$store.state.set.shapeTo.ss1" :timeData="`estimeData`" @timeChange="sShapeTimeChange" /> -->
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
           <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -152,7 +117,7 @@
             min="0" max="1000" />
         </div>
       </div>
-      <div class="form-group" v-if="this.$store.state.set.shapeContent === `rectangle`">
+      <div class="form-group" style="margin-bottom: 5px;" v-if="this.$store.state.set.shapeContent === `rectangle`">
         <div class="col-md-7 right">
           <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -161,7 +126,7 @@
             min="0" max="1000" />
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
           <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -170,7 +135,7 @@
             max="1000" />
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
           <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -179,9 +144,7 @@
             max="1000" />
         </div>
       </div>
-      <!-- <div class="btn-div">
-                                                                                                        <button class="btn btn-primary btn-tool" @click="shapeContent()">commit</button>
-                                                                                                      </div> -->
+
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `cut`">
       <div style="display:flex;justify-content: center;">
@@ -193,14 +156,9 @@
         <label style="width:50px;text-align: right;">To&nbsp;&nbsp;:</label>
         <Timepicker :tmm="this.$store.state.set.cutTo.mm" :tss="this.$store.state.set.cutTo.ss"
           :tss1="this.$store.state.set.cutTo.ss1" :timeData="`ectimeData`" @timeChange="etimeChange" />
-      </div><!-- 
-                                <div style="display:flex; margin-top:10px;justify-content: center;">
-                                  <label style="width:50px;text-align: right;">Delay&nbsp;&nbsp;:</label>
-                                  <Timepicker :timeData="`delay`" :tmm="this.$store.state.set.delay.mm" :tss="this.$store.state.set.delay.ss"
-                                    :tss1="this.$store.state.set.delay.ss1" @timeChange="delay" />
-                                </div> -->
+      </div>
       <div>
-        <!-- <button class="btn btn-success btn-tool" @click="cut()">Save</button> -->
+
       </div>
     </div>
   </div>
@@ -210,7 +168,8 @@
 import { useStore } from "vuex";
 import { useRouter, useRoute } from 'vue-router'
 import setStore from "../store/modules/set.module";
-//import Timepicker from 'vue3-timepicker';
+import uploadStore from "../store/modules/upload.module";
+import UploadModule from '../store/modules/upload.module.js'
 import Timepicker from "./subToolComponents/TimePicker.vue";
 import "vue3-timepicker/dist/VueTimepicker.css";
 import { ref } from "vue";
@@ -289,7 +248,17 @@ export default {
     var payload = { type: "textOffsetLeft", value: this.textOffsetLeft };
     this.$store.dispatch("setData", payload);
 
+    payload = { type: "textFrom", value: { mm: 0, ss: 0, ss1: 0 } };
+    this.$store.dispatch("setData", payload);
 
+    payload = { type: "textTo", value: { mm: 0, ss: 5, ss1: 0 } };
+    this.$store.dispatch("setData", payload);
+
+    payload = { type: "shapeFrom", value: { mm: 0, ss: 0, ss1: 0 } };
+    this.$store.dispatch("setData", payload);
+
+    payload = { type: "shapeTo", value: { mm: 0, ss: 5, ss1: 0 } };
+    this.$store.dispatch("setData", payload);
 
   },
   setup() {
@@ -534,7 +503,26 @@ export default {
     audioUpload: function () {
 
     },
-    change: function (content) {
+    change1: function (content, e) {
+      var payload = { type: 'shapeContent', value: content };
+      this.$store.dispatch('setData', payload);
+
+      for (var i = 0; i < document.getElementsByClassName("relative-div").length; i++) {
+        document.getElementsByClassName("relative-div")[i].style.backgroundColor = 'rgb(48,48,48)';
+        document.getElementsByClassName("relative-div")[i].style.border = 'solid 1px rgb(48, 48, 48)';
+      }
+
+
+      if (e.target.className.search('relative-div') >= 0) {
+        e.target.style.backgroundColor = 'rgba(15, 15, 15, 0.5)';
+        e.target.style.border = "solid 1px #0d6efd";
+      }
+      else if (e.target.className.search('absolute-div') >= 0) {
+        e.target.parentNode.style.backgroundColor = 'rgba(15, 15, 15, 0.5)';
+        e.target.parentNode.style.border = "solid 1px #0d6efd";
+      }
+    },
+    change: function (content, e) {
       var payload = { type: 'shapeContent', value: content };
       this.$store.dispatch('setData', payload);
     },
@@ -573,7 +561,7 @@ export default {
       this.$store.dispatch("setData", payload);
 
       this.shapeContent = "";
-      this.shapeColor = "white";
+      this.shapeColor = "#FFFFFF";
       this.shapeBorderColor = "rgb(16,16,16)";
       this.shapeBorderWidth = 1;
       this.shapeOffsetWidth = 350;
@@ -621,34 +609,501 @@ export default {
     },
     showIcon: function (e) {
 
-      if (e.target.className.search('relative-div') >= 0) {
-        e.target.style.backgroundColor = 'rgba(15, 15, 15, 0.5)';
-        e.target.style.border = "solid 1px #0d6efd";
-      }
-      else if (e.target.className.search('absolute-div') >= 0) {
-        e.target.parentNode.style.backgroundColor = 'rgba(15, 15, 15, 0.5)';
-        e.target.parentNode.style.border = "solid 1px #0d6efd";
-      }
+
 
     },
     notShowIcon: function (e) {
 
-      if (e.target.className.search('relative-div') >= 0) {
-        e.target.style.backgroundColor = 'rgb(48, 48, 48)';
-        e.target.style.border = "solid 1px rgb(48, 48, 48)";
-      }
-      else if (e.target.className.search('absolute-div') >= 0) {
-        e.target.parentNode.style.backgroundColor = 'rgb(48, 48, 48)';
-        e.target.parentNode.style.border = "solid 1px rgb(48, 48, 48)";
-      }
+
     },
+    addShape: function () {
+      // console.log(this.$store.state.set.shapeFrom, 'this.$store.state.set.shapeFrom');
+      // console.log(this.$store.state.set.shapeTo, 'this.$store.state.set.shapeTo');
+      // console.log(this.$store.state.set.shapeContent, 'this.$store.state.set.shapeContent');
+      // console.log(this.$store.state.set.shapeBorderColor, 'this.$store.state.set.shapeBorderColor');
+      // console.log(this.$store.state.set.shapeBorderWidth, 'this.$store.state.set.shapeBorderWidth');
+      // console.log(this.$store.state.set.shapeColor, 'this.$store.state.set.shapeColor');
+      // console.log(this.$store.state.set.shapeOffsetWidth, 'this.$store.state.set.shapeOffsetWidth');
+      // console.log(this.$store.state.set.shapeOffsetHeight, 'this.$store.state.set.shapeOffsetHeight');
+      // console.log(this.$store.state.set.shapeOffsetTop, 'this.$store.state.set.shapeOffsetTop');
+      // console.log(this.$store.state.set.shapeOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2, 'this.$store.state.set.shapeOffsetLeft');
+
+      //from >= to 0,0  available slot return;
+      if (this.$store.state.set.shapeFrom.mm * 6000 + this.$store.state.set.shapeFrom.ss * 100 + this.$store.state.set.shapeFrom.ss1 >= this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1) {
+
+        this.$store.dispatch("setData", {
+          type: "shapeFrom",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "shapeTo",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+
+        alert("End time couldn't equal to or less than Start time.");
+        return;
+      }
+
+      //to > maxtime max, max return;
+      if (this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1 > this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1) {
+
+        this.$store.dispatch("setData", {
+          type: "shapeFrom",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "shapeTo",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        alert("End time couldn't larger than Video duration.");
+        return;
+      }
+
+      //from<= to>= from search 0,0
+      for (var i = 0; i < this.$store.state.upload.shapes.length; i++) {
+        var tStart = this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 + this.$store.state.upload.shapes[i].value.shapeFrom.ss1;
+
+        var tEnd = this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1;
+
+        var t_start = this.$store.state.set.shapeFrom.mm * 6000 + this.$store.state.set.shapeFrom.ss * 100 + this.$store.state.set.shapeFrom.ss1;
+
+        var t_end = this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1;
+
+        if (tStart >= t_start && tStart <= t_end) {
+          this.$store.dispatch("setData", {
+            type: "shapeFrom",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          this.$store.dispatch("setData", {
+            type: "shapeTo",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          alert("Time slot is conflicted");
+          return;
+        }
+
+        if (tEnd >= t_start && tEnd <= t_end) {
+          this.$store.dispatch("setData", {
+            type: "shapeFrom",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          this.$store.dispatch("setData", {
+            type: "shapeTo",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          alert("Time slot is conflicted");
+          return;
+        }
+
+      }
+
+
+      var payload = {
+        type: "shapes",
+        value: {
+          shapeFrom: { ...this.$store.state.set.shapeFrom },
+          shapeTo: { ...this.$store.state.set.shapeTo },
+          shapeContent: this.$store.state.set.shapeContent,
+          shapeBorderColor: this.$store.state.set.shapeBorderColor,
+          shapeBorderWidth: this.$store.state.set.shapeBorderWidth,
+          shapeColor: this.$store.state.set.shapeColor,
+          shapeOffsetWidth: this.$store.state.set.shapeOffsetWidth,
+          shapeOffsetHeight: this.$store.state.set.shapeOffsetHeight,
+          shapeOffsetTop: this.$store.state.set.shapeOffsetTop,
+          shapeOffsetLeft: this.$store.state.set.shapeOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2
+        }
+      }
+
+
+
+      var maxTime = this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1;
+
+      var tFrom = this.$store.state.set.shapeFrom.mm * 6000 + this.$store.state.set.shapeFrom.ss * 100 + this.$store.state.set.shapeFrom.ss1;
+      var tTo = this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1;
+      var flag = 0;
+
+      if (tFrom >= maxTime) {
+        alert("You can't add any more. The start time of subtile is exceed video duration");
+        return;
+      }
+
+      if (tTo > maxTime) {
+        var flag = 1;
+        tTo = maxTime;
+        payload.value.shapeTo.mm = this.$store.state.set.duration.mm;
+        payload.value.shapeTo.ss = this.$store.state.set.duration.ss;
+        payload.value.shapeTo.ss1 = this.$store.state.set.duration.ss1;
+      }
+
+
+      console.log(payload, 'payload to add in shapes');
+
+      //changeState
+      var changeState = this.$store.state.set.changeState + 1;
+
+      this.$store.dispatch("setData", {
+        type: "changeState",
+        value: changeState
+      });
+
+      this.$store.dispatch("addToUploadDatas", payload);
+
+
+
+
+      var shapeFrom = this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1 + 1;
+      var shapeTo = this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1 + 500;
+
+
+      if (flag == 1) {
+        this.$store.dispatch("setData", {
+          type: "shapeFrom",
+          value: {
+            mm: parseInt(shapeFrom / 6000),
+            ss: parseInt((shapeFrom % 6000) / 100),
+            ss1: parseInt((shapeFrom % 6000) % 100)
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "shapeTo",
+          value: {
+            mm: this.$store.state.set.duration.mm,
+            ss: this.$store.state.set.duration.ss,
+            ss1: this.$store.state.set.duration.ss1
+          }
+        });
+      }
+      else {
+
+        this.$store.dispatch("setData", {
+          type: "shapeFrom",
+          value: {
+            mm: parseInt(shapeFrom / 6000),
+            ss: parseInt((shapeFrom % 6000) / 100),
+            ss1: parseInt((shapeFrom % 6000) % 100)
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "shapeTo",
+          value: {
+            mm: parseInt(shapeTo / 6000),
+            ss: parseInt((shapeTo % 6000) / 100),
+            ss1: parseInt((shapeTo % 6000) % 100)
+          }
+        });
+
+        if (shapeTo > maxTime) {
+          this.$store.dispatch("setData", {
+            type: "shapeTo",
+            value: {
+              mm: this.$store.state.set.duration.mm,
+              ss: this.$store.state.set.duration.ss,
+              ss1: this.$store.state.set.duration.ss1
+            }
+          });
+        }
+
+        if (shapeFrom > maxTime) {
+          this.$store.dispatch("setData", {
+            type: "shapeFrom",
+            value: {
+              mm: this.$store.state.set.duration.mm,
+              ss: this.$store.state.set.duration.ss,
+              ss1: this.$store.state.set.duration.ss1
+            }
+          });
+        }
+
+      }
+
+    },
+    addSubTitle: function () {
+      // console.log(this.$store.state.set.textFrom, 'this.$store.state.set.textFrom');
+      // console.log(this.$store.state.set.textTo, 'this.$store.state.set.textTo');
+      // console.log(this.$store.state.set.textContent, 'this.$store.state.set.textContent');
+      // console.log(this.$store.state.set.textColor, 'this.$store.state.set.textColor');
+      // console.log(this.$store.state.set.textOffsetWidth, 'this.$store.state.set.textOffsetWidth');
+      // console.log(this.$store.state.set.textOffsetHeight, 'this.$store.state.set.textOffsetHeight');
+      // console.log(this.$store.state.set.textOffsetTop, 'this.$store.state.set.textOffsetTop');
+      // console.log(this.$store.state.set.textOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2, 'this.$store.state.set.textOffsetLeft');
+
+      //from >= to 0,0  available slot return;
+      if (this.$store.state.set.textFrom.mm * 6000 + this.$store.state.set.textFrom.ss * 100 + this.$store.state.set.textFrom.ss1 >= this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1) {
+
+        this.$store.dispatch("setData", {
+          type: "textFrom",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "textTo",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+
+        alert("End time couldn't equal to or less than Start time.");
+        return;
+      }
+
+      //to > maxtime max, max return;
+      if (this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1 > this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1) {
+
+        this.$store.dispatch("setData", {
+          type: "textFrom",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "textTo",
+          value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0
+          }
+        });
+
+        alert("End time couldn't larger than Video duration.");
+        return;
+      }
+
+      //from<= to>= from search 0,0
+      for (var i = 0; i < this.$store.state.upload.texts.length; i++) {
+        var tStart = this.$store.state.upload.texts[i].value.textFrom.mm * 6000 + this.$store.state.upload.texts[i].value.textFrom.ss * 100 + this.$store.state.upload.texts[i].value.textFrom.ss1;
+
+        var tEnd = this.$store.state.upload.texts[i].value.textTo.mm * 6000 + this.$store.state.upload.texts[i].value.textTo.ss * 100 + this.$store.state.upload.texts[i].value.textTo.ss1;
+
+        var t_start = this.$store.state.set.textFrom.mm * 6000 + this.$store.state.set.textFrom.ss * 100 + this.$store.state.set.textFrom.ss1;
+
+        var t_end = this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1;
+
+        if (tStart >= t_start && tStart <= t_end) {
+          this.$store.dispatch("setData", {
+            type: "textFrom",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          this.$store.dispatch("setData", {
+            type: "textTo",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          alert("Time slot is conflicted");
+          return;
+        }
+
+        if (tEnd >= t_start && tEnd <= t_end) {
+          this.$store.dispatch("setData", {
+            type: "textFrom",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          this.$store.dispatch("setData", {
+            type: "textTo",
+            value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0
+            }
+          });
+
+          alert("Time slot is conflicted");
+          return;
+        }
+
+      }
+
+
+      var payload = {
+        type: "texts",
+        value: {
+          textFrom: { ...this.$store.state.set.textFrom },
+          textTo: { ...this.$store.state.set.textTo },
+          textContent: this.$store.state.set.textContent,
+          textColor: this.$store.state.set.textColor,
+          textOffsetWidth: this.$store.state.set.textOffsetWidth,
+          textOffsetHeight: this.$store.state.set.textOffsetHeight,
+          textOffsetTop: this.$store.state.set.textOffsetTop,
+          textOffsetLeft: this.$store.state.set.textOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2
+        }
+      }
+
+
+      /*  check time slot to add if user changes manually textfrom and textto value  */
+      var maxTime = this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1;
+
+      var tFrom = this.$store.state.set.textFrom.mm * 6000 + this.$store.state.set.textFrom.ss * 100 + this.$store.state.set.textFrom.ss1;
+      var tTo = this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1;
+      var flag = 0;
+
+      if (tFrom >= maxTime) {
+        alert("You can't add any more. The start time of subtile is exceed video duration");
+        return;
+      }
+
+      if (tTo > maxTime) {
+        var flag = 1;
+        tTo = maxTime;
+        payload.value.textTo.mm = this.$store.state.set.duration.mm;
+        payload.value.textTo.ss = this.$store.state.set.duration.ss;
+        payload.value.textTo.ss1 = this.$store.state.set.duration.ss1;
+      }
+
+
+      // console.log(payload, 'payload to add in texts');
+
+      this.$store.dispatch("addToUploadDatas", payload);
+      //changeState
+      var changeState = this.$store.state.set.changeState + 1;
+      this.$store.dispatch("setData", {
+        type: "changeState",
+        value: changeState
+      });
+      /*-------------------------    add success     -----------------------------*/
+
+
+
+      var textFrom = this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1 + 1;
+      var textTo = this.$store.state.set.textTo.mm * 6000 + this.$store.state.set.textTo.ss * 100 + this.$store.state.set.textTo.ss1 + 500;
+
+
+      if (flag == 1) {
+        this.$store.dispatch("setData", {
+          type: "textFrom",
+          value: {
+            mm: parseInt(textFrom / 6000),
+            ss: parseInt((textFrom % 6000) / 100),
+            ss1: parseInt((textFrom % 6000) % 100)
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "textTo",
+          value: {
+            mm: this.$store.state.set.duration.mm,
+            ss: this.$store.state.set.duration.ss,
+            ss1: this.$store.state.set.duration.ss1
+          }
+        });
+      }
+      else {
+
+        this.$store.dispatch("setData", {
+          type: "textFrom",
+          value: {
+            mm: parseInt(textFrom / 6000),
+            ss: parseInt((textFrom % 6000) / 100),
+            ss1: parseInt((textFrom % 6000) % 100)
+          }
+        });
+
+        this.$store.dispatch("setData", {
+          type: "textTo",
+          value: {
+            mm: parseInt(textTo / 6000),
+            ss: parseInt((textTo % 6000) / 100),
+            ss1: parseInt((textTo % 6000) % 100)
+          }
+        });
+
+        if (textTo > maxTime) {
+          this.$store.dispatch("setData", {
+            type: "textTo",
+            value: {
+              mm: this.$store.state.set.duration.mm,
+              ss: this.$store.state.set.duration.ss,
+              ss1: this.$store.state.set.duration.ss1
+            }
+          });
+        }
+
+        if (textFrom > maxTime) {
+          this.$store.dispatch("setData", {
+            type: "textFrom",
+            value: {
+              mm: this.$store.state.set.duration.mm,
+              ss: this.$store.state.set.duration.ss,
+              ss1: this.$store.state.set.duration.ss1
+            }
+          });
+        }
+
+      }
+
+    },
+
   }
 }
 </script>
 
 <style scoped>
 .fa-chevron-left:hover {
-  color: white;
+  color: #FFFFFF;
 }
 
 textarea {
@@ -677,7 +1132,7 @@ textarea {
 .shape-rectangle {
   width: 40px;
   height: 40px;
-  background-color: white;
+  background-color: #FFFFFF;
   margin: 5px;
 }
 
@@ -685,14 +1140,14 @@ textarea {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: white;
+  background-color: #FFFFFF;
   margin: 5px;
 }
 
 .shape-line {
   width: 40px;
   height: 6px;
-  background-color: white;
+  background-color: #FFFFFF;
   margin: 5px;
   margin-top: 20px;
 }
@@ -707,7 +1162,7 @@ textarea {
   right: 10px;
   top: 10px;
   width: 15px;
-  color: white;
+  color: #FFFFFF;
 }
 
 .fa-check {
@@ -732,5 +1187,9 @@ input[type=number]::-webkit-outer-spin-button {
 .btn-record {
   margin: 5px;
   margin-top: 20px;
+}
+
+textarea {
+  color: black;
 }
 </style>

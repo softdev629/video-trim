@@ -44,7 +44,7 @@ export default {
     textFrom: { mm: 0, ss: 0, ss1: 0 },
     textTo: { mm: 0, ss: 0, ss1: 0 },
     textContent: "",
-    textColor: "white",
+    textColor: "#FFFFFF",
     textBorderColor: "transparent",
     textBorderWidth: 1,
     textOffsetWidth: 150,
@@ -66,6 +66,7 @@ export default {
     comment: "none",
     commentDisplay: "none",
     relaseFlag: false,
+    changeState: 0
   },
   mutations: {
     INIT_SET_DATA(state) {
@@ -96,11 +97,11 @@ export default {
       state.cutTo = { mm: 0, ss: 0, ss1: 0 };
       state.cutDelay = { mm: 0, ss: 0, ss1: 0 };
 
-      state.audioFrom = { mm: "00", ss: "00", ss1: "00" };
-      state.audioTo = { mm: "00", ss: "00", ss1: "00" };
+      state.audioFrom = { mm: 0, ss: 0, ss1: 0 };
+      state.audioTo = { mm: 0, ss: 0, ss1: 0 };
 
-      state.shapeFrom = { mm: "00", ss: "00", ss1: "00" };
-      state.shapeTo = { mm: "00", ss: "00", ss1: "00" };
+      state.shapeFrom = { mm: 0, ss: 0, ss1: 0 };
+      state.shapeTo = { mm: 0, ss: 0, ss1: 0 };
       state.shapeContent = "rectangle";
       state.shapeBorderColor = "rgb(16,16,16)";
       state.shapeBorderWidth = 1;
@@ -110,10 +111,10 @@ export default {
       state.shapeOffsetTop = 150;
       state.shapeOffsetLeft = 770;
 
-      state.textFrom = { mm: "00", ss: "00", ss1: "00" };
-      state.textTo = { mm: "00", ss: "00", ss1: "00" };
+      state.textFrom = { mm: 0, ss: 0, ss1: 0 };
+      state.textTo = { mm: 0, ss: 0, ss1: 0 };
       state.textContent = "";
-      state.textColor = "white";
+      state.textColor = "#FFFFFF";
       state.textBorderColor = "transparent";
       state.textBorderWidth = 1;
       state.textOffsetWidth = 150;
@@ -133,6 +134,7 @@ export default {
       state.comment = "none";
       state.commentDisplay = "none";
       state.relaseFlag = false;
+      state.changeState = 0;
     },
     UPDATE_SET_DATA(state, payload) {
       switch (payload.type) {
@@ -306,6 +308,9 @@ export default {
         case "relaseFlag":
           state.relaseFlag = payload.value;
           break;
+        case "changeState":
+          state.changeState = payload.value;
+          break;
         default:
           return;
       }
@@ -433,7 +438,7 @@ export default {
           state.textContent = "";
           return;
         case "textColor":
-          state.textColor = "white";
+          state.textColor = "#FFFFFF";
           return;
         case "textBorderColor":
           state.textBorderColor = "transparent";
@@ -489,6 +494,10 @@ export default {
           break;
         case "relaseFlag":
           state.relaseFlag = false;
+          break;
+        case "changeState":
+          state.changeState = 0;
+          break;
         default:
           return;
       }

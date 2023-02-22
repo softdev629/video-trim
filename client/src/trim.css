@@ -171,7 +171,7 @@ input.vue__time-picker-input {
 
 body {
   background-color: rgb(16, 16, 16);
-  color: white;
+  color: #FFFFFF;
 }
 
 .secondary-color {
@@ -188,7 +188,7 @@ body {
 
 input {
   background-color: rgb(16, 16, 16);
-  color: white;
+  color: #FFFFFF;
 }
 
 input:focus {
@@ -206,7 +206,7 @@ textarea:focus {
 }
 
 .media-selected {
-  border: 1px solid rgb(255, 255, 255);
+  border: 1px solid #FFFFFF;
 }
 
 * {

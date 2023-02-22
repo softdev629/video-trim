@@ -36,25 +36,18 @@ export default {
           mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
         };
 
-        //        to -from > 125
+
         var diff = 100 * ((this.$store.state.set.videoTo.mm - this.tData.mm) * 6000 + (this.$store.state.set.videoTo.ss - this.tData.ss) * 100 + (this.$store.state.set.videoTo.ss1 - this.tData.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1));
 
-        // console.log('diff stimedata', diff, this.$store.state.set.zoom);
 
         if (diff < 125) {
-          //set to-from 126
-          console.log('diff < 126, timesdata reset');
 
           var pixel = ((100 * ((this.$store.state.set.videoTo.mm) * 6000 + (this.$store.state.set.videoTo.ss) * 100 + (this.$store.state.set.videoTo.ss1)) / (100 * (this.$store.state.set.zoom - 6) * (-1)))) - 126;
 
-          console.log('pixel', pixel);
 
           var time = parseInt((pixel) * ((-1) * (this.$store.state.set.zoom - 6)));
 
-          console.log('time', time);
-          // var prevFrom1 = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
 
-          // var dOffset = prevFrom1 - time;
 
           if (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1 == 0) {
             this.tData.mm = 0;
@@ -87,47 +80,9 @@ export default {
             this.tData.ss1 = this.$store.state.set.videoFrom.ss1;
 
           }
-
-
-
-          // var delay = (this.$store.state.set.delay.mm * 6000 + this.$store.state.set.delay.ss * 100 + this.$store.state.set.delay.ss1);
-
-          // console.log(delay, dOffset, 'delay--------offset');
-
-
-          // this.$store.dispatch("setData", {
-          //   type: "delay",
-          //   value: {
-          //     mm: parseInt((delay - dOffset) / (100 * 60)),
-          //     ss: parseInt(((delay - dOffset) % (100 * 60)) / 100),
-          //     ss1: parseInt(((delay - dOffset) % (100 * 60)) % 100),
-          //   },
-          // });
-
-          // console.log(this.$store.state.set.delay, 'store ------ delay');
-
-
           return;
         }
 
-
-
-        // var prevFrom = (this.$store.state.set.videoFrom.mm * 6000 + this.$store.state.set.videoFrom.ss * 100 + this.$store.state.set.videoFrom.ss1);
-
-
-        // var mm = this.$store.state.set.delay.mm + value.mm - this.$store.state.set.videoFrom.mm;
-        // var ss = this.$store.state.set.delay.ss + value.ss - this.$store.state.set.videoFrom.ss;
-        // var ss1 = this.$store.state.set.delay.ss1 + value.ss1 - this.$store.state.set.videoFrom.ss1;
-
-        // let payload = {
-        //   type: "delay", value: {
-        //     mm: mm,
-        //     ss: ss,
-        //     ss1: ss1
-        //   }
-        // };
-
-        // this.$store.dispatch("setData", payload);
 
         var payload = { type: "videoFrom", value };
 
@@ -245,15 +200,7 @@ export default {
         this.$store.dispatch("setData", payload);
 
       }
-      // if (this.timeData == 'delay') {
-      //   console.log('delay--------------150------');
 
-      //   let value = {
-      //     mm: this.tData.mm, ss: this.tData.ss, ss1: this.tData.ss1
-      //   };
-      //   let payload = { type: "delay", value };
-      //   this.$store.dispatch("setData", payload);
-      // }
 
       if (this.timeData == "sctimeData") {
         let value = {
@@ -400,6 +347,51 @@ export default {
         let payload = { type: "cutTo", value };
         this.$store.dispatch("setData", payload);
 
+      }
+
+      if (this.timeData == "sttimeData") {
+        this.$store.dispatch("setData", {
+          type: "textFrom",
+          value: {
+            mm: this.tData.mm,
+            ss: this.tData.ss,
+            ss1: this.tData.ss1,
+          },
+        });
+
+      }
+
+      if (this.timeData == "ettimeData") {
+        this.$store.dispatch("setData", {
+          type: "textTo",
+          value: {
+            mm: this.tData.mm,
+            ss: this.tData.ss,
+            ss1: this.tData.ss1,
+          },
+        });
+      }
+
+      if (this.timeData == "sstimeData") {
+        this.$store.dispatch("setData", {
+          type: "shapeFrom",
+          value: {
+            mm: this.tData.mm,
+            ss: this.tData.ss,
+            ss1: this.tData.ss1,
+          },
+        });
+      }
+
+      if (this.timeData == "estimeData") {
+        this.$store.dispatch("setData", {
+          type: "shapeTo",
+          value: {
+            mm: this.tData.mm,
+            ss: this.tData.ss,
+            ss1: this.tData.ss1,
+          },
+        });
       }
 
     }

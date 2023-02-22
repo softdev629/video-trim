@@ -23,7 +23,7 @@ export default {
   border: solid 1px rgb(16, 16, 16);
   width: 200px;
   background-color: rgb(16, 16, 16);
-  color: white;
+  color: #FFFFFF;
   padding: 0px 10px;
   border-radius: 10px;
 }
@@ -32,7 +32,7 @@ export default {
   border: none;
   width: 25px;
   background-color: rgb(16, 16, 16);
-  color: white;
+  color: #FFFFFF;
 }
 
 .tControl input:focus {

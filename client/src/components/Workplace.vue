@@ -298,7 +298,7 @@ export default {
   right: 10px;
   margin-left: 20px;
   background: #34eae1;
-  border: solid 1px white;
+  border: solid 1px #FFFFFF;
   border-radius: 5px;
 
 }

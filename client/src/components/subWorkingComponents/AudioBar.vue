@@ -165,7 +165,7 @@ label {
 
 .shape-bar {
   background-color: rgb(20, 20, 20);
-  color: white;
+  color: #FFFFFF;
   margin-top: 10px;
 }
 

@@ -1,58 +1,47 @@
 export default {
-  namespaced: true,
   state: {
-    from: { mm: "00", ss: "00", ss1: "00" },
-    to: { mm: "12", ss: "77", ss1: "00" },
-    videoFrom: { mm: "00", ss: "00", ss1: "00" },
-    videoTo: { mm: "12", ss: "77", ss1: "00" },
-    delay: { mm: "12", ss: "77", ss1: "00" },
-    texts: [
-      {
-        textFrom: { mm: "00", ss: "00", ss1: "00" },
-        textTo: { mm: "00", ss: "00", ss1: "00" },
-        textContent: "",
-        textColor: "white",
-        textBorderColor: "transparent",
-        textBorderWidth: 0,
-        textOffsetWidth: 0,
-        textOffsetHeight: 0,
-        textOffsetTop: 0,
-        textOffsetLeft: 0,
-      }
-    ],
-    shapes: [{
-      shapeFrom: { mm: "00", ss: "00", ss1: "00" },
-      shapeTo: { mm: "00", ss: "00", ss1: "00" },
-      shapeContent: "",
-      shapeBorderColor: "",
-      shapeBorderWidth: 0,
-      shapeColor: "",
-      shapeOffsetWidth: 0,
-      shapeOffsetHeight: 0,
-      shapeOffsetTop: 0,
-      shapeOffsetLeft: 0,
-    }],
-    audios: [{
-      audioFrom: { mm: "00", ss: "00", ss1: "00" },
-      audioTo: { mm: "00", ss: "00", ss1: "00" },
-    }],
+    from: { mm: 0, ss: 0, ss1: 0 },
+    to: { mm: 0, ss: 0, ss1: 0 },
+    videoFrom: { mm: 0, ss: 0, ss1: 0 },
+    videoTo: { mm: 0, ss: 0, ss1: 0 },
+    cutFrom: { mm: 0, ss: 0, ss1: 0 },
+    cutTo: { mm: 0, ss: 0, ss1: 0 },
+    delay: { mm: 0, ss: 0, ss1: 0 },
+    texts: [],
+    shapes: [],
+    audios: [],
   },
   mutations: {
     ADD_UPLOAD_DATA(state, payload) {
       switch (payload.type) {
         case "from":
-          state.videoFrom = payload.value;
+          state.from = payload.value;
           return;
         case "to":
-          state.videoTo = payload.value;
+          state.to = payload.value;
           return;
-        case "text":
+        case "videoFrom":
+          state.from = payload.value;
+          return;
+        case "videoTo":
+          state.to = payload.value;
+          return;
+        case "cutFrom":
+          state.from = payload.value;
+          return;
+        case "cutTo":
+          state.to = payload.value;
+          return;
+        case "delay":
+          state.to = payload.value;
+          return;
+        case "texts":
           state.texts = { ...payload.value };
           return;
-        case "shape":
+        case "shapes":
           state.shapes = { ...payload.value };
           return;
-        case "audio":
+        case "audios":
           state.audios = { ...payload.value };
           return;
         default:
@@ -69,19 +58,31 @@ export default {
         case "to":
           context.commit('ADD_UPLOAD_DATA', payload);
           return;
-        case "text":
+        case "videoFrom":
+          context.commit('ADD_UPLOAD_DATA', payload);
+          return;
+        case "videoTo":
+          context.commit('ADD_UPLOAD_DATA', payload);
+          return;
+        case "cutFrom":
+          context.commit('ADD_UPLOAD_DATA', payload);
+          return;
+        case "cutTo":
+          context.commit('ADD_UPLOAD_DATA', payload);
+          return;
+        case "texts":
           const texts = context.state.texts;
           texts.push(payload);
           context.commit('ADD_UPLOAD_DATA', texts);
           return;
-        case "shape":
+        case "shapes":
           const shapes = context.state.shapes;
-          texts.push(payload);
+          shapes.push(payload);
           context.commit('ADD_UPLOAD_DATA', shapes);
           return;
-        case "audio":
+        case "audios":
           const audios = context.state.audios;
-          texts.push(payload);
+          audios.push(payload);
           context.commit('ADD_UPLOAD_DATA', audios);
           return;
         default:

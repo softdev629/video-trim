@@ -66,6 +66,7 @@ export default {
         { cut: `` },
       ];
       this.selected[toolType] = `selected`;
+
       var payload = { type: "selectedSettingTool", value: toolType };
       this.$store.dispatch("setData", payload);
 
@@ -97,6 +98,7 @@ export default {
 
       payload = { type: "panelWidth", value: panelWidth };
       this.$store.dispatch("setData", payload);
+
 
 
     },

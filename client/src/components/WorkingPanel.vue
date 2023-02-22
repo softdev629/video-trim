@@ -21,8 +21,8 @@
         :curPosSelected="this.curPosSelected" />
       <AudioBar :zoom="this.zoom" :duration="this.duration" />
       <FrameBar :zoom="this.zoom" :duration="this.duration" />
-      <ShapeBar :zoom="this.zoom" />
-      <TextBar :zoom="this.zoom" />
+      <ShapeBar :zoom="this.zoom" :duration="this.duration" />
+      <TextBar :zoom="this.zoom" :duration="this.duration" />
     </div>
   </div>
 </template>

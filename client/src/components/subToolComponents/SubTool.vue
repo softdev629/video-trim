@@ -2,14 +2,14 @@
   <div :class="`panel-group sub-tool-component ${active} ${mouseOverd}`" @click="toolBoxOpen()"
     @mouseover="mouseoverd($event)" @mouseout="mouseouted($event)">
     <h4 class="panel-title">
-      <a v-if="toolType === `trim`" style="color:white;margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"><span
+      <a v-if="toolType === `trim`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"><span
             class="tooltiptext">Trim</span></i></a>
-      <a v-if="toolType === `shape`" style="color:white;margin-left:13%;"><i class="fa fa-braille fa-1x tooltip"><span
+      <a v-if="toolType === `shape`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-braille fa-1x tooltip"><span
             class="tooltiptext">Shape</span></i></a>
-      <a v-if="toolType === `text`" style="color:white;margin-left:13%;"><i class="fa fa-file-text fa-1x tooltip"><span
+      <a v-if="toolType === `text`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-file-text fa-1x tooltip"><span
             class="tooltiptext">Text</span></i></a>
-      <a v-if="toolType === `audio`" style="color:white;margin-left:13%;"><i class="fa fa-microphone fa-1x tooltip"><span
-            class="tooltiptext">Audio</span></i></a>
+      <a v-if="toolType === `audio`" style="color:#FFFFFF;margin-left:13%;"><i
+          class="fa fa-microphone fa-1x tooltip"><span class="tooltiptext">Audio</span></i></a>
       <a v-if="toolType === `cut`" style="margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"
           style="color:red;opacity:0.8;font-size:18px;"><span class="tooltiptext">Cut</span></i></a>
     </h4>
@@ -68,7 +68,7 @@ export default {
   visibility: hidden;
   width: 65px;
   background-color: rgb(16, 16, 16);
-  border: solid 1px white;
+  border: solid 1px #FFFFFF;
   color: #fff;
   padding: 5px 0;
   border-radius: 6px;

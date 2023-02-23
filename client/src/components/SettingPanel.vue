@@ -49,7 +49,7 @@
           <div class="col-md-12  relative-div" style="position:relative;">
             <i class="fa fa-close text-close absolute-div" style="display:none"></i>
             <textarea v-model="this.$store.state.set.textContent" class="sub-title-text absolute-div"
-              placeholder="sub title"></textarea>
+              placeholder="Input subtitle here"></textarea>
           </div>
         </div>
         <div class="form-group" style="display:flex;justify-content: space-between;">
@@ -57,7 +57,7 @@
             <Timepicker :tmm="this.$store.state.set.textFrom.mm" :tss="this.$store.state.set.textFrom.ss"
               :tss1="this.$store.state.set.textFrom.ss1" :timeData="`sttimeData`" />
           </div>
-          <div>
+          <div style="display:none;">
             <input type="color" v-model="this.$store.state.set.textColor" />
           </div>
           <div style="display:flex;">

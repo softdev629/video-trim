@@ -7,7 +7,7 @@
       <a v-if="toolType === `shape`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-braille fa-1x tooltip"><span
             class="tooltiptext">Shape</span></i></a>
       <a v-if="toolType === `text`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-file-text fa-1x tooltip"><span
-            class="tooltiptext">Text</span></i></a>
+            class="tooltiptext">Subtitle</span></i></a>
       <a v-if="toolType === `audio`" style="color:#FFFFFF;margin-left:13%;"><i
           class="fa fa-microphone fa-1x tooltip"><span class="tooltiptext">Audio</span></i></a>
       <a v-if="toolType === `cut`" style="margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"

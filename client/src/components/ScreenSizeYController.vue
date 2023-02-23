@@ -1,5 +1,5 @@
 <template>
-  <div class="screenY splitter" :style="`background-color: ${bkColor};width:5px; height:600px; position:relative`"
+  <div class="screenY splitter" :style="`background-color: ${bkColor};width:5px; height:400px; min-height: 100%; position:relative`"
     @mousemove="moveSizeController($event)" @mousedown="selectSizeController($event)" @mouseup="selectRelease($event)"
     @mouseover="changeBkColor($event)" @mouseout="rechangeBkColor($event)">
     <!-- <div :style="`position:relative;top:40%;left:-100%;`">

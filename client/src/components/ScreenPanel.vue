@@ -2,7 +2,7 @@
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
     :style="`width:100%;height:100%;`">
     <video class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
-      :style="`width:800px; height:600px; max-width: 100%; max-height: 100%;`" type="video/mp4" ref="vid"
+      :style="`width:600px; height:400px; min-width: 100%; min-height: 100%;`" type="video/mp4" ref="vid"
       @timeupdate="curTimeChange($event)"></video>
     <!-- <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"

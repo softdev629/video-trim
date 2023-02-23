@@ -13,13 +13,13 @@ label {
     <div v-if="this.$store.state.set.selectedSettingTool === `audio`" class="div-range active"
       :style="`left: ${start}px; width:${width}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0)"></div>
-      <div class="text" @mousedown="resizeSelected($event, 2)">Audio</div>
+      <div class="text" @mousedown="resizeSelected($event, 2)">音声</div>
       <div class="right" @mousedown="resizeSelected($event, 1)" :style="`left: ${width - 10}px`"></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `audio`" class="div-range"
       :style="`left: ${start}px; width:${width}px;`">
       <div class="left"></div>
-      <div class="text">Audio</div>
+      <div class="text">音声</div>
       <div class="right" :style="`left: ${width - 7}px`"></div>
     </div>
   </div>

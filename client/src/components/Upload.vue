@@ -169,16 +169,16 @@ const onDrop = (files: File[] | null) => {
 
 const dropZoneRef = ref<HTMLElement>()
 const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
-</script>
+</script>Trim
 
 <template>
   <div ref="loader"></div>
-  <div ref="comment" class="loading-text" :style="`display:none;`">Loading file.&nbsp;&nbsp;&nbsp;Wait a moment...</div>
+  <div ref="comment" class="loading-text" :style="`display:none;`">ファイルを読み込んでいます。&nbsp;&nbsp;&nbsp;しばらくお待ちください。</div>
   <div ref="body">
     <header class="py-16">
-      <h1 class="text-5xl font-bold text-center mb-6 tracking-widest	">Video Editor</h1>
+      <h1 class="text-5xl font-bold text-center mb-6 tracking-widest	">動画エディタ</h1>
       <p className="text-center mb-6 text-xl">
-        You can trim or cut video appended voices, several shapes and subtitles.
+        ビデオのトリミングとカットができます。
       </p>
     </header>
     <div class="flex flex-col gap-16 items-center justify-center">
@@ -186,7 +186,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
       <button
         class="border border-white text-white bg-transparent text-2xl hover:px-20 px-10 py-4 rounded-xl inline-flex items-center transition-all duration-100"
         @click="selectFile">
-        <span>Open file</span>
+        <span>ファイルを開く</span>
       </button>
       <div
         class="flex flex gap-5 items-center justify-center border border-white text-gray-300 bg-transparent rounded-xl px-20 py-4 text-2xl"
@@ -194,7 +194,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop)
         <svg class="fill-current w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
         </svg>
-        <span>or drop file here</span>
+        <span>ここにファイルをドロップ</span>
       </div>
     </div>
   </div>

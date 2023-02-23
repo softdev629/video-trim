@@ -3,15 +3,15 @@
     @mouseover="mouseoverd($event)" @mouseout="mouseouted($event)">
     <h4 class="panel-title">
       <a v-if="toolType === `trim`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"><span
-            class="tooltiptext">Trim</span></i></a>
+            class="tooltiptext">トリミング</span></i></a>
       <a v-if="toolType === `shape`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-braille fa-1x tooltip"><span
-            class="tooltiptext">Shape</span></i></a>
+            class="tooltiptext">図形</span></i></a>
       <a v-if="toolType === `text`" style="color:#FFFFFF;margin-left:13%;"><i class="fa fa-file-text fa-1x tooltip"><span
-            class="tooltiptext">Subtitle</span></i></a>
+            class="tooltiptext">字幕</span></i></a>
       <a v-if="toolType === `audio`" style="color:#FFFFFF;margin-left:13%;"><i
-          class="fa fa-microphone fa-1x tooltip"><span class="tooltiptext">Audio</span></i></a>
+          class="fa fa-microphone fa-1x tooltip"><span class="tooltiptext">音声</span></i></a>
       <a v-if="toolType === `cut`" style="margin-left:13%;"><i class="fa fa-cut fa-1x tooltip"
-          style="color:red;opacity:0.8;font-size:18px;"><span class="tooltiptext">Cut</span></i></a>
+          style="color:red;opacity:0.8;font-size:18px;"><span class="tooltiptext">カット</span></i></a>
     </h4>
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 65px;
+  width: 100px;
   background-color: rgb(16, 16, 16);
   border: solid 1px #FFFFFF;
   color: #fff;

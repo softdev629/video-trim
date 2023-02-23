@@ -211,16 +211,47 @@ router.post('/save/:fname', async function (req, res, next) {
     }
     // console.log(t_start, c_start, c_end, t_end);
     if (c_start > t_start && c_end < t_end) {
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v copy -c:a copy " + "output1.mp4 -y");
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + "output1.mp4 -y");
       concatList.push("output1.mp4");
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v copy -c:a copy " + "output2.mp4 -y");
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + "output2.mp4 -y");
       concatList.push("output2.mp4");
       let commandString = "ffmpeg ";
       for (let filename of concatList) {
         commandString += ` -i ${filename} `;
       }
       commandString += '-filter_complex "';
-
+      videoInfo = await (new Promise((resolve, reject) => {
+        ffmpeg.ffprobe('output1.mp4', (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data.streams);
+            // for (let stream of data.streams) {
+            //   if (stream.width) {
+            //     resolve(stream);
+            //     return;
+            //   }
+            // }
+          }
+        });
+      }));
+      console.log("output1.mp4\n", videoInfo);
+      videoInfo = await (new Promise((resolve, reject) => {
+        ffmpeg.ffprobe('output2.mp4', (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data.streams);
+            // for (let stream of data.streams) {
+            //   if (stream.width) {
+            //     resolve(stream);
+            //     return;
+            //   }
+            // }
+          }
+        });
+      }));
+      console.log("output2.mp4\n", videoInfo);
       // console.log('bbbbbbbbbbbbbbbbbbbbbbb');
 
       for (let index in concatList) {
@@ -245,10 +276,10 @@ router.post('/save/:fname', async function (req, res, next) {
       execSync(commandString);
     } else if (c_end < t_end) {
       // console.log(c_end, t_end);
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a copy " + newName);
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + newName);
     } else if (t_start < c_start) {
       // console.log(t_start, c_start);
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a copy " + newName);
+      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + newName);
     }
 
     if (fs.existsSync("output1.mp4")) {
@@ -262,6 +293,9 @@ router.post('/save/:fname', async function (req, res, next) {
     }
     if (fs.existsSync('subtitles.mp4')) {
       fs.unlinkSync('subtitles.mp4');
+    }
+    if (fs.existsSync("subtitles.srt")) {
+      fs.unlinkSync("subtitles.srt");
     }
     // console.log('ggggggggggggggggggg');
   } catch (error) {
@@ -276,6 +310,9 @@ router.post('/save/:fname', async function (req, res, next) {
     }
     if (fs.existsSync('subtitles.mp4')) {
       fs.unlinkSync('subtitles.mp4');
+    }
+    if (fs.existsSync("subtitles.srt")) {
+      fs.unlinkSync("subtitles.srt");
     }
     // console.log('ggggggggggggggggggg');
     return res.status(500).json({ error });

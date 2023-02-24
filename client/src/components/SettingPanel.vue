@@ -27,17 +27,36 @@
       </div>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `audio`">
-      <div style="display:flex;justify-content: space-around;">
-        <button class="btn btn-info btn-tool" style="margin-top:0px;" @click="record()"><i
-            class="fa fa-microphone"></i></button>
-        <label style="margin-top:5px;">{{ `${recordTime.mm}:${recordTime.ss}.${recordTime.ss1}
-                  `}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
-      </div>
-      <div style="display:flex;justify-content: space-around;">
-        <button class="btn btn-danger btn-tool btn-record" @click="recordRestart()">{{
-          this.btnType }}</button>
-        <button class="btn btn-primary btn-tool btn-record" @click="clear()">Clear</button>
-        <button class="btn btn-success btn-tool btn-record" @click="recordAdd()">Add</button>
+      <div class="audio-panel">
+        <div style="display:flex;justify-content: space-around;">
+          <button class="btn btn-info btn-tool" style="margin-top:0px;" ref="record" @click="record()"><i
+              class="fa fa-microphone"></i></button>
+          <label style="margin-top:5px;">{{ `${recordTime.mm}:${recordTime.ss}.${recordTime.ss1}
+                      `}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
+        </div>
+        <div class="record-btn-group">
+          <button class="btn btn-danger btn-tool btn-record" ref="stop" @click="stop()"><i
+              class="fa fa-stop"></i></button>
+          <button class="btn btn-primary btn-tool btn-record" ref="play" @click="play()"><i
+              class="fa fa-play"></i></button>
+          <button class="btn btn-success btn-tool btn-record" ref="save" @click="save()"><i
+              class="fa fa-save"></i></button>
+        </div>
+        <div id="saved-audio-messages" ref="savedAudioMessagesContainer">
+          <div class="audio-div" v-for="(audioItem, index) in this.audioList" :key="index"
+            @click="audio_select($event, index)" :class="`${audioItem.active}`">
+            <audio v-if="audioItem.active === `audio-active`" :src="`/audios/${audioItem.fileName}`" controls
+              class="my-audio" ref="myAudio"></audio>
+            <audio v-if="audioItem.active !== `audio-active`" :src="`/audios/${audioItem.fileName}`" controls
+              class="my-audio"></audio>
+            <input v-if="audioItem.active === `audio-active`" type="radio" name="audio-group" checked />
+            <input v-if="audioItem.active !== `audio-active`" type="radio" name="audio-group" />
+          </div>
+        </div>
+        <div>
+          <button class="btn my-btn btn-success add-audio" @click="addAudio()">Add Audio</button>
+        </div>
+
       </div>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `text`">
@@ -74,16 +93,16 @@
           <div class="shape-box">
             <div class="shape-item relative-div"
               style="position:relative;background-color: rgba(15,15,15,0.5); border:solid 1px #0d6efd"
-              @mouseover="showIcon($event)" @mouseout="notShowIcon($event)" @click="change1(`rectangle`, $event)"
-              data-type="rectangle">
+              @mouseover="showIcon($event)" @mouseout="notShowIcon($event)" @click="change1(`Rectangle`, $event)"
+              data-type="Rectangle">
               <div class="shape-rectangle absolute-div"></div>
             </div>
             <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change1(`circle`, $event)" data-type="circle">
+              @mouseout="notShowIcon($event)" @click="change1(`Circle`, $event)" data-type="Circle">
               <div class="shape-circle absolute-div"></div>
             </div>
             <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change1(`line`, $event)" data-type="line">
+              @mouseout="notShowIcon($event)" @click="change1(`Line`, $event)" data-type="Line">
 
               <div class="shape-line absolute-div"></div>
             </div>
@@ -115,7 +134,7 @@
           <input v-model="this.$store.state.set.shapeOffsetWidth" type="number" min="0" max="1000" />
         </div>
       </div>
-      <div class="form-group" style="margin-bottom: 5px;" v-if="this.$store.state.set.shapeContent === `rectangle`">
+      <div class="form-group" style="margin-bottom: 5px;" v-if="this.$store.state.set.shapeContent === `Rectangle`">
         <div class="col-md-7 right">
           <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -175,6 +194,7 @@ export default {
   name: "SettingPanel",
   data() {
     return {
+      polling: null,
       width: 0,
       height: 450,
       stimeData: {
@@ -191,7 +211,11 @@ export default {
       audioTo: { mm: "00", ss: "00", ss1: "00" },
       recordTime: { mm: 0, ss: 0, ss1: 0 },
       recordMTime: 0,
-      polling: null,
+
+      recorder: null,
+      audio: null,
+      audioList: [],
+
       btnType: 'Pause',
       shapeColor: "rgb(16,16,16)",
       shapeOffsetWidth: 100,
@@ -259,55 +283,200 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+
   },
   methods: {
-    record: function () {
-      window.clearInterval(this.polling);
+    record: async function () {
+      this.recordMTime = 0;
+
+      if (this.polling)
+        window.clearInterval(this.polling);
+
       this.polling = window.setInterval(() => {
         this.recordMTime++;
         this.recordTime.mm = parseInt(this.recordMTime / 6000);
         this.recordTime.ss = parseInt((this.recordMTime % 6000) / 100);
         this.recordTime.ss1 = parseInt((this.recordMTime % 6000) % 100);
       }, 10);
-    },
-    recordRestart: function () {
-      if (this.btnType === "Pause") {
-        this.btnType = "Restart";
-        window.clearInterval(this.polling);
+
+
+      const recordAudio = () =>
+        new Promise(async resolve => {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mediaRecorder = new MediaRecorder(stream);
+          let audioChunks = [];
+
+          mediaRecorder.addEventListener('dataavailable', event => {
+            audioChunks.push(event.data);
+          });
+
+          const start = () => {
+            audioChunks = [];
+            mediaRecorder.start();
+          };
+
+          const stop = () =>
+            new Promise(resolve => {
+              mediaRecorder.addEventListener('stop', () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                const play = () => audio.play();
+                resolve({ audioChunks, audioBlob, audioUrl, play });
+              });
+
+              mediaRecorder.stop();
+            });
+
+          resolve({ start, stop });
+        });
+
+
+      this.$refs.record.setAttribute('disabled', true);
+      this.$refs.stop.removeAttribute('disabled');
+      this.$refs.play.setAttribute('disabled', true);
+      this.$refs.save.setAttribute('disabled', true);
+
+      if (!this.recorder) {
+        //        this.recorder = await this.$store.dispatch("recordAudio");
+        this.recorder = await recordAudio();
       }
-      else if (this.btnType === "Restart") {
-        window.clearInterval(this.polling);
-        this.btnType = "Pause";
-        this.recordTime.mm = 0;
-        this.recordTime.ss = 0;
-        this.recordTime.ss1 = 0;
-        this.recordMTime = 0;
-        this.record();
-      }
+      this.recorder.start();
+
     },
-    clear: function () {
-      this.btnType = "Pause";
-      window.clearInterval(this.polling);
+    stop: async function () {
+      if (this.polling)
+        window.clearInterval(this.polling);
+
+
+      this.$refs.record.removeAttribute('disabled');
+      this.$refs.stop.setAttribute('disabled', true);
+      this.$refs.play.removeAttribute('disabled');
+      this.$refs.save.removeAttribute('disabled');
+      this.audio = await this.recorder.stop();
+
+    },
+    play: async function () {
+      if (this.polling)
+        window.clearInterval(this.polling);
       this.recordTime.mm = 0;
       this.recordTime.ss = 0;
       this.recordTime.ss1 = 0;
       this.recordMTime = 0;
+
+
+      this.audio.play();
     },
-    recordAdd: function () {
-      if (this.recordMTime) {
-        alert('Adding is success.');
-      }
-      else {
-        alert('Nothing is data to add.');
-      }
-      window.clearInterval(this.polling);
-      this.recordTime.mm = 0;
-      this.recordTime.ss = 0;
-      this.recordTime.ss1 = 0;
-      this.recordMTime = 0;
-      this.btnType = "Pause";
+    save: async function () {
+      if (this.polling)
+        window.clearInterval(this.polling);
+
+
+
+
+      const reader = new FileReader();
+
+
+
+      reader.readAsDataURL(this.audio.audioBlob);
+      reader.onload = () => {
+        const base64AudioMessage = reader.result.split(',')[1];
+
+
+        fetch('/api/upload_audio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: base64AudioMessage })
+        })
+          .then(response => response.json())
+          .then(data => {
+            this.audioList.push({ fileName: data.message, active: "inactive", duration: this.recordMTime });
+
+            this.recordTime.mm = 0;
+            this.recordTime.ss = 0;
+            this.recordTime.ss1 = 0;
+            this.recordMTime = 0;
+
+          })
+      };
 
       return;
+    },
+    audio_select: function (e, index) {
+      for (let audioItem of this.audioList) {
+        audioItem.active = "inactive";
+      }
+
+      this.audioList[index].active = "audio-active";
+      console.log(e.target, index);
+    },
+    addAudio: function () {
+
+      window.clearInterval(this.polling);
+      this.recordTime.mm = 0;
+      this.recordTime.ss = 0;
+      this.recordTime.ss1 = 0;
+      this.recordMTime = 0;
+
+      //audioItem.active == "audio-active", fileName, duration
+      let activeFlag = 0;
+
+      for (let audioItem of this.audioList) {
+
+        if (audioItem.active === "audio-active") {
+
+          activeFlag = 1;
+          //set duration
+          this.$store.dispatch("setData", {
+            type: "audioDuration",
+            value: audioItem.duration
+          });
+
+
+
+          //get new audioFrom
+          let audioFrom = parseInt(this.$store.state.set.audioTo.mm) * 6000 + parseInt(this.$store.state.set.audioTo.ss) * 100 + this.$store.state.set.audioTo.ss1 + 2;
+
+          //get new audioTo
+          let audioTo = audioFrom + audioItem.duration;
+          //set new audioFrom to store
+
+
+
+          let audioFromObj = { mm: parseInt(audioFrom / 6000), ss: parseInt((audioFrom % 6000) / 100), ss1: parseInt((audioFrom % 6000) % 100) };
+          let audioToObj = { mm: parseInt(audioTo / 6000), ss: parseInt((audioTo % 6000) / 100), ss1: parseInt((audioTo % 6000) % 100) };
+
+
+          this.$store.dispatch("setData", {
+            type: "audioFrom",
+            value: audioFromObj
+          });
+
+          //set new audioTo to store          
+          this.$store.dispatch("setData", {
+            type: "audioTo",
+            value: audioToObj
+          });
+
+
+
+
+        }
+      }
+
+      if (!activeFlag) {
+        alert("Nothing is data to add.");
+      }
+      var payload = {
+        type: "audios",
+        value: {
+          from: { ...this.$store.state.set.audioFrom },
+          to: { ...this.$store.state.set.audioTo }
+        }
+      };
+
+      this.$store.dispatch("addToUploadDatas", payload);
+      console.log("this.$store.state.upload.audios", this.$store.state.upload.audios);
     },
     close: function () {
 
@@ -1103,6 +1272,8 @@ input[type="color"] {
   cursor: pointer;
 }
 
+
+
 .shape-circle {
   width: 40px;
   height: 40px;
@@ -1140,6 +1311,11 @@ input[type="color"] {
   color: rgb(13, 110, 253);
 }
 
+.record-btn-group {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
 
 /* input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -1151,6 +1327,20 @@ input[type=number]::-webkit-outer-spin-button {
   background-color: rgba(15, 15, 15, 0.5);
 }
 
+.record-audio {
+  height: 30px !important;
+}
+
+.audio-active {
+  border: solid 1px blue !important;
+}
+
+input[type="radio"] {
+  cursor: pointer;
+  margin-left: 15px;
+  border: none;
+}
+
 .btn-record {
   margin: 5px;
   margin-top: 20px;
@@ -1158,5 +1348,242 @@ input[type=number]::-webkit-outer-spin-button {
 
 textarea {
   color: black;
+}
+
+.audio-panel {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+}
+
+.audio-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.add-audio {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 90%;
+}
+
+#saved-audio-messages {
+  height: 150px;
+  width: 100%;
+  text-align: center;
+  overflow-y: scroll;
+}
+
+audio {
+  height: 30px;
+  width: 90%;
+}
+
+
+
+audio::-webkit-media-controls {
+  width: inherit;
+  height: inherit;
+  position: relative;
+  direction: ltr;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+audio::-webkit-media-controls-enclosure {
+  width: 100%;
+  max-width: 800px;
+  height: 30px;
+  flex-shrink: 0;
+  bottom: 0;
+  text-indent: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+audio::-webkit-media-controls-panel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* We use flex-start here to ensure that the play button is visible even
+     * if we are too small to show all controls.
+     */
+  justify-content: flex-start;
+  -webkit-user-select: none;
+  position: relative;
+  width: 100%;
+  z-index: 0;
+  overflow: hidden;
+  text-align: right;
+  bottom: auto;
+  height: 30px;
+  background-color: rgba(20, 20, 20, 0.5);
+  border-radius: 5px;
+
+  /* The duration is also specified in MediaControlElements.cpp and LayoutTests/media/media-controls.js */
+  transition: opacity 0.3s;
+}
+
+
+audio:-webkit-full-page-media {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+audio:-webkit-full-page-media::-webkit-media-controls-panel {
+  bottom: 0px;
+}
+
+audio::-webkit-media-controls-mute-button {
+  -webkit-appearance: media-mute-button;
+  display: flex;
+  flex: none;
+  border: none;
+  box-sizing: border-box;
+  width: 35px;
+  height: 30px;
+  line-height: 30px;
+  margin: 0 6px 0 0;
+  padding: 0;
+  background-color: initial;
+  color: inherit;
+}
+
+audio::-webkit-media-controls-overlay-enclosure {
+  display: none;
+}
+
+audio::-webkit-media-controls-play-button {
+  -webkit-appearance: media-play-button;
+  display: flex;
+  flex: none;
+  border: none;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: 9px;
+  margin-right: 9px;
+  padding: 0;
+  background-color: initial;
+  color: inherit;
+}
+
+audio::-webkit-media-controls-timeline-container {
+  -webkit-appearance: media-controls-background;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1;
+  -webkit-user-select: none;
+  height: 16px;
+  min-width: 0;
+}
+
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  -webkit-appearance: media-current-time-display;
+  -webkit-user-select: none;
+  flex: none;
+  display: flex;
+  border: none;
+  cursor: default;
+  height: 30px;
+  margin: 0 9px 0 0;
+  padding: 0;
+  line-height: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  font-style: normal;
+  color: white;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-transform: none;
+  text-indent: 0;
+  text-shadow: none;
+  text-decoration: none;
+}
+
+audio::-webkit-media-controls-timeline {
+  -webkit-appearance: media-slider;
+  display: flex;
+  flex: 1 1 auto;
+  height: 8px;
+  margin: 0 15px 0 0;
+  padding: 0;
+  background-color: transparent;
+  min-width: 25px;
+  border: initial;
+  color: inherit;
+}
+
+
+
+/* FIXME these shouldn't use special pseudoShadowIds, but nicer rules.
+   https://code.google.com/p/chromium/issues/detail?id=112508
+   https://bugs.webkit.org/show_bug.cgi?id=62218
+*/
+input[type="range" i]::-webkit-media-slider-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  /* This property is updated by C++ code. */
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  border: 1px solid rgba(230, 230, 230, 0.35);
+  border-radius: 4px;
+  background-color: transparent;
+  /* Background drawing is managed by C++ code to draw ranges. */
+}
+
+/* The negative right margin causes the track to overflow its container. */
+input[type="range" i]::-webkit-media-slider-container>div {
+  margin-right: -14px;
+}
+
+input[type="range" i]::-webkit-media-slider-thumb {
+  margin-left: -7px;
+  margin-right: -7px;
+}
+
+audio::-webkit-media-controls-fullscreen-button {
+  -webkit-appearance: media-enter-fullscreen-button;
+  display: flex;
+  flex: none;
+  border: none;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin-left: -5px;
+  margin-right: 9px;
+  padding: 0;
+  background-color: initial;
+  color: inherit;
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button {
+  display: none;
+}
+
+
+audio::-webkit-media-controls-fullscreen-volume-slider {
+  display: none;
+}
+
+audio::-webkit-media-controls-fullscreen-volume-min-button {
+  display: none;
+}
+
+audio::-webkit-media-controls-fullscreen-volume-max-button {
+  display: none;
 }
 </style>

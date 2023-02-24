@@ -7,14 +7,14 @@
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool === `shape`"
       v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" class="div-range active"
-      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;height:28px;position:absolute`">
+      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0, id)"></div>
       <div class="text" @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}</div>
       <div class="right" @mousedown="resizeSelected($event, 1, id)" :style="`left: ${this.width[id] - 10}px`"></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `shape`"
       v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" class="div-range"
-      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;height:28px;position:absolute`">
+      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left"></div>
       <div class="text">{{ shape.value.shapeContent }}</div>
       <div class="right" :style="`left: ${this.width[id] - 7}px`"></div>
@@ -118,15 +118,15 @@ export default {
 
         var timeObject = timeToObject(time);
 
-        if (type == "textFrom") {
-          shapes[index].value.textFrom.mm = timeObject.mm;
-          shapes[index].value.textFrom.ss = timeObject.ss;
-          shapes[index].value.textFrom.ss1 = timeObject.ss1;
+        if (type == "shapeFrom") {
+          shapes[index].value.shapeFrom.mm = timeObject.mm;
+          shapes[index].value.shapeFrom.ss = timeObject.ss;
+          shapes[index].value.shapeFrom.ss1 = timeObject.ss1;
         }
-        else if (type == "textTo") {
-          shapes[index].value.textTo.mm = timeObject.mm;
-          shapes[index].value.textTo.ss = timeObject.ss;
-          shapes[index].value.textTo.ss1 = timeObject.ss1;
+        else if (type == "shapeTo") {
+          shapes[index].value.shapeTo.mm = timeObject.mm;
+          shapes[index].value.shapeTo.ss = timeObject.ss;
+          shapes[index].value.shapeTo.ss1 = timeObject.ss1;
         }
 
         var payload = { type: "shapes", value: shapes };
@@ -142,6 +142,7 @@ export default {
       if (this.resizeState == true) {//right
         if (this.resizeType == 1) {
           //check conflict
+          console.log(this.resizeId, "resizeId");
           if (this.resizeId + 1 != this.width.length) {
 
 
@@ -314,20 +315,20 @@ label {
 }
 
 .div-range {
-  position: relative;
   left: 0px;
   text-indent: 0px;
+  height: 28px;
+  position: absolute;
   background-color: rgb(46, 185, 66);
   margin: 3px 0px;
   border-radius: 5px;
-  z-index: 2;
 }
 
 .left {
   position: absolute;
   background-color: rgba(255, 255, 255, 0.5);
   /* border: none; */
-  /* border-left: solid 2px rgba(255, 255, 255, 0.6); */
+  border-left: solid 2px rgba(255, 255, 255, 0.6);
   height: 100%;
   left: 0px;
   top: 0px;
@@ -338,8 +339,8 @@ label {
 
 .text {
   text-align: center;
+  position: relative;
   overflow: hidden;
-  padding: 0px 5px;
 }
 
 

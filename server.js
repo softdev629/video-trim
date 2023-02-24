@@ -6,9 +6,14 @@ var cors = require('cors');
 
 var apiRouter = require('./routes/api');
 
+
+
+
 var app = express();
 
 var debug = require('debug')('video-editor-backend:server');
+
+
 var http = require('http');
 
 require('dotenv').config()

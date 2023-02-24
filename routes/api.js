@@ -6,6 +6,55 @@ var fs = require('fs');
 const { execSync } = require("child_process");
 var ffmpeg = require('fluent-ffmpeg');
 
+/* for audio upload */
+const { promisify } = require('util');
+const { v4 } = require('uuid');
+
+const writeFile = promisify(fs.writeFile);
+const readdir = promisify(fs.readdir);
+
+// make sure messages folder exists
+const messageFolder = 'public/audios/';
+if (!fs.existsSync(messageFolder)) {
+  fs.mkdirSync(messageFolder);
+}
+
+
+
+// router.get('/upload/audio', (req, res) => {
+//   readdir(messageFolder)
+//     .then(messageFilenames => {
+//       res.status(200).json({ messageFilenames });
+//     })
+//     .catch(err => {
+//       console.log('Error reading message directory', err);
+//       res.sendStatus(500);
+//     });
+// });
+
+router.post('/upload_audio', (req, res) => {
+  if (!req.body.message) {
+    return res.status(400).json({ error: 'No req.body.message' });
+  }
+  const messageId = v4();
+  writeFile(messageFolder + messageId, req.body.message, 'base64')
+    .then(() => {
+      res.status(201).json({ fileName: messageId });
+    })
+    .catch(err => {
+      console.log('Error writing message to file', err);
+      res.sendStatus(500);
+    });
+});
+
+
+
+/* for audio upload */
+
+
+
+
+
 const generateFileName = (originalName) => (Date.now() + "-" + Math.round(Math.random() * 1E9) + path.extname(originalName));
 
 const storage = multer.diskStorage({
@@ -252,25 +301,22 @@ router.post('/save/:fname', async function (req, res, next) {
         });
       }));
       console.log("output2.mp4\n", videoInfo);
-      // console.log('bbbbbbbbbbbbbbbbbbbbbbb');
+
 
       for (let index in concatList) {
         commandString += `[${index}:v]scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:-1:-1,setsar=1,fps=30,format=yuv420p[v${index}];`;
       }
 
-      // console.log('ccccccccccccccccccccc');
 
       for (let index in concatList) {
         commandString += `[${index}:a]aformat=sample_rates=48000:channel_layouts=stereo[a${index}];`;
       }
 
-      // console.log('dddddddddddddddddddd');
 
       for (let index in concatList) {
         commandString += `[v${index}][a${index}]`;
       }
 
-      // console.log('eeeeeeeeeeeeeeeeeeeeee');
 
       commandString += `concat=n=${concatList.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac -movflags +faststart ${newName}`;
       execSync(commandString);
@@ -286,7 +332,6 @@ router.post('/save/:fname', async function (req, res, next) {
       fs.unlinkSync('output1.mp4');
     }
 
-    // console.log('ffffffffffffffffff');
 
     if (fs.existsSync("output2.mp4")) {
       fs.unlinkSync('output2.mp4');
@@ -297,13 +342,12 @@ router.post('/save/:fname', async function (req, res, next) {
     if (fs.existsSync("subtitles.srt")) {
       fs.unlinkSync("subtitles.srt");
     }
-    // console.log('ggggggggggggggggggg');
+
   } catch (error) {
     if (fs.existsSync("output1.mp4")) {
       fs.unlinkSync('output1.mp4');
     }
 
-    // console.log('ffffffffffffffffff');
 
     if (fs.existsSync("output2.mp4")) {
       fs.unlinkSync('output2.mp4');
@@ -314,7 +358,7 @@ router.post('/save/:fname', async function (req, res, next) {
     if (fs.existsSync("subtitles.srt")) {
       fs.unlinkSync("subtitles.srt");
     }
-    // console.log('ggggggggggggggggggg');
+
     return res.status(500).json({ error });
   }
   generateThumbnails(nname);

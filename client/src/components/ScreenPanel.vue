@@ -13,19 +13,19 @@
       </div>
   </div> -->
     <div class="shape-section"
-      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `rectangle`"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Rectangle`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
     <div class="shape-section"
-      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `line`"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Line`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
     <div class="shape-section"
-      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `circle`"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Circle`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
@@ -256,7 +256,7 @@ export default {
           return;
         }
 
-        if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'rectangle') {
+        if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Rectangle') {
 
           if (this.selectState == 1) {
             this.$store.dispatch('setData', {
@@ -285,7 +285,7 @@ export default {
             });
           }
         }
-        else if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'circle') {
+        else if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Circle') {
 
           if (this.selectState == 1) {
 
@@ -316,7 +316,7 @@ export default {
           }
 
         }
-        else if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'line') {
+        else if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Line') {
 
           if (this.selectState == 1) {
             this.$store.dispatch('setData', {

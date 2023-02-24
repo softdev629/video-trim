@@ -29,10 +29,11 @@ export default {
 
     audioFrom: { mm: 0, ss: 0, ss1: 0 },
     audioTo: { mm: 0, ss: 0, ss1: 0 },
+    audioDuration: 0,
 
     shapeFrom: { mm: 0, ss: 0, ss1: 0 },
     shapeTo: { mm: 0, ss: 0, ss1: 0 },
-    shapeContent: "rectangle",
+    shapeContent: "Rectangle",
     shapeBorderColor: "rgb(16,16,16)",
     shapeBorderWidth: 1,
     shapeColor: "rgb(16,16,16)",
@@ -99,10 +100,11 @@ export default {
 
       state.audioFrom = { mm: 0, ss: 0, ss1: 0 };
       state.audioTo = { mm: 0, ss: 0, ss1: 0 };
+      state.audioDuration = 0;
 
       state.shapeFrom = { mm: 0, ss: 0, ss1: 0 };
       state.shapeTo = { mm: 0, ss: 0, ss1: 0 };
-      state.shapeContent = "rectangle";
+      state.shapeContent = "Rectangle";
       state.shapeBorderColor = "rgb(16,16,16)";
       state.shapeBorderWidth = 1;
       state.shapeColor = "rgb(16,16,16)";
@@ -212,6 +214,8 @@ export default {
         case "audioTo":
           state.audioTo = payload.value;
           return;
+        case "audioDuration":
+          state.audioDuration = payload.value;
 
         case "shapeFrom":
           state.shapeFrom = payload.value;
@@ -396,6 +400,8 @@ export default {
         case "audioTo":
           state.audioTo = { mm: 0, ss: 0, ss1: 0 };
           return;
+        case "audioDuration":
+          state.audioDuration = 0;
 
         case "shapeFrom":
           state.shapeFrom = { mm: 0, ss: 0, ss1: 0 };
@@ -410,7 +416,7 @@ export default {
           state.shapeBorderColor = "rgb(16,16,16)";
           return;
         case "shapeContent":
-          state.shapeContent = "rectangle";
+          state.shapeContent = "Rectangle";
           return;
         case "shapeColor":
           state.shapeColor = "rgb(16,16,16)";
@@ -502,6 +508,9 @@ export default {
           return;
       }
     },
+    TIME_OBJ_TO_TIME(state, obj) {
+      return obj.mm * 6000 + obj.ss * 100 + obj.ss1;
+    }
   },
   actions: {
     initData(context) {
@@ -513,6 +522,59 @@ export default {
     delData(context, payload) {
       context.commit("DELETE_SET_DATA", payload);
     },
+    recordAudio() {
+      new Promise(async resolve => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        let audioChunks = [];
+
+        mediaRecorder.addEventListener('dataavailable', event => {
+          audioChunks.push(event.data);
+        });
+
+        const start = () => {
+          audioChunks = [];
+          mediaRecorder.start();
+        };
+
+        const stop = () =>
+          new Promise(resolve => {
+            mediaRecorder.addEventListener('stop', () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+              const audioUrl = URL.createObjectURL(audioBlob);
+              const audio = new Audio(audioUrl);
+              const play = () => audio.play();
+              resolve({ audioChunks, audioBlob, audioUrl, play });
+            });
+
+            mediaRecorder.stop();
+          });
+
+        resolve({ start, stop });
+      });
+    },
+    timeObjToTime(context, obj) {
+      return context.commit("TIME_OBJ_TO_TIME", obj);
+    },
+    timeToTimeObj(context, time) {
+      console.log('timeToTimeObj', time);
+      return time;
+      // let obj = {
+      //   mm: Math.trunc(time / 6000),
+      //   ss: Math.trunc((time % 6000) / 100),
+      //   ss1: Math.trunc((time % 6000) % 100)
+      // }
+      // console.log("obj", obj);
+      // return obj;
+    },
+    timeToPixel(context, time) {
+      let pixel;
+      return pixel;
+    },
+    pixelToTime(context, pixel) {
+      let time;
+      return time;
+    }
   }
 
 };

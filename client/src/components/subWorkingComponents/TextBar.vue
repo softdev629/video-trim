@@ -7,8 +7,7 @@
     </div>
 
     <div v-if="this.$store.state.set.selectedSettingTool === `text`" v-for="(text, id) in this.$store.state.upload.texts"
-      :key="id" class="div-range active"
-      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;height:28px;position:absolute`">
+      :key="id" class="div-range active" :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0, id)"></div>
       <div class="text " @contextmenu="popup($event); " @mousedown="resizeSelected($event, 2, id)">{{
         text.value.textContent
@@ -17,8 +16,7 @@
       <div class="right" @mousedown="resizeSelected($event, 1, id)" :style="`left: ${this.width[id] - 10}px`"></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `text`" v-for="(text, id) in this.$store.state.upload.texts"
-      :key="id" class="div-range"
-      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;height:28px;position:absolute`">
+      :key="id" class="div-range" :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left"></div>
       <div class="text">{{ text.value.textContent }}</div>
       <div class="right" :style="`left: ${this.width[id] - 7}px`"></div>
@@ -346,7 +344,8 @@ label {
 }
 
 .div-range {
-  position: relative;
+  height: 28px;
+  position: absolute;
   left: 0px;
   text-indent: 0px;
   background-color: rgb(244, 162, 30);

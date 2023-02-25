@@ -7,9 +7,10 @@
     </div>
 
     <div v-if="this.$store.state.set.selectedSettingTool === `text`" v-for="(text, id) in this.$store.state.upload.texts"
-      :key="id" class="div-range active" :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
+      :key="id" :class="`div-range ${this.active[id]}`"
+      :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0, id)"></div>
-      <div class="text " @contextmenu="popup($event); " @mousedown="resizeSelected($event, 2, id)">{{
+      <div class="text " @click="selectItem(id)" @mousedown="resizeSelected($event, 2, id)">{{
         text.value.textContent
       }}
       </div>
@@ -38,11 +39,12 @@ export default {
       resizeStart: 0,
       resizeState: false,
       resizeType: 0,
-      resizeId: 0
+      resizeId: 0,
+      active: []
     };
   },
   mounted() {
-    var start = [], width = [];
+    var start = [], width = [], active = [];
 
 
     for (var i = 0; i < this.$store.state.upload.texts.length; i++) {
@@ -50,12 +52,15 @@ export default {
 
       width.push(100 * (this.$store.state.upload.texts[i].value.textTo.mm * 6000 + this.$store.state.upload.texts[i].value.textTo.ss * 100 + this.$store.state.upload.texts[i].value.textTo.ss1 - this.$store.state.upload.texts[i].value.textFrom.mm * 6000 - this.$store.state.upload.texts[i].value.textFrom.ss * 100 - this.$store.state.upload.texts[i].value.textFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
 
-
+      active.push("inactive");
 
 
     }
     this.start = start;
     this.width = width;
+    this.active = active;
+
+    window.addEventListener('keydown', this.delText);
   },
   watch: {
     zoom: function (newZoom, oldZoom) {
@@ -66,7 +71,7 @@ export default {
       this.width = this.width * newZoom;
     },
     "$store.state.upload.texts.length": function (newZoom, oldZoom) {
-      var start = [], width = [];
+      var start = [], width = [], active = [];
 
 
       for (var i = 0; i < this.$store.state.upload.texts.length; i++) {
@@ -74,10 +79,11 @@ export default {
 
         width.push(100 * (this.$store.state.upload.texts[i].value.textTo.mm * 6000 + this.$store.state.upload.texts[i].value.textTo.ss * 100 + this.$store.state.upload.texts[i].value.textTo.ss1 - this.$store.state.upload.texts[i].value.textFrom.mm * 6000 - this.$store.state.upload.texts[i].value.textFrom.ss * 100 - this.$store.state.upload.texts[i].value.textFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
 
-
+        active.push("inactive");
       }
       this.start = start;
       this.width = width;
+      this.active = active;
 
     },
   },
@@ -90,6 +96,93 @@ export default {
       // else if (e.target.tagName == "SPAN") {
       //   e.target.classList.toggle("show");
       // }
+    },
+    delText(event) {
+      //      alert(event.which);
+      if (event.which !== 46)
+        return;
+      var id = 0, flag = 0;
+      for (var i = 0; i < this.active.length; i++) {
+        if (this.active[i] === "active") {
+          id = i; flag = 1;
+          break;
+        }
+      }
+
+      if (!flag)
+        return;
+
+      if (this.$store.state.set.selectedSettingTool !== "text")
+        return;
+
+      if (this.active[id] !== "active")
+        return;
+
+      var texts = this.$store.state.upload.texts;
+      console.log("id,  length", id, this.active.length);
+
+      var payload;
+
+      if (id == this.active.length - 1) {
+        if (id == 0) {
+          payload = {
+            type: "textFrom", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "textTo", value: {
+              mm: 0,
+              ss: 5,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+        else {
+          payload = {
+            type: "textFrom", value: {
+              mm: this.$store.state.upload.texts[id - 1].value.textFrom.mm,
+              ss: this.$store.state.upload.texts[id - 1].value.textFrom.ss,
+              ss1: this.$store.state.upload.texts[id - 1].value.textFrom.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "textTo", value: {
+              mm: this.$store.state.upload.texts[id - 1].value.textTo.mm,
+              ss: this.$store.state.upload.texts[id - 1].value.textTo.ss,
+              ss1: this.$store.state.upload.texts[id - 1].value.textTo.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+
+      }
+
+
+      texts.splice(id, 1);
+
+      payload = { type: "texts", value: texts };
+
+
+      this.$store.dispatch("updateToUploadDatas", payload);
+
+    },
+    selectItem(id) {
+      for (var i = 0; i < this.active.length; i++) {
+        this.active[i] = "inactive";
+      }
+      this.active[id] = "active";
     },
     resizeSelected(e, type, id) {
 

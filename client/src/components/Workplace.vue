@@ -111,7 +111,7 @@ export default {
       var c_start = this.$store.state.set.cutFrom.mm.toString() + ":" + this.$store.state.set.cutFrom.ss.toString();
       var c_end = this.$store.state.set.cutTo.mm.toString() + ":" + this.$store.state.set.cutTo.ss.toString();
 
-      var tempTitles = [], tempShapes = [];
+      var tempTitles = [], tempShapes = [], tempAudios = [];
 
       const timeToString = value => {
         return Math.trunc(value.mm / 60) + ":" + value.mm % 60 + ":" + value.ss;
@@ -142,6 +142,17 @@ export default {
 
       console.log(tempShapes, "tempShapes");
 
+      for (var audio of this.$store.state.upload.audios) {
+        tempAudios.push({
+          from: timeToString(audio.value.from),
+          to: timeToString(audio.value.to)
+        });
+      }
+
+
+
+      console.log(tempAudios, "tempAudios");
+
       if (t_start == c_start && t_end == c_end) {
         c_start = t_start;
         c_end = c_start;
@@ -158,7 +169,8 @@ export default {
           "end": c_end,
         },
         "subtitles": tempTitles,
-        //        "shapes": tempShapes,
+        //"shapes": tempShapes,
+        //"audios":tempAudios
       };
 
       console.log(data, 'uploading');
@@ -284,37 +296,48 @@ export default {
 
         this.$store.dispatch("setData", payload);
 
-        if (this.$store.state.set.textTo.ss >= 5) {
-          payload = {
-            type: "textTo", value: {
-              mm: 0,
-              ss: 5,
-              ss1: 0,
-            }
-          };
-        }
-        else if (this.$store.state.set.textTo.ss == 0) {
-          payload = {
-            type: "textTo", value: {
-              mm: 0,
-              ss: 0,
-              ss1: 0,
-            }
+        payload = {
+          type: "textTo", value: {
+            mm: 0,
+            ss: 5,
+            ss1: 0,
           }
-        }
-        else {
-          payload = {
-            type: "textTo", value: {
-              mm: 0,
-              ss: this.$store.state.set.duration.ss,
-              ss1: 0,
-            }
-          };
-        }
-
+        };
 
         this.$store.dispatch("setData", payload);
 
+        /*
+                if (this.$store.state.set.textTo.ss >= 5) {
+                  payload = {
+                    type: "textTo", value: {
+                      mm: 0,
+                      ss: 5,
+                      ss1: 0,
+                    }
+                  };
+                }
+                else if (this.$store.state.set.textTo.ss == 0) {
+                  payload = {
+                    type: "textTo", value: {
+                      mm: 0,
+                      ss: 0,
+                      ss1: 0,
+                    }
+                  }
+                }
+                else {
+                  payload = {
+                    type: "textTo", value: {
+                      mm: 0,
+                      ss: this.$store.state.set.duration.ss,
+                      ss1: 0,
+                    }
+                  };
+                }
+        
+        
+                this.$store.dispatch("setData", payload);
+*/
 
         payload = {
           type: "shapeFrom", value: {
@@ -326,6 +349,17 @@ export default {
 
         this.$store.dispatch("setData", payload);
 
+        payload = {
+          type: "shapeTo", value: {
+            mm: 0,
+            ss: 5,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+
+        /*
         if (this.$store.state.set.shapeTo.ss >= 5) {
           payload = {
             type: "shapeTo", value: {
@@ -356,7 +390,32 @@ export default {
 
 
         this.$store.dispatch("setData", payload);
+*/
 
+        payload = {
+          type: "audioFrom", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+
+        payload = {
+          type: "audioTo", value: {
+            mm: 0,
+            ss: 0,
+            ss1: 0,
+          }
+        };
+
+        this.$store.dispatch("setData", payload);
+
+        this.$store.dispatch("setData",
+          {
+            type: "audioDuration", value: 0
+          });
 
 
         payload = { type: 'comment', value: "none" };
@@ -376,6 +435,9 @@ export default {
         this.$store.dispatch('updateToUploadDatas', payload);
 
         payload = { type: 'shapes', value: [] };
+        this.$store.dispatch('updateToUploadDatas', payload);
+
+        payload = { type: 'audios', value: [] };
         this.$store.dispatch('updateToUploadDatas', payload);
 
         this.$router.push('/workplace');

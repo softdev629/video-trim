@@ -12,9 +12,10 @@ label {
       <i class="fa fa-microphone"></i>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool === `audio`"
-      v-for="(audio, id) in this.$store.state.upload.audios" :key="id" class="div-range active"
+      v-for="(audio, id) in this.$store.state.upload.audios" :key="id" :class="`div-range ${this.active[id]}`"
       :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
-      <div class="text" @mousedown="resizeSelected($event, 2, id)"><i class="fa fa-microphone"></i></div>
+      <div class="text" @click="selectItem(id)" @mousedown="resizeSelected($event, 2, id)"><i
+          class="fa fa-microphone"></i></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `audio`"
       v-for="(audio, id) in this.$store.state.upload.audios" :key="id" class="div-range"
@@ -37,11 +38,12 @@ export default {
       resizeStart: 0,
       resizeState: false,
       resizeType: 0,
-      resizeId: 0
+      resizeId: 0,
+      active: []
     };
   },
   mounted() {
-    var start = [], width = [];
+    var start = [], width = [], active = [];
 
 
     for (var i = 0; i < this.$store.state.upload.audios.length; i++) {
@@ -49,12 +51,14 @@ export default {
 
       width.push(100 * (this.$store.state.upload.audios[i].value.to.mm * 6000 + this.$store.state.upload.audios[i].value.to.ss * 100 + this.$store.state.upload.audios[i].value.to.ss1 - this.$store.state.upload.audios[i].value.from.mm * 6000 - this.$store.state.upload.audios[i].value.from.ss * 100 - this.$store.state.upload.audios[i].value.from.ss1) / (100 * (this.zoom - 6) * (-1)));
 
-
+      active.push("inactive");
     }
     this.start = start;
     this.width = width;
+    this.active = active;
 
 
+    window.addEventListener('keydown', this.delAudio);
 
   },
   watch: {
@@ -67,21 +71,114 @@ export default {
 
     },
     "$store.state.upload.audios.length": function (newZoom, oldZoom) {
-      var start = [], width = [];
+      var start = [], width = [], active = [];
 
       for (var i = 0; i < this.$store.state.upload.audios.length; i++) {
         start.push(100 * (this.$store.state.upload.audios[i].value.from.mm * 6000 + this.$store.state.upload.audios[i].value.from.ss * 100 + this.$store.state.upload.audios[i].value.from.ss1) / (100 * (this.zoom - 6) * (-1)));
 
         width.push(100 * (this.$store.state.upload.audios[i].value.to.mm * 6000 + this.$store.state.upload.audios[i].value.to.ss * 100 + this.$store.state.upload.audios[i].value.to.ss1 - this.$store.state.upload.audios[i].value.from.mm * 6000 - this.$store.state.upload.audios[i].value.from.ss * 100 - this.$store.state.upload.audios[i].value.from.ss1) / (100 * (this.zoom - 6) * (-1)));
 
+        active.push("inactive");
+
       }
       this.start = start;
       this.width = width;
-      console.log("start", start, "width", width);
+      this.active = active;
     },
   },
 
   methods: {
+    delAudio(event) {
+      //      alert(event.which);
+      if (event.which !== 46)
+        return;
+      var id = 0, flag = 0;
+      for (var i = 0; i < this.active.length; i++) {
+        if (this.active[i] === "active") {
+          id = i; flag = 1;
+          break;
+        }
+      }
+
+      if (!flag)
+        return;
+
+      if (this.$store.state.set.selectedSettingTool !== "audio")
+        return;
+
+      if (this.active[id] !== "active")
+        return;
+
+
+
+
+      var audios = this.$store.state.upload.audios;
+      console.log("id,  length", id, this.active.length);
+      console.log("id,  length", id, audios);
+
+      var payload;
+
+      if (id == this.active.length - 1) {
+        if (id == 0) {
+          payload = {
+            type: "audioFrom", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "audioTo", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+        else {
+          payload = {
+            type: "audioFrom", value: {
+              mm: this.$store.state.upload.audios[id - 1].value.from.mm,
+              ss: this.$store.state.upload.audios[id - 1].value.from.ss,
+              ss1: this.$store.state.upload.audios[id - 1].value.from.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "audioTo", value: {
+              mm: this.$store.state.upload.audios[id - 1].value.to.mm,
+              ss: this.$store.state.upload.audios[id - 1].value.to.ss,
+              ss1: this.$store.state.upload.audios[id - 1].value.to.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+
+      }
+
+
+      audios.splice(id, 1);
+
+      payload = { type: "audios", value: audios };
+
+
+      this.$store.dispatch("updateToUploadDatas", payload);
+
+    },
+    selectItem(id) {
+      for (var i = 0; i < this.active.length; i++) {
+        this.active[i] = "inactive";
+      }
+      this.active[id] = "active";
+    },
     resizeSelected(e, type, id) {
       if (this.$store.state.set.selectedSettingTool !== 'audio')
         return;
@@ -159,7 +256,7 @@ export default {
       if (this.resizeState == true) {//right
 
         //check conflict
-        console.log('111111111111111111111111111111111111111111', this.start[this.resizeId] + this.width[this.resizeId], e.x - this.resizeStart, this.start[this.resizeId + 1]);
+
         if (this.resizeId + 1 != this.width.length) {
           if (this.start[this.resizeId] + this.width[this.resizeId] + e.x - this.resizeStart >= this.start[this.resizeId + 1] && e.x - this.resizeStart > 0) {
 
@@ -170,7 +267,7 @@ export default {
             return;
           }
         }
-        console.log('33333333333333333333333333333333333333333');
+
         if (this.resizeId != 0) {
           if (this.start[this.resizeId - 1] + this.width[this.resizeId - 1] >= this.start[this.resizeId] + e.x - this.resizeStart) {
 
@@ -183,24 +280,24 @@ export default {
           }
         }
 
-        console.log('55555555555555555555555555555555555555555');
+
         if (this.start[this.resizeId] + e.x - this.resizeStart < 0) {
           this.start[this.resizeId] = 0;
-          console.log('666666666666666666666666666666666666666666666666');
+
           update("from", this.start[this.resizeId], this.resizeId);
 
           this.resizeState = false;
           this.resizeStart = 0;
           return;
         }
-        console.log('7777777777777777777777777777777777777777777777');
+
         this.start[this.resizeId] += e.x - this.resizeStart;
         update("from", this.start[this.resizeId], this.resizeId);
 
         if (this.resizeId + 1 == this.width.length) {
           var from = parseInt((((this.start[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
           var to = parseInt((((this.start[this.resizeId] + this.width[this.resizeId]) / 100) * 100) * ((-1) * (this.zoom - 6)));
-          console.log('88888888888888888888888888888888888888888888888');
+
           var payload = {
             type: "audioFrom", value: {
               mm: parseInt((from) / (100 * 60)),
@@ -221,7 +318,7 @@ export default {
           this.$store.dispatch("setData", payload);
           update("to", this.width[this.resizeId] + this.start[this.resizeId], this.resizeId);
         }
-        console.log('999999999999999999999999999999999999');
+
 
 
         this.resizeStart = e.x;

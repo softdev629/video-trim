@@ -4,16 +4,16 @@
     <div class="setting-panel-close" v-if="this.$store.state.set.selectedSettingTool !== 0"><a @click="close()">
         <i class="fa fa-chevron-left"></i></a></div>
     <div v-if="this.$store.state.set.selectedSettingTool === `shape`" style="text-align:center">
-      <button class="btn my-btn btn-success" style="margin-bottom:5px;width:50%" @click="addShape()">Add Shape</button>
+      <button class="btn my-btn btn-success" style="margin-bottom:5px;width:50%" @click="addShape()">図形追加</button>
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `trim`">
       <div style="display:flex;justify-content: center;">
-        <label style="width:50px;text-align: right;">From&nbsp;&nbsp;:</label>
+        <label style="width:50px;text-align: right;">開始&nbsp;&nbsp;:</label>
         <Timepicker :tmm="this.$store.state.set.videoFrom.mm" :tss="this.$store.state.set.videoFrom.ss"
           :tss1="this.$store.state.set.videoFrom.ss1" :timeData="`stimeData`" @timeChange="stimeChange" />
       </div>
       <div style="display:flex; margin-top:10px;justify-content: center;">
-        <label style="width:50px;text-align: right;">To&nbsp;&nbsp;:</label>
+        <label style="width:50px;text-align: right;">終了&nbsp;&nbsp;:</label>
         <Timepicker :tmm="this.$store.state.set.videoTo.mm" :tss="this.$store.state.set.videoTo.ss"
           :tss1="this.$store.state.set.videoTo.ss1" :timeData="`etimeData`" @timeChange="etimeChange" />
       </div><!-- 
@@ -62,13 +62,13 @@
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `text`">
       <div class="row" style="padding-left: 20px; padding-right: 20px;">
         <div class="col-md-12">
-          <button class="btn my-btn btn-success" @click="addSubTitle()">Add Subtitle</button>
+          <button class="btn my-btn btn-success" @click="addSubTitle()">字幕追加</button>
         </div>
         <div class="form-group" style="margin:0px;">
           <div class="col-md-12  relative-div" style="position:relative;">
             <i class="fa fa-close text-close absolute-div" style="display:none"></i>
             <textarea v-model="this.$store.state.set.textContent" class="sub-title-text absolute-div"
-              placeholder="Input subtitle here"></textarea>
+              placeholder="ここに入力"></textarea>
           </div>
         </div>
         <div class="form-group" style="display:flex;justify-content: space-between;">
@@ -128,7 +128,7 @@
 
       <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
-          <label>Offset Width&nbsp;&nbsp;&nbsp;</label>
+          <label>幅&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left ">
           <input v-model="this.$store.state.set.shapeOffsetWidth" type="number" min="0" max="1000" />
@@ -136,7 +136,7 @@
       </div>
       <div class="form-group" style="margin-bottom: 5px;" v-if="this.$store.state.set.shapeContent === `Rectangle`">
         <div class="col-md-7 right">
-          <label>Offset Height&nbsp;&nbsp;&nbsp;</label>
+          <label>高さ&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
           <input v-model="this.$store.state.set.shapeOffsetHeight" type="number" min="0" max="1000" />
@@ -144,7 +144,7 @@
       </div>
       <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
-          <label>Offset Top&nbsp;&nbsp;&nbsp;</label>
+          <label>トップ&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
           <input v-model="this.$store.state.set.shapeOffsetTop" type="number" min="0" max="1000" />
@@ -152,7 +152,7 @@
       </div>
       <div class="form-group" style="margin-bottom: 5px;">
         <div class="col-md-7 right">
-          <label>Offset Left&nbsp;&nbsp;&nbsp;</label>
+          <label>左オフセット&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="col-md-5 left">
           <input v-model="this.$store.state.set.shapeOffsetLeft" type="number" min="0" max="1000" />
@@ -162,12 +162,12 @@
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `cut`">
       <div style="display:flex;justify-content: center;">
-        <label style="width:50px;text-align: right;">From&nbsp;&nbsp;:</label>
+        <label style="width:50px;text-align: right;">開始&nbsp;&nbsp;:</label>
         <Timepicker :tmm="this.$store.state.set.cutFrom.mm" :tss="this.$store.state.set.cutFrom.ss"
           :tss1="this.$store.state.set.cutFrom.ss1" :timeData="`sctimeData`" @timeChange="stimeChange" />
       </div>
       <div style="display:flex; margin-top:10px;justify-content: center;">
-        <label style="width:50px;text-align: right;">To&nbsp;&nbsp;:</label>
+        <label style="width:50px;text-align: right;">終了&nbsp;&nbsp;:</label>
         <Timepicker :tmm="this.$store.state.set.cutTo.mm" :tss="this.$store.state.set.cutTo.ss"
           :tss1="this.$store.state.set.cutTo.ss1" :timeData="`ectimeData`" @timeChange="etimeChange" />
       </div>
@@ -222,16 +222,16 @@ export default {
       shapeOffsetHeight: 60,
       shapeOffsetTop: 20,
       shapeOffsetLeft: 20,
-      shapeFrom: { mm: "00", ss: "00", ss1: "00" },
-      shapeTo: { mm: "00", ss: "00", ss1: "00" },
+      shapeFrom: { mm: 0, ss: 0, ss1: 0 },
+      shapeTo: { mm: 0, ss: 0, ss1: 0 },
       textContent: "",
       textBorderColor: "rgb(16,16,16)",
       textOffsetWidth: 350,
       textOffsetHeight: 80,
       textOffsetTop: 100,
       textOffsetLeft: 1000,
-      textFrom: { mm: "00", ss: "00", ss1: "00" },
-      textTo: { mm: "00", ss: "00", ss1: "00" },
+      textFrom: { mm: 0, ss: 0, ss1: 0 },
+      textTo: { mm: 0, ss: 0, ss1: 0 },
     };
   },
   components: {
@@ -359,10 +359,6 @@ export default {
     play: async function () {
       if (this.polling)
         window.clearInterval(this.polling);
-      this.recordTime.mm = 0;
-      this.recordTime.ss = 0;
-      this.recordTime.ss1 = 0;
-      this.recordMTime = 0;
 
 
       this.audio.play();
@@ -427,6 +423,7 @@ export default {
 
           activeFlag = 1;
           //set duration
+
           this.$store.dispatch("setData", {
             type: "audioDuration",
             value: audioItem.duration
@@ -476,7 +473,10 @@ export default {
       };
 
       this.$store.dispatch("addToUploadDatas", payload);
-      console.log("this.$store.state.upload.audios", this.$store.state.upload.audios);
+      //      console.log("this.$store.state.upload.audios", this.$store.state.upload.audios);
+
+
+
     },
     close: function () {
 
@@ -725,8 +725,8 @@ export default {
       this.shapeOffsetTop = 250;
       this.shapeOffsetLeft = 650;
 
-      this.shapeFrom = { mm: "00", ss: "00", ss1: "00" };
-      this.shapeTo = { mm: "00", ss: "00", ss1: "00" };
+      this.shapeFrom = { mm: 0, ss: 0, ss1: 0 };
+      this.shapeTo = { mm: 0, ss: 0, ss1: 0 };
 
       alert("Commit is success.");
     },

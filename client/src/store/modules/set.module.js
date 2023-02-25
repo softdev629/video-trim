@@ -216,7 +216,7 @@ export default {
           return;
         case "audioDuration":
           state.audioDuration = payload.value;
-
+          return;
         case "shapeFrom":
           state.shapeFrom = payload.value;
           return;
@@ -402,7 +402,7 @@ export default {
           return;
         case "audioDuration":
           state.audioDuration = 0;
-
+          return;
         case "shapeFrom":
           state.shapeFrom = { mm: 0, ss: 0, ss1: 0 };
           return;

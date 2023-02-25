@@ -6,10 +6,11 @@
       <i class="fa fa-braille fa-1x"></i>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool === `shape`"
-      v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" class="div-range active"
+      v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" :class="`div-range ${this.active[id]}`"
       :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0, id)"></div>
-      <div class="text" @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}</div>
+      <div class="text" @click="selectItem(id)" @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}
+      </div>
       <div class="right" @mousedown="resizeSelected($event, 1, id)" :style="`left: ${this.width[id] - 10}px`"></div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `shape`"
@@ -36,11 +37,12 @@ export default {
       resizeStart: 0,
       resizeState: false,
       resizeType: 0,
-      resizeId: 0
+      resizeId: 0,
+      active: []
     };
   },
   mounted() {
-    var start = [], width = [];
+    var start = [], width = [], active = [];
 
 
     for (var i = 0; i < this.$store.state.upload.shapes.length; i++) {
@@ -48,12 +50,13 @@ export default {
 
       width.push(100 * (this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1 - this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 - this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 - this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
 
-
+      active.push("inactive");
     }
     this.start = start;
     this.width = width;
+    this.active = active;
 
-
+    window.addEventListener('keydown', this.delShape);
 
   },
   watch: {
@@ -65,17 +68,17 @@ export default {
       this.width = this.width * newZoom;
     },
     "$store.state.upload.shapes.length": function (newZoom, oldZoom) {
-      var start = [], width = [];
+      var start = [], width = [], active = [];
 
       for (var i = 0; i < this.$store.state.upload.shapes.length; i++) {
         start.push(100 * (this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 + this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
 
         width.push(100 * (this.$store.state.upload.shapes[i].value.shapeTo.mm * 6000 + this.$store.state.upload.shapes[i].value.shapeTo.ss * 100 + this.$store.state.upload.shapes[i].value.shapeTo.ss1 - this.$store.state.upload.shapes[i].value.shapeFrom.mm * 6000 - this.$store.state.upload.shapes[i].value.shapeFrom.ss * 100 - this.$store.state.upload.shapes[i].value.shapeFrom.ss1) / (100 * (this.zoom - 6) * (-1)));
-
+        active.push("inactive");
       }
       this.start = start;
       this.width = width;
-
+      this.active = active;
     },
   },
   methods: {
@@ -87,6 +90,96 @@ export default {
       // else if (e.target.tagName == "SPAN") {
       //   e.target.classList.toggle("show");
       // }
+    },
+    delShape(event) {
+      //      alert(event.which);
+      if (event.which !== 46)
+        return;
+      var id = 0, flag = 0;
+      for (var i = 0; i < this.active.length; i++) {
+        if (this.active[i] === "active") {
+          id = i; flag = 1;
+          break;
+        }
+      }
+
+      if (!flag)
+        return;
+
+      if (this.$store.state.set.selectedSettingTool !== "shape")
+        return;
+
+
+      if (this.active[id] !== "active")
+        return;
+
+
+
+      var shapes = this.$store.state.upload.shapes;
+      console.log("id,  length", id, this.active.length);
+
+      var payload;
+
+      if (id == this.active.length - 1) {
+        if (id == 0) {
+          payload = {
+            type: "shapeFrom", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "shapeTo", value: {
+              mm: 0,
+              ss: 5,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+        else {
+          payload = {
+            type: "shapeFrom", value: {
+              mm: this.$store.state.upload.shapes[id - 1].value.shapeFrom.mm,
+              ss: this.$store.state.upload.shapes[id - 1].value.shapeFrom.ss,
+              ss1: this.$store.state.upload.shapes[id - 1].value.shapeFrom.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "shapeTo", value: {
+              mm: this.$store.state.upload.shapes[id - 1].value.shapeTo.mm,
+              ss: this.$store.state.upload.shapes[id - 1].value.shapeTo.ss,
+              ss1: this.$store.state.upload.shapes[id - 1].value.shapeTo.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+
+      }
+
+
+      shapes.splice(id, 1);
+
+      payload = { type: "shapes", value: shapes };
+
+
+      this.$store.dispatch("updateToUploadDatas", payload);
+
+    },
+    selectItem(id) {
+      for (var i = 0; i < this.active.length; i++) {
+        this.active[i] = "inactive";
+      }
+      this.active[id] = "active";
     },
     resizeSelected(e, type, id) {
 

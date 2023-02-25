@@ -54,7 +54,7 @@
           </div>
         </div>
         <div>
-          <button class="btn my-btn btn-success add-audio" @click="addAudio()">Add Audio</button>
+          <button class="btn my-btn btn-success add-audio" @click="addAudio()">音声追加</button>
         </div>
 
       </div>
@@ -88,7 +88,7 @@
     </div>
     <div class="setting-panel-box" v-if="this.$store.state.set.selectedSettingTool === `shape`" style="margin-top:10px;">
 
-      <div class="form-group">
+      <div class="form-group shape-block">
         <div class="col-md-12">
           <div class="shape-box">
             <div class="shape-item relative-div"
@@ -102,9 +102,30 @@
               <div class="shape-circle absolute-div"></div>
             </div>
             <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
-              @mouseout="notShowIcon($event)" @click="change1(`Line`, $event)" data-type="Line">
+              @mouseout="notShowIcon($event)" @click="change1(`LineToDown`, $event)" data-type="LineToDown">
 
-              <div class="shape-line absolute-div"></div>
+              <div class="shape-line-down absolute-div"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="from-group shape-block">
+        <div class="col-md-12">
+          <div class="shape-box">
+            <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
+              @mouseout="notShowIcon($event)" @click="change1(`LineToUp`, $event)" data-type="LineToUp">
+
+              <div class="shape-line-up absolute-div"></div>
+            </div>
+            <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
+              @mouseout="notShowIcon($event)" @click="change1(`Vertical`, $event)" data-type="Vertical">
+
+              <div class="shape-vertical absolute-div"></div>
+            </div>
+            <div class="shape-item relative-div" style="position:relative;" @mouseover="showIcon($event)"
+              @mouseout="notShowIcon($event)" @click="change1(`Horizontal`, $event)" data-type="Horizontal">
+
+              <div class="shape-horizontal absolute-div"></div>
             </div>
           </div>
         </div>
@@ -386,7 +407,8 @@ export default {
         })
           .then(response => response.json())
           .then(data => {
-            this.audioList.push({ fileName: data.message, active: "inactive", duration: this.recordMTime });
+            //            console.log(data);
+            this.audioList.push({ fileName: data.fileName, active: "inactive", duration: this.recordMTime });
 
             this.recordTime.mm = 0;
             this.recordTime.ss = 0;
@@ -404,7 +426,7 @@ export default {
       }
 
       this.audioList[index].active = "audio-active";
-      console.log(e.target, index);
+      //      console.log(e.target, index);
     },
     addAudio: function () {
 
@@ -413,7 +435,7 @@ export default {
       this.recordTime.ss = 0;
       this.recordTime.ss1 = 0;
       this.recordMTime = 0;
-
+      var filename = "";
       //audioItem.active == "audio-active", fileName, duration
       let activeFlag = 0;
 
@@ -429,6 +451,7 @@ export default {
             value: audioItem.duration
           });
 
+          filename = audioItem.fileName;
 
 
           //get new audioFrom
@@ -464,11 +487,15 @@ export default {
       if (!activeFlag) {
         alert("Nothing is data to add.");
       }
+
+
+
       var payload = {
         type: "audios",
         value: {
           from: { ...this.$store.state.set.audioFrom },
-          to: { ...this.$store.state.set.audioTo }
+          to: { ...this.$store.state.set.audioTo },
+          filename: filename
         }
       };
 
@@ -606,6 +633,7 @@ export default {
             ss1: 0,
           }
         };
+
 
         this.$store.dispatch("setData", payload);
         payload = {
@@ -773,6 +801,9 @@ export default {
 
     },
     addShape: function () {
+
+      this.$store.dispatch("timeToTimeObj", 1000);
+      // console.log(str, "------------------------------");
 
       if (this.$store.state.set.shapeFrom.mm * 6000 + this.$store.state.set.shapeFrom.ss * 100 + this.$store.state.set.shapeFrom.ss1 >= this.$store.state.set.shapeTo.mm * 6000 + this.$store.state.set.shapeTo.ss * 100 + this.$store.state.set.shapeTo.ss1) {
 
@@ -1244,6 +1275,10 @@ textarea {
   margin-top: 10px;
 }
 
+.shape-block {
+  margin-bottom: 20px;
+}
+
 .shape-box {
   display: flex;
   justify-content: space-around;
@@ -1282,12 +1317,42 @@ input[type="color"] {
   margin: 5px;
 }
 
-.shape-line {
+.shape-horizontal {
+
   width: 40px;
   height: 6px;
   background-color: #FFFFFF;
   margin: 5px;
   margin-top: 20px;
+
+}
+
+.shape-vertical {
+
+  width: 6px;
+  height: 40px;
+  background-color: #FFFFFF;
+  margin: 5px;
+  margin-left: 20px;
+
+}
+
+.shape-line-down {
+  width: 60px;
+  height: 60px;
+  border-bottom: 5px solid white;
+  -webkit-transform:
+    translateY(-25px) translateX(15px) rotate(45deg);
+  position: absolute;
+}
+
+.shape-line-up {
+  width: 60px;
+  height: 60px;
+  border-bottom: 5px solid white;
+  -webkit-transform:
+    translateY(13px) translateX(15px) rotate(135deg);
+  position: absolute;
 }
 
 .my-btn {

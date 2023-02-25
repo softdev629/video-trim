@@ -36,10 +36,12 @@ router.post('/upload_audio', (req, res) => {
   if (!req.body.message) {
     return res.status(400).json({ error: 'No req.body.message' });
   }
-  const messageId = v4();
+  let messageId = v4();
   writeFile(messageFolder + messageId, req.body.message, 'base64')
     .then(() => {
-      res.status(201).json({ fileName: messageId });
+      let new_messageId = v4();
+      execSync(`ffmpeg -i ${messageFolder + messageId} -c:a aac ${messageFolder + new_messageId}.aac`);
+      res.status(201).json({ fileName: new_messageId });
     })
     .catch(err => {
       console.log('Error writing message to file', err);
@@ -73,7 +75,7 @@ const generateThumbnails = filename => {
   if (!fs.existsSync(dname)) {
     fs.mkdirSync(dname);
   }
-  execSync("ffmpeg -i " + fname + " -vf fps=1 " + dname + "/" + "%07d.png");
+  execSync("ffmpeg -hide_banner -loglevel error -i " + fname + " -vf fps=1 " + dname + "/" + "%07d.png");
 }
 
 const getFileCount = filename => {
@@ -121,6 +123,53 @@ const getDuration = async filename => {
   return videoInfo.duration;
 }
 
+const getWidthAndHeight = async filename => {
+  let fname = "public/videos/" + filename;
+  let videoInfo = await (new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(fname, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        for (let stream of data.streams) {
+          if (stream.width) {
+            resolve(stream);
+            return;
+          }
+        }
+      }
+    });
+  }));
+  if (!videoInfo) return -1;
+  return {
+    width: videoInfo.width,
+    height: videoInfo.height
+  };
+}
+
+const extractColor = colorString => {
+  if (colorString[0] == '#') return colorString;
+  let arr = [];
+  let throwString = "rgb(), ";
+  let last = "";
+  for (let x of colorString) {
+    // console.log(x);
+    if (throwString.indexOf(x) >= 0) {
+      if (last.length > 0) {
+        arr.push(last);
+        last = "";
+      }
+      continue;
+    }
+    last += x;
+    // console.log(last);
+  }
+  if (last.length > 0) {
+    arr.push(last);
+  }
+  // console.log(arr);
+  return `#${parseInt(arr[0]).toString(16).padStart(2, "0")}${parseInt(arr[1]).toString(16).padStart(2, "0")}${parseInt(arr[2]).toString(16).padStart(2, "0")}`;
+}
+
 const upload = multer({ storage: storage })
 /* Upload a video */
 router.post('/upload', function (req, res, next) {
@@ -140,11 +189,13 @@ router.post('/upload', function (req, res, next) {
       error: "Invalid video file."
     });
   }
+  let wh = await getWidthAndHeight(req.file.filename);
   return res.json({
     statusOK: true,
     filename: req.file.filename,
     filecount,
-    duration
+    duration,
+    ...wh
   });
 });
 
@@ -161,6 +212,8 @@ const timeInSeconds = (str) => {
 const timeSecondsToString = (time) => {
   return parseInt(time / 3600) + ":" + parseInt(parseInt(time / 60) % 60) + ":" + parseInt(time % 60);
 }
+
+const normalizeTimeFromFrontEnd = timeString => timeSecondsToString(timeInSeconds(timeString));
 
 router.post('/save/:fname', async function (req, res, next) {
   let request = req.body;
@@ -186,10 +239,11 @@ router.post('/save/:fname', async function (req, res, next) {
       error: "Invalid path."
     });
   }
-  let width = videoInfo.width || 1920;
-  let height = videoInfo.height || 1600;
+  let width = videoInfo.width || 2048;
+  let height = videoInfo.height || 1152;
+  let length = Math.trunc(videoInfo.duration);
   let t_start = 0;
-  let t_end = Math.trunc(videoInfo.duration);
+  let t_end = length;
   let c_start = 0;
   let c_end = 0;
   if (request.trim) {
@@ -222,49 +276,208 @@ router.post('/save/:fname', async function (req, res, next) {
         fs.appendFileSync("subtitles.srt", from + ",000 --> " + to + ",000\n");
         fs.appendFileSync("subtitles.srt", subtitle.text + "\n" + "\n");
       }
-      execSync(`ffmpeg -i ${fname} -vf subtitles=subtitles.srt subtitles.mp4 -y`);
-      videoInfo = await (new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(fname, (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(data.streams);
-            // for (let stream of data.streams) {
-            //   if (stream.width) {
-            //     resolve(stream);
-            //     return;
-            //   }
-            // }
-          }
-        });
-      }));
+      execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -vf subtitles=subtitles.srt subtitles.mp4 -y`);
+      // videoInfo = await (new Promise((resolve, reject) => {
+      //   ffmpeg.ffprobe(fname, (err, data) => {
+      //     if (err) {
+      //       reject(err);
+      //     } else {
+      //       resolve(data.streams);
+      //       // for (let stream of data.streams) {
+      //       //   if (stream.width) {
+      //       //     resolve(stream);
+      //       //     return;
+      //       //   }
+      //       // }
+      //     }
+      //   });
+      // }));
       // console.log(videoInfo);
 
       fname = 'subtitles.mp4';
-      videoInfo = await (new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(fname, (err, data) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(data.streams);
-            // for (let stream of data.streams) {
-            //   if (stream.width) {
-            //     resolve(stream);
-            //     return;
-            //   }
-            // }
-          }
-        });
-      }));
+      // videoInfo = await (new Promise((resolve, reject) => {
+      //   ffmpeg.ffprobe(fname, (err, data) => {
+      //     if (err) {
+      //       reject(err);
+      //     } else {
+      //       resolve(data.streams);
+      //       // for (let stream of data.streams) {
+      //       //   if (stream.width) {
+      //       //     resolve(stream);
+      //       //     return;
+      //       //   }
+      //       // }
+      //     }
+      //   });
+      // }));
       // console.log(videoInfo);
+    }
+    if (request.shapes && request.shapes.length > 0) {
+      let last = "0";
+      request.shapes.sort((a, b) => (timeInSeconds(a.from) - timeInSeconds(b.from)));
+      let segments = [];
+      let index = 0;
+      for (let shape of request.shapes) {
+        if (timeInSeconds(last) < timeInSeconds(shape.from)) {
+          index++;
+          let gname = "shape" + index.toString(10) + ".mp4";
+          segments.push(gname);
+          execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${normalizeTimeFromFrontEnd(shape.from)} -c:v libx264 -c:a aac ${gname} -y`);
+        }
+        // console.log(shape);
+        console.log(shape.type);
+        switch (shape.type) {
+          case 'Rectangle':
+            {
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              let W = request.width || 600;
+              let H = request.height || 400;
+              // console.log(shape.type);
+              // console.log("okay");
+              let x = shape.left / W * width;
+              let y = shape.top / H * height;
+              let w = shape.width / W * width;
+              let h = shape.height / H * height;
+              let c = extractColor(shape.borderColor);
+              let s = shape.from;
+              let e = shape.to;
+              console.log("color = ", c, shape.borderColor, gname);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -vf "drawbox=x=${x}:y=${y}:w=${w}:h=${h}:color=${c}" -c:v libx264 -c:a aac ${gname} -y`);
+              videoInfo = await (new Promise((resolve, reject) => {
+                ffmpeg.ffprobe(gname, (err, data) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(data.streams);
+                  }
+                });
+              }));
+              // console.log(videoInfo);
+              break;
+            }
+          case 'Circle':
+            {
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              // console.log(shape.type);
+              // console.log("okay");
+              let W = request.width || 600;
+              let H = request.height || 400;
+              // console.log(shape.type);
+              // console.log("okay");
+              let x = shape.left / W * width;
+              let y = shape.top / H * height;
+              let w = shape.width / W * width;
+              let c = extractColor(shape.borderColor);
+              let s = shape.from;
+              let e = shape.to;
+              // console.log("color = ", c, gname);
+              console.log("fname = ", fname);
+              console.log(gname, fname, x, y, w, c, s, e);
+              let h = w;
+              // execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
+              // console.log(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${x + w / 2},2)+pow(Y-${y + h / 2},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w + 5}x${h + 5},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2 + 2.5},2)+pow(Y-${h / 2 + 2.5},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${w / 2 + 2.5},2)+pow(Y-${h / 2 + 2.5},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              videoInfo = await (new Promise((resolve, reject) => {
+                ffmpeg.ffprobe(gname, (err, data) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(data.streams);
+                  }
+                });
+              }));
+            }
+          case 'Line':
+            {
+
+            }
+        }
+        last = shape.to;
+      }
+      // console.log(segments.length);
+      // console.log(length);
+      if (timeInSeconds(last) < length) {
+        index++;
+        let gname = "shape" + index.toString(10) + ".mp4";
+        segments.push(gname);
+        execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${timeSecondsToString(length)} -c:v libx264 -c:a aac ${gname} -y`);
+        gname = "shape" + Math.random() * 1e9 + ".mp4";
+        index++;
+      }
+      // console.log("segmentsize = ", index);
+      let commandString = "ffmpeg";
+      for (let name of segments) {
+        commandString += ` -i ${name}`;
+      }
+      commandString += ' -filter_complex "';
+      for (let i in segments) {
+        commandString += `[${i}:v][${i}:a]`;
+      }
+      commandString += ` concat=${segments.length}:v=1:a=1 [v] [a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac shape.mp4 -y`;
+      execSync(commandString);
+      for (let name of segments) {
+        fs.unlinkSync(name);
+      }
+      fname = "shape.mp4";
+    }
+    if (request.audios) {
+      let last = "0";
+      request.audios.sort((a, b) => (timeInSeconds(a.from) - timeInSeconds(b.from)));
+      let segments = [];
+      let index = 0;
+      for (let audio of request.audios) {
+        if (timeInSeconds(last) < timeInSeconds(audio.from)) {
+          index++;
+          let gname = "audio" + index.toString(10) + ".mp4";
+          segments.push(gname);
+          execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${normalizeTimeFromFrontEnd(s)} -c:v libx264 -c:a aac ${gname} -y`);
+        }
+        {
+          let s = audio.from;
+          let e = audio.to;
+          let a = audio.filename;
+          index++;
+          let gname = "audio" + index.toString(10) + ".mp4";
+          segments.push(gname);
+          execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
+          execSync(`ffmpeg -hide_banner -loglevel error -i temp.mp4 -i public/audios/${a} -c:v libx264 - filter_complex "[0:a][1:a] amix=inputs=2:duration=longest [audio_out]" ${gname} -y`);
+        }
+        last = audio.to;
+      }
+      if (timeInSeconds(last) < length) {
+        index++;
+        let gname = "audio" + index.toString(10) + ".mp4";
+        segments.push(gname);
+        execSync(`ffmpeg - hide_banner - loglevel error - i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${timeSecondsToString(length)} -c:v libx264 - c:a aac ${gname} -y`);
+        index++;
+      }
+      // console.log("segmentsize = ", index);
+      let commandString = "ffmpeg";
+      for (let name of segments) {
+        commandString += ` - i ${name} `;
+      }
+      commandString += ' -filter_complex "';
+      for (let i in segments) {
+        commandString += `[${i}:v][${i}: a]`;
+      }
+      commandString += ` concat = ${segments.length}: v = 1: a = 1[v][a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac shape.mp4 -y`;
+      execSync(commandString);
+      for (let name of segments) {
+        fs.unlinkSync(name);
+      }
+      fname = "audio.mp4";
     }
     // console.log(t_start, c_start, c_end, t_end);
     if (c_start > t_start && c_end < t_end) {
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + "output1.mp4 -y");
+      execSync("ffmpeg -hide_banner -loglevel error -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + "output1.mp4 -y");
       concatList.push("output1.mp4");
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + "output2.mp4 -y");
+      execSync("ffmpeg -hide_banner -loglevel error -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + "output2.mp4 -y");
       concatList.push("output2.mp4");
-      let commandString = "ffmpeg ";
+      let commandString = "ffmpeg -hide_banner -loglevel error";
       for (let filename of concatList) {
         commandString += ` -i ${filename} `;
       }
@@ -284,7 +497,7 @@ router.post('/save/:fname', async function (req, res, next) {
           }
         });
       }));
-      console.log("output1.mp4\n", videoInfo);
+      // console.log("output1.mp4\n", videoInfo);
       videoInfo = await (new Promise((resolve, reject) => {
         ffmpeg.ffprobe('output2.mp4', (err, data) => {
           if (err) {
@@ -300,8 +513,7 @@ router.post('/save/:fname', async function (req, res, next) {
           }
         });
       }));
-      console.log("output2.mp4\n", videoInfo);
-
+      // console.log("output2.mp4\n", videoInfo);
 
       for (let index in concatList) {
         commandString += `[${index}:v]scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:-1:-1,setsar=1,fps=30,format=yuv420p[v${index}];`;
@@ -322,10 +534,10 @@ router.post('/save/:fname', async function (req, res, next) {
       execSync(commandString);
     } else if (c_end < t_end) {
       // console.log(c_end, t_end);
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + newName);
+      execSync("ffmpeg -hide_banner -loglevel error -i " + fname + " -ss " + timeSecondsToString(c_end) + " -to " + timeSecondsToString(t_end) + " -c:v libx264 -c:a aac " + newName);
     } else if (t_start < c_start) {
       // console.log(t_start, c_start);
-      execSync("ffmpeg -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + newName);
+      execSync("ffmpeg -hide_banner -loglevel error -i " + fname + " -ss " + timeSecondsToString(t_start) + " -to " + timeSecondsToString(c_start) + " -c:v libx264 -c:a aac " + newName);
     }
 
     if (fs.existsSync("output1.mp4")) {
@@ -364,11 +576,13 @@ router.post('/save/:fname', async function (req, res, next) {
   generateThumbnails(nname);
   let filecount = getFileCount(nname);
   let duration = await getDuration(nname);
+  let wh = await getWidthAndHeight(nname);
   return res.json({
     statusOK: true,
     filename: nname,
     filecount,
-    duration
+    duration,
+    ...wh
   });
 });
 

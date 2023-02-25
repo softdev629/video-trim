@@ -145,7 +145,8 @@ export default {
       for (var audio of this.$store.state.upload.audios) {
         tempAudios.push({
           from: timeToString(audio.value.from),
-          to: timeToString(audio.value.to)
+          to: timeToString(audio.value.to),
+          filename: audio.value.filename
         });
       }
 
@@ -169,7 +170,7 @@ export default {
           "end": c_end,
         },
         "subtitles": tempTitles,
-        //"shapes": tempShapes,
+        "shapes": tempShapes,
         //"audios":tempAudios
       };
 

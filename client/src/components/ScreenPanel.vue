@@ -14,19 +14,37 @@
   </div> -->
     <div class="shape-section"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Rectangle`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
     <div class="shape-section"
-      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Line`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};`"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToDown`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(-25px) translateX(15px) rotate(45deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
     <div class="shape-section"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Circle`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 2px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
+      @mousedown="selectText($event)" @mouseup="selectRelease($event)">
+      <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
+    </div>
+    <div class="shape-section"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Vertical`"
+      :style="`height:${this.$store.state.set.shapeOffsetHeight}px; width:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
+      @mousedown="selectText($event)" @mouseup="selectRelease($event)">
+      <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
+    </div>
+    <div class="shape-section"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToUp`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(13px) translateX(15px) rotate(135deg);`"
+      @mousedown="selectText($event)" @mouseup="selectRelease($event)">
+      <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
+    </div>
+    <div class="shape-section"
+      v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Horizontal`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>

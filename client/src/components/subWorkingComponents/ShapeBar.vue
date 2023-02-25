@@ -116,7 +116,7 @@ export default {
 
 
       var shapes = this.$store.state.upload.shapes;
-      console.log("id,  length", id, this.active.length);
+//      console.log("id,  length", id, this.active.length);
 
       var payload;
 
@@ -235,7 +235,7 @@ export default {
       if (this.resizeState == true) {//right
         if (this.resizeType == 1) {
           //check conflict
-          console.log(this.resizeId, "resizeId");
+//          console.log(this.resizeId, "resizeId");
           if (this.resizeId + 1 != this.width.length) {
 
 

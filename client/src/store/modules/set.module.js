@@ -554,11 +554,12 @@ export default {
       });
     },
     timeObjToTime(context, obj) {
-      return context.commit("TIME_OBJ_TO_TIME", obj);
+      context.commit("TIME_OBJ_TO_TIME", obj);
     },
-    timeToTimeObj(context, time) {
-      console.log('timeToTimeObj', time);
-      return time;
+    timeToTimeObj: (context, time) => {
+//      console.log('timeToTimeObj', time);
+      // context.commit("TIME_OBJ_TO_TIME", time);
+      // return time;
       // let obj = {
       //   mm: Math.trunc(time / 6000),
       //   ss: Math.trunc((time % 6000) / 100),

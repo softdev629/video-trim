@@ -113,8 +113,8 @@ export default {
 
 
       var audios = this.$store.state.upload.audios;
-      console.log("id,  length", id, this.active.length);
-      console.log("id,  length", id, audios);
+      // console.log("id,  length", id, this.active.length);
+      // console.log("id,  length", id, audios);
 
       var payload;
 

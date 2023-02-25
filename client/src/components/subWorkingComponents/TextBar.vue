@@ -119,7 +119,7 @@ export default {
         return;
 
       var texts = this.$store.state.upload.texts;
-      console.log("id,  length", id, this.active.length);
+//      console.log("id,  length", id, this.active.length);
 
       var payload;
 

@@ -260,18 +260,18 @@ export default {
   },
   mounted() {
     const store = useStore();
-    this.width = setStore.state.settingBoxWidth;
-    this.height = setStore.state.screenHeight;
-    if (!setStore.state.selectedSettingTool)
-      this.panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + setStore.state.settingBoxWidth + 1);
+    this.width = this.$store.state.set.settingBoxWidth;
+    this.height = this.$store.state.set.screenHeight;
+    if (!this.$store.state.set.selectedSettingTool)
+      this.panelWidth = this.$store.state.set.windowOuterWidth - (this.$store.state.set.toolSideBar + 5 + this.$store.state.set.settingBoxWidth + 1);
     else
-      this.panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + setStore.state.settingBoxWidth + 40 + 1);
+      this.panelWidth = this.$store.state.set.windowOuterWidth - (this.$store.state.set.toolSideBar + 5 + this.$store.state.set.settingBoxWidth + 40 + 1);
 
-    if (this.height / this.panelWidth < setStore.state.screenRate) {
-      this.panelHeight = setStore.state.screenHeight;
+    if (this.height / this.panelWidth < this.$store.state.set.screenRate) {
+      this.panelHeight = this.$store.state.set.screenHeight;
     }
     else {
-      this.panelHeight = this.panelWidth * setStore.state.screenRate;
+      this.panelHeight = this.panelWidth * this.$store.state.set.screenRate;
     }
 
     this.stimeData.mm = this.$store.state.set.videoFrom.mm;

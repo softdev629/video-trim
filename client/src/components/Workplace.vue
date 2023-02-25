@@ -125,6 +125,8 @@ export default {
         });
       }
 
+      //type:Redtangle, Circle, LineToDown, LineToUp, Vertical, Horizontal
+
       for (var shape of this.$store.state.upload.shapes) {
         tempShapes.push({
           from: timeToString(shape.value.shapeFrom),
@@ -161,6 +163,8 @@ export default {
 
 
       var data = {
+        // "screenWidth": this.$store.state.set.screenWidth,
+        // "screenHeight":this.$store.state.set.screenHeight,
         "trim": {
           "start": t_start,
           "end": t_end,

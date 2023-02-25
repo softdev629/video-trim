@@ -11,6 +11,7 @@
 </template>
 <script>
 import { useStore } from "vuex";
+import setStore from "../../store/modules/set.module";
 
 export default {
   name: "CutFrameBar",

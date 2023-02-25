@@ -30,7 +30,7 @@ export default {
     const store = useStore();
 
     this.width = this.$store.state.set.windowOuterWidth;
-    this.height = setStore.state.screenYControllerWidth;
+    this.height = this.$store.state.set.screenYControllerWidth;
 
 
 

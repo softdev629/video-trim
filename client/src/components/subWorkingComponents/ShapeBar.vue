@@ -9,9 +9,17 @@
       v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" :class="`div-range ${this.active[id]}`"
       :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
       <div class="left" @mousedown="resizeSelected($event, 0, id)"></div>
-      <div class="text" @click="selectItem(id)" @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}
+      <div v-if="this.active[id] === `active`" class="text" @click="selectItem(id)" @contextmenu="onContextMenu($event)"
+        @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}
       </div>
+      <div v-if="this.active[id] === `inactive`" class="text" @click="selectItem(id)"
+        @mousedown="resizeSelected($event, 2, id)">{{ shape.value.shapeContent }}
+      </div>
+
       <div class="right" @mousedown="resizeSelected($event, 1, id)" :style="`left: ${this.width[id] - 10}px`"></div>
+    </div>
+    <div id="context-menu-shape">
+      <div class="item" @click="del_shape()">Delete</div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `shape`"
       v-for="(shape, id) in this.$store.state.upload.shapes" :key="id" class="div-range"
@@ -25,6 +33,8 @@
 </template>
 
 <script>
+import setStore from "../../store/modules/set.module";
+
 export default {
   name: "ShapeBar",
   props: {
@@ -57,6 +67,14 @@ export default {
     this.active = active;
 
     window.addEventListener('keydown', this.delShape);
+    window.addEventListener("click", (e) => {
+      if (document.getElementById("context-menu-shape")) {
+        const contextMenu = document.getElementById("context-menu-shape");
+        if (e.target.offsetParent != contextMenu) {
+          contextMenu.className = "none";
+        }
+      }
+    });
 
   },
   watch: {
@@ -82,14 +100,27 @@ export default {
     },
   },
   methods: {
-    popup(e) {
-      e.preventDefault();
-      // if (e.target.tagName == "DIV") {
-      //   e.target.children[0].classList.toggle("show");
-      // }
-      // else if (e.target.tagName == "SPAN") {
-      //   e.target.classList.toggle("show");
-      // }
+    onContextMenu: function (event) {
+
+      if (this.$store.state.set.selectedSettingTool !== "shape")
+        return;
+
+
+
+      event.preventDefault();
+
+      const { clientX: mouseX, clientY: mouseY } = event;
+
+      const contextMenu = document.getElementById("context-menu-shape");
+      contextMenu.style.top = `${mouseY}px`;
+      contextMenu.style.left = `${mouseX}px`;
+
+      contextMenu.className = "none";
+
+      setTimeout(() => {
+        contextMenu.className = "visible";
+      });
+
     },
     delShape(event) {
       //      alert(event.which);
@@ -116,7 +147,7 @@ export default {
 
 
       var shapes = this.$store.state.upload.shapes;
-//      console.log("id,  length", id, this.active.length);
+      //      console.log("id,  length", id, this.active.length);
 
       var payload;
 
@@ -173,6 +204,91 @@ export default {
 
 
       this.$store.dispatch("updateToUploadDatas", payload);
+
+    },
+    del_shape(event) {
+
+      var id = 0, flag = 0;
+      for (var i = 0; i < this.active.length; i++) {
+        if (this.active[i] === "active") {
+          id = i; flag = 1;
+          break;
+        }
+      }
+
+      if (!flag)
+        return;
+
+      if (this.$store.state.set.selectedSettingTool !== "shape")
+        return;
+
+
+      if (this.active[id] !== "active")
+        return;
+
+
+
+      var shapes = this.$store.state.upload.shapes;
+      //      console.log("id,  length", id, this.active.length);
+
+      var payload;
+
+      if (id == this.active.length - 1) {
+        if (id == 0) {
+          payload = {
+            type: "shapeFrom", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "shapeTo", value: {
+              mm: 0,
+              ss: 5,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+        else {
+          payload = {
+            type: "shapeFrom", value: {
+              mm: this.$store.state.upload.shapes[id - 1].value.shapeFrom.mm,
+              ss: this.$store.state.upload.shapes[id - 1].value.shapeFrom.ss,
+              ss1: this.$store.state.upload.shapes[id - 1].value.shapeFrom.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "shapeTo", value: {
+              mm: this.$store.state.upload.shapes[id - 1].value.shapeTo.mm,
+              ss: this.$store.state.upload.shapes[id - 1].value.shapeTo.ss,
+              ss1: this.$store.state.upload.shapes[id - 1].value.shapeTo.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+
+      }
+
+
+      shapes.splice(id, 1);
+
+      payload = { type: "shapes", value: shapes };
+
+
+      this.$store.dispatch("updateToUploadDatas", payload);
+
+      const contextMenu = document.getElementById("context-menu-shape");
+      contextMenu.className = "none";
 
     },
     selectItem(id) {
@@ -235,7 +351,7 @@ export default {
       if (this.resizeState == true) {//right
         if (this.resizeType == 1) {
           //check conflict
-//          console.log(this.resizeId, "resizeId");
+          //          console.log(this.resizeId, "resizeId");
           if (this.resizeId + 1 != this.width.length) {
 
 
@@ -478,76 +594,34 @@ label {
   cursor: col-resize;
 }
 
-.popup-div {
-  position: absolute;
-
+#context-menu-shape {
+  position: fixed;
+  z-index: 10000;
+  width: 80px;
+  background: #1b1a1a;
+  border-radius: 5px;
+  transform: scale(0);
+  transform-origin: top left;
 }
 
+#context-menu-shape.visible {
+  transform: scale(1);
+  transition: transform 200ms ease-in-out;
+}
 
-/* Popup container - can be anything you want */
-.popup {
-  position: relative;
-  display: inline-block;
+#context-menu-shape.visible {
+  display: block;
+}
+
+#context-menu-shape .item {
+  padding: 5px 5px;
+  font-size: 15px;
+  color: #eee;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  border-radius: inherit;
 }
 
-/* The actual popup */
-.popup .popuptext {
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
-}
-
-/* Popup arrow */
-.popup .popuptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
-
-/* Add animation (fade in the popup) */
-@-webkit-keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+.context-menu-shape .item:hover {
+  background: #343434;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="screen" @mousemove="selectMove($event)" @mouseover="mouseOverFunc($event)" @mouseout="mouseOutFunc($event)"
-    :style="`width:100%;height:100%;`">
+    :style="`width:100%;height:100%;`" ref="screen">
     <video class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
       :style="`width:600px; height:400px; min-width: 100%; min-height: 100%;`" type="video/mp4" ref="vid"
       @timeupdate="curTimeChange($event)"></video>
@@ -12,42 +12,44 @@
         :style="`display:${show}`">
       </div>
   </div> -->
-    <div class="shape-section"
+
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Rectangle`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section"
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToDown`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(-25px) translateX(15px) rotate(45deg);`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(-25px) translateX(15px) rotate(45deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section"
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Circle`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section"
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Vertical`"
-      :style="`height:${this.$store.state.set.shapeOffsetHeight}px; width:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
+      :style="`height:${this.$store.state.set.shapeOffsetHeight}px; width:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section"
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToUp`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(13px) translateX(15px) rotate(135deg);`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(13px) translateX(15px) rotate(135deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section"
+    <div class="shape-section" ref="shape"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Horizontal`"
-      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft}px;top:${this.$store.state.set.shapeOffsetTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
+      :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
+
   </div>
 </template>
 
@@ -70,7 +72,11 @@ export default {
       },
       fileName: "",
       selectState: 0,
-      show: 'none'
+      show: 'none',
+      screenWidth: 0,
+      screenHeight: 0,
+      spaceLeft: 0,
+      spaceTop: 0
     };
   },
   mounted() {
@@ -86,34 +92,48 @@ export default {
 
     this.fileName = this.$store.state.set.fileName;
 
-    this.width = setStore.state.screenWidth;
-    this.height = setStore.state.screenHeight;
 
+    console.log(this.$refs.vid, this.$refs.screen);
 
-
-    if (!setStore.state.selectedSettingTool)
-      this.panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + setStore.state.settingBoxWidth - 3);
-    else
-      this.panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + setStore.state.settingBoxWidth + 40 + 1);
-
-
-
-    if (this.height / this.panelWidth < setStore.state.screenRate) {
-      this.panelHeight = setStore.state.screenHeight;
+    if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
+      this.screenHeight = this.$refs.vid.offsetHeight;
+      this.screenWidth = Math.trunc(this.screenHeight / this.$store.state.set.screenRate);
     }
     else {
-      this.panelHeight = this.panelWidth * setStore.state.screenRate;
+      this.screenWidth = this.$refs.vid.offsetWidth;
+      this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
     }
 
+    this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
+    this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
+
+
+
+
+
+    //screenwidth, screenheight, offsetx, offsety
     this.$store.dispatch('setData', {
-      type: 'panelWidth',
-      value: this.panelWidth
+      type: 'screenWidth',
+      value: this.screenWidth
     });
 
     this.$store.dispatch('setData', {
-      type: 'panelHeight',
-      value: this.panelHeight
+      type: 'screenHeight',
+      value: this.screenHeight
     });
+
+    console.log(this.spaceTop, this.spaceLeft);
+
+    this.$store.dispatch('setData', {
+      type: 'shapeOffsetLeft',
+      value: 100
+    });
+
+    this.$store.dispatch('setData', {
+      type: 'shapeOffsetTop',
+      value: 100
+    });
+
 
 
   },
@@ -237,26 +257,35 @@ export default {
         }
       }
       else {
+        if (this.$store.state.set.shapeOffsetLeft < 0) {
+          console.log("this.$store.state.set.shapeOffsetLeft < 0");
 
-        if (this.$store.state.set.shapeOffsetLeft < (this.$store.state.set.settingBoxWidth + 40 + this.$store.state.set.screenYControllerWidth + this.$store.state.set.toolSideBar + (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2)) {
+
           this.$store.dispatch('setData', {
             type: 'shapeOffsetLeft',
-            value: this.$store.state.set.shapeOffsetLeft + 10
+            value: this.$store.state.set.shapeOffsetLeft + 5
           });
           this.selectState = 0;
           return;
         }
 
-        if ((this.$store.state.set.shapeOffsetLeft + this.$store.state.set.shapeOffsetWidth) > (this.$store.state.set.settingBoxWidth + 40 + this.$store.state.set.screenYControllerWidth + this.$store.state.set.toolSideBar + (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2) + this.$store.state.set.screenWidth) {
+        if (this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth) {
+          console.log("this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth");
+
+
           this.$store.dispatch('setData', {
             type: 'shapeOffsetLeft',
-            value: this.$store.state.set.shapeOffsetLeft - 10
+            value: this.$store.state.set.shapeOffsetLeft - 5
           });
           this.selectState = 0;
           return;
         }
+
 
         if (this.$store.state.set.shapeOffsetTop < 0) {
+          console.log("this.$store.state.set.shapeOffsetTop < 0");
+
+
           this.$store.dispatch('setData', {
             type: 'shapeOffsetTop',
             value: this.$store.state.set.shapeOffsetTop + 5
@@ -265,7 +294,11 @@ export default {
           return;
         }
 
-        if (this.$store.state.set.shapeOffsetTop + this.$store.state.set.shapeOffsetHeight > this.$store.state.set.panelHeight) {
+
+        if (this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight) {
+          console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight", this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight, this.$store.state.set.screenWidth, this.$refs.shape.offsetHeight, this.$refs.shape.offsetWidth);
+
+
           this.$store.dispatch('setData', {
             type: 'shapeOffsetTop',
             value: this.$store.state.set.shapeOffsetTop - 5
@@ -273,6 +306,13 @@ export default {
           this.selectState = 0;
           return;
         }
+
+
+
+
+
+        console.log(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.shapeOffsetTop, this.$refs.vid.offsetWidth, this.$refs.vid.offsetHeight, this.$store.state.set.screenRate, this.screenWidth, this.screenHeight, this.spaceLeft, this.spaceTop);
+
 
         if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Rectangle') {
 
@@ -334,7 +374,7 @@ export default {
           }
 
         }
-        else if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Line') {
+        else if (this.$store.state.set.selectedSettingTool === 'shape') {
 
           if (this.selectState == 1) {
             this.$store.dispatch('setData', {
@@ -412,7 +452,83 @@ export default {
     "$store.state.set.fileName": function (val, oldVal) {
       this.fileName = this.$store.state.set.fileName;
     },
+    "$refs.vid.offsetWidth": function (val, oldVal) {
+      if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
+        this.screenHeight = this.$refs.vid.offsetHeight;
+        this.screenWidth = Math.trunc(this.screenHeight / this.$store.state.set.screenRate);
+      }
+      else {
+        this.screenWidth = this.$refs.vid.offsetWidth;
+        this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
+      }
 
+      this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
+      this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
+
+
+      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
+
+
+      //screenwidth, screenheight, offsetx, offsety
+      this.$store.dispatch('setData', {
+        type: 'screenWidth',
+        value: this.screenWidth
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetLeft',
+        value: this.screenHeight
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetLeft',
+        value: this.$refs.shape.offsetLeft - this.spaceLeft
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetTop',
+        value: this.$refs.shape.offsetTop - this.spaceTop
+      });
+
+    },
+    "$refs.vid.offsetHeight": function (val, oldVal) {
+      if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
+        this.screenHeight = this.$refs.vid.offsetHeight;
+        this.screenWidth = Math.trunc(this.screenHeight / this.$store.state.set.screenRate);
+      }
+      else {
+        this.screenWidth = this.$refs.vid.offsetWidth;
+        this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
+      }
+
+      this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
+      this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
+
+
+      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
+
+
+      //screenwidth, screenheight, offsetx, offsety
+      this.$store.dispatch('setData', {
+        type: 'screenWidth',
+        value: this.screenWidth
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetLeft',
+        value: this.screenHeight
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetLeft',
+        value: this.$refs.shape.offsetLeft - this.spaceLeft
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'shapeOffsetTop',
+        value: this.$refs.shape.offsetTop - this.spaceTop
+      });
+    }
   },
 
 
@@ -424,12 +540,14 @@ export default {
   display: flex;
   justify-content: center;
   background-color: rgb(48, 48, 48);
+  position: relative;
 }
 
 .size1 {
   width: 100%;
   height: 100%;
   padding: 20px;
+  display: absolute;
 }
 
 .size2 {
@@ -462,5 +580,9 @@ export default {
 .text-resize:hover {
   cursor: se-resize;
   background-color: #0a40be;
+}
+
+.shape-section {
+  position: absolute;
 }
 </style>

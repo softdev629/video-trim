@@ -8,6 +8,8 @@
 
 
 <script>
+import setStore from "../../store/modules/set.module";
+
 export default {
   name: "ZoomController",
   props: {

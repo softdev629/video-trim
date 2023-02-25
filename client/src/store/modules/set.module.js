@@ -39,8 +39,8 @@ export default {
     shapeColor: "rgb(16,16,16)",
     shapeOffsetWidth: 100,
     shapeOffsetHeight: 80,
-    shapeOffsetTop: 150,
-    shapeOffsetLeft: 770,
+    shapeOffsetTop: 100,
+    shapeOffsetLeft: 100,
 
     textFrom: { mm: 0, ss: 0, ss1: 0 },
     textTo: { mm: 0, ss: 0, ss1: 0 },
@@ -557,7 +557,7 @@ export default {
       context.commit("TIME_OBJ_TO_TIME", obj);
     },
     timeToTimeObj: (context, time) => {
-//      console.log('timeToTimeObj', time);
+      //      console.log('timeToTimeObj', time);
       // context.commit("TIME_OBJ_TO_TIME", time);
       // return time;
       // let obj = {

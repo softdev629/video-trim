@@ -37,7 +37,7 @@ import TextBar from "./subWorkingComponents/TextBar.vue";
 
 import TimeController from "./subWorkingComponents/TimeController.vue";
 import ZoomController from "./subWorkingComponents/ZoomController.vue";
-
+import setStore from "../store/modules/set.module";
 import { mapState, useStore } from "vuex";
 
 export default {

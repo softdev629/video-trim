@@ -34,18 +34,18 @@ export default {
   },
   mounted() {
 
-    var panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + setStore.state.settingBoxWidth + 1);
-    if (setStore.state.selectedSettingTool) {
+    var panelWidth = this.$store.state.set.windowOuterWidth - (this.$store.state.set.toolSideBar + 5 + this.$store.state.set.settingBoxWidth + 1);
+    if (this.$store.state.set.selectedSettingTool) {
       panelWidth = panelWidth - 40 - 1;
     }
 
 
     var panelHeight;
-    if (this.height / this.panelWidth < setStore.state.screenRate) {
-      panelHeight = setStore.state.screenHeight;
+    if (this.height / this.panelWidth < this.$store.state.set.screenRate) {
+      panelHeight = this.$store.state.set.screenHeight;
     }
     else {
-      panelHeight = this.panelWidth * setStore.state.screenRate;
+      panelHeight = this.panelWidth * this.$store.state.set.screenRate;
     }
 
     var payload = { type: "panelHeight", value: panelHeight };
@@ -93,7 +93,7 @@ export default {
       this.$store.dispatch("setData", payload);
       this.$emit("forceRendering");
 
-      var panelWidth = setStore.state.windowOuterWidth - (setStore.state.toolSideBar + 5 + 300 + 1);
+      var panelWidth = this.$store.state.set.windowOuterWidth - (this.$store.state.set.toolSideBar + 5 + 300 + 1);
 
       payload = { type: "panelWidth", value: panelWidth };
       this.$store.dispatch("setData", payload);

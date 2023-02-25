@@ -1,5 +1,6 @@
 <template>
-  <div class="screenY splitter" :style="`background-color: ${bkColor};width:5px; height:400px; min-height: 100%; position:relative`"
+  <div class="screenY splitter"
+    :style="`background-color: ${bkColor};width:5px; height:400px; min-height: 100%; position:relative`"
     @mousemove="moveSizeController($event)" @mousedown="selectSizeController($event)" @mouseup="selectRelease($event)"
     @mouseover="changeBkColor($event)" @mouseout="rechangeBkColor($event)">
     <!-- <div :style="`position:relative;top:40%;left:-100%;`">
@@ -31,8 +32,8 @@ export default {
   },
   mounted() {
     const store = useStore();
-    this.width = setStore.state.screenYControllerWidth;
-    this.height = setStore.state.screenHeight;
+    this.width = this.$store.state.set.screenYControllerWidth;
+    this.height = this.$store.state.set.screenHeight;
   },
   methods: {
     selectSizeController: function (e) {

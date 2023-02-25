@@ -40,7 +40,7 @@ label {
 <script>
 import CutFrameBar from "./CutFrameBar.vue";
 import { useStore } from "vuex";
-
+import setStore from "../../store/modules/set.module";
 
 
 export default {
@@ -396,7 +396,7 @@ label {
   width: 6px;
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.5);
-    z-index: 5;
+  z-index: 5;
 }
 
 

@@ -14,8 +14,15 @@ label {
     <div v-if="this.$store.state.set.selectedSettingTool === `audio`"
       v-for="(audio, id) in this.$store.state.upload.audios" :key="id" :class="`div-range ${this.active[id]}`"
       :style="`left: ${this.start[id] + 80}px; width:${this.width[id]}px;`">
-      <div class="text" @click="selectItem(id)" @mousedown="resizeSelected($event, 2, id)"><i
-          class="fa fa-microphone"></i></div>
+      <div v-if="this.active[id] === `active`" class="text" @click="selectItem(id)" @contextmenu="onContextMenu($event)"
+        @mousedown="resizeSelected($event, 2, id)"><i class="fa fa-microphone"></i></div>
+
+      <div v-if="this.active[id] === `inactive`" class="text" @click="selectItem(id)"
+        @mousedown="resizeSelected($event, 2, id)"><i class="fa fa-microphone"></i></div>
+
+    </div>
+    <div id="context-menu-audio">
+      <div class="item" @click="del_audio()">Delete</div>
     </div>
     <div v-if="this.$store.state.set.selectedSettingTool !== `audio`"
       v-for="(audio, id) in this.$store.state.upload.audios" :key="id" class="div-range"
@@ -26,6 +33,8 @@ label {
 </template>
 
 <script>
+import setStore from "../../store/modules/set.module";
+
 export default {
   name: "AudioBar",
   props: {
@@ -59,6 +68,14 @@ export default {
 
 
     window.addEventListener('keydown', this.delAudio);
+    window.addEventListener("click", (e) => {
+      if (document.getElementById("context-menu-audio")) {
+        const contextMenu = document.getElementById("context-menu-audio");
+        if (e.target.offsetParent != contextMenu) {
+          contextMenu.className = "none";
+        }
+      }
+    });
 
   },
   watch: {
@@ -88,6 +105,28 @@ export default {
   },
 
   methods: {
+    onContextMenu: function (event) {
+
+      if (this.$store.state.set.selectedSettingTool !== "audio")
+        return;
+
+
+
+      event.preventDefault();
+
+      const { clientX: mouseX, clientY: mouseY } = event;
+
+      const contextMenu = document.getElementById("context-menu-audio");
+      contextMenu.style.top = `${mouseY}px`;
+      contextMenu.style.left = `${mouseX}px`;
+
+      contextMenu.className = "none";
+
+      setTimeout(() => {
+        contextMenu.className = "visible";
+      });
+
+    },
     delAudio(event) {
       //      alert(event.which);
       if (event.which !== 46)
@@ -171,6 +210,92 @@ export default {
 
 
       this.$store.dispatch("updateToUploadDatas", payload);
+
+    },
+    del_audio() {
+
+      var id = 0, flag = 0;
+      for (var i = 0; i < this.active.length; i++) {
+        if (this.active[i] === "active") {
+          id = i; flag = 1;
+          break;
+        }
+      }
+
+      if (!flag)
+        return;
+
+      if (this.$store.state.set.selectedSettingTool !== "audio")
+        return;
+
+      if (this.active[id] !== "active")
+        return;
+
+
+
+
+      var audios = this.$store.state.upload.audios;
+      // console.log("id,  length", id, this.active.length);
+      // console.log("id,  length", id, audios);
+
+      var payload;
+
+      if (id == this.active.length - 1) {
+        if (id == 0) {
+          payload = {
+            type: "audioFrom", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "audioTo", value: {
+              mm: 0,
+              ss: 0,
+              ss1: 0,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+        else {
+          payload = {
+            type: "audioFrom", value: {
+              mm: this.$store.state.upload.audios[id - 1].value.from.mm,
+              ss: this.$store.state.upload.audios[id - 1].value.from.ss,
+              ss1: this.$store.state.upload.audios[id - 1].value.from.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+
+
+
+          payload = {
+            type: "audioTo", value: {
+              mm: this.$store.state.upload.audios[id - 1].value.to.mm,
+              ss: this.$store.state.upload.audios[id - 1].value.to.ss,
+              ss1: this.$store.state.upload.audios[id - 1].value.to.ss1,
+            }
+          };
+          this.$store.dispatch("setData", payload);
+        }
+
+      }
+
+
+      audios.splice(id, 1);
+
+      payload = { type: "audios", value: audios };
+
+
+      this.$store.dispatch("updateToUploadDatas", payload);
+
+      const contextMenu = document.getElementById("context-menu-audio");
+      contextMenu.className = "none";
 
     },
     selectItem(id) {
@@ -406,5 +531,38 @@ label {
 
 .active>.right:hover {
   cursor: col-resize;
+}
+
+
+
+#context-menu-audio {
+  position: fixed;
+  z-index: 10000;
+  width: 80px;
+  background: #1b1a1a;
+  border-radius: 5px;
+  transform: scale(0);
+  transform-origin: top left;
+}
+
+#context-menu-audio.visible {
+  transform: scale(1);
+  transition: transform 200ms ease-in-out;
+}
+
+#context-menu-audio.visible {
+  display: block;
+}
+
+#context-menu-audio .item {
+  padding: 5px 5px;
+  font-size: 15px;
+  color: #eee;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.context-menu-audio .item:hover {
+  background: #343434;
 }
 </style>

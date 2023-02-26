@@ -104,10 +104,12 @@ export default {
       this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
     }
 
+
+
     this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
     this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
 
-
+    console.log(this.$refs.vid.offsetWidth , this.screenWidth, this.spaceLeft, "!!!!!!!!!!!!!!!!!!!!!!!");
 
 
 
@@ -311,7 +313,7 @@ export default {
 
 
 
-//        console.log(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.shapeOffsetTop, this.$refs.vid.offsetWidth, this.$refs.vid.offsetHeight, this.$store.state.set.screenRate, this.screenWidth, this.screenHeight, this.spaceLeft, this.spaceTop);
+        console.log(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.shapeOffsetTop, this.$refs.vid.offsetWidth, this.$refs.vid.offsetHeight, this.$store.state.set.screenRate, this.screenWidth, this.screenHeight, this.spaceLeft, this.spaceTop, offsetX);
 
 
         if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Rectangle') {
@@ -321,6 +323,9 @@ export default {
               type: 'shapeOffsetLeft',
               value: this.$store.state.set.shapeOffsetLeft + offsetX
             });
+
+            console.log(this.$store.state.set.shapeOffsetLeft);
+
             this.$store.dispatch('setData', {
               type: 'shapeOffsetTop',
               value: this.$store.state.set.shapeOffsetTop + offsetY
@@ -452,6 +457,7 @@ export default {
     "$store.state.set.fileName": function (val, oldVal) {
       this.fileName = this.$store.state.set.fileName;
     },
+/*
     "$refs.vid.offsetWidth": function (val, oldVal) {
       if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
         this.screenHeight = this.$refs.vid.offsetHeight;
@@ -529,9 +535,71 @@ export default {
         value: this.$refs.shape.offsetTop - this.spaceTop
       });
     }
+
+*/
+    "$refs.vid.offsetWidth":function(newVal, oldVal){
+    console.log("aaa");
+      if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
+        this.screenHeight = this.$refs.vid.offsetHeight;
+        this.screenWidth = Math.trunc(this.screenHeight / this.$store.state.set.screenRate);
+      }
+      else {
+        this.screenWidth = this.$refs.vid.offsetWidth;
+        this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
+      }
+
+
+
+      this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
+      this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
+
+      console.log(this.$refs.vid,offsetWidth , this.screenWidth, this.spaceLeft, "!!!!!!!!!!!!!!!!!!!!!!!");
+
+
+
+      //screenwidth, screenheight, offsetx, offsety
+      this.$store.dispatch('setData', {
+        type: 'screenWidth',
+        value: this.screenWidth
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'screenHeight',
+        value: this.screenHeight
+      });
+
+    },
+    "$refs.vid.offsetHeight":function(newVal, oldVal){
+      if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
+        this.screenHeight = this.$refs.vid.offsetHeight;
+        this.screenWidth = Math.trunc(this.screenHeight / this.$store.state.set.screenRate);
+      }
+      else {
+        this.screenWidth = this.$refs.vid.offsetWidth;
+        this.screenHeight = Math.trunc(this.screenWidth * this.$store.state.set.screenRate);
+      }
+
+
+
+      this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
+      this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
+
+      console.log(this.$refs.vid.offsetWidth , this.screenWidth, this.spaceLeft, "!!!!!!!!!!!!!!!!!!!!!!!");
+
+
+
+      //screenwidth, screenheight, offsetx, offsety
+      this.$store.dispatch('setData', {
+        type: 'screenWidth',
+        value: this.screenWidth
+      });
+
+      this.$store.dispatch('setData', {
+        type: 'screenHeight',
+        value: this.screenHeight
+      });
+    },
   },
-
-
 };
 </script>
 

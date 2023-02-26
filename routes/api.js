@@ -11,26 +11,25 @@ const { promisify } = require('util');
 const { v4 } = require('uuid');
 
 const writeFile = promisify(fs.writeFile);
-const readdir = promisify(fs.readdir);
 
+console.log('watching...');
+
+if (!fs.existsSync('public')) {
+  fs.mkdirSync('public');
+}
+
+if (!fs.existsSync("public/videos")) {
+  fs.mkdirSync("public/videos");
+}
+
+if (!fs.existsSync("public/frames")) {
+  fs.mkdirSync("public/frames");
+}
 // make sure messages folder exists
 const messageFolder = 'public/audios/';
 if (!fs.existsSync(messageFolder)) {
   fs.mkdirSync(messageFolder);
 }
-
-
-
-// router.get('/upload/audio', (req, res) => {
-//   readdir(messageFolder)
-//     .then(messageFilenames => {
-//       res.status(200).json({ messageFilenames });
-//     })
-//     .catch(err => {
-//       console.log('Error reading message directory', err);
-//       res.sendStatus(500);
-//     });
-// });
 
 router.post('/upload_audio', (req, res) => {
   if (!req.body.message) {
@@ -48,14 +47,6 @@ router.post('/upload_audio', (req, res) => {
       res.sendStatus(500);
     });
 });
-
-
-
-/* for audio upload */
-
-
-
-
 
 const generateFileName = (originalName) => (Date.now() + "-" + Math.round(Math.random() * 1E9) + path.extname(originalName));
 
@@ -172,15 +163,7 @@ const extractColor = colorString => {
 
 const upload = multer({ storage: storage })
 /* Upload a video */
-router.post('/upload', function (req, res, next) {
-  if (!fs.existsSync("public/videos")) {
-    fs.mkdirSync("public/videos");
-  }
-  if (!fs.existsSync("public/frames")) {
-    fs.mkdirSync("public/frames");
-  }
-  next();
-}, upload.single('video'), async function (req, res, next) {
+router.post('/upload', upload.single('video'), async function (req, res, next) {
   generateThumbnails(req.file.filename);
   let filecount = getFileCount(req.file.filename);
   let duration = await getDuration(req.file.filename);
@@ -277,40 +260,8 @@ router.post('/save/:fname', async function (req, res, next) {
         fs.appendFileSync("subtitles.srt", subtitle.text + "\n" + "\n");
       }
       execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -vf subtitles=subtitles.srt subtitles.mp4 -y`);
-      // videoInfo = await (new Promise((resolve, reject) => {
-      //   ffmpeg.ffprobe(fname, (err, data) => {
-      //     if (err) {
-      //       reject(err);
-      //     } else {
-      //       resolve(data.streams);
-      //       // for (let stream of data.streams) {
-      //       //   if (stream.width) {
-      //       //     resolve(stream);
-      //       //     return;
-      //       //   }
-      //       // }
-      //     }
-      //   });
-      // }));
-      // console.log(videoInfo);
 
       fname = 'subtitles.mp4';
-      // videoInfo = await (new Promise((resolve, reject) => {
-      //   ffmpeg.ffprobe(fname, (err, data) => {
-      //     if (err) {
-      //       reject(err);
-      //     } else {
-      //       resolve(data.streams);
-      //       // for (let stream of data.streams) {
-      //       //   if (stream.width) {
-      //       //     resolve(stream);
-      //       //     return;
-      //       //   }
-      //       // }
-      //     }
-      //   });
-      // }));
-      // console.log(videoInfo);
     }
     if (request.shapes && request.shapes.length > 0) {
       let last = "0";
@@ -390,12 +341,49 @@ router.post('/save/:fname', async function (req, res, next) {
                   }
                 });
               }));
+              break;
             }
-          case 'Line':
+          case 'LineToDown':
             {
-
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              // console.log(shape.type);
+              // console.log("okay");
+              let W = shape.screenWidth || 600;
+              let H = shape.screenHeight || 400;
+              console.log(W, H);
+              // console.log(shape.type);
+              // console.log("okay");
+              let x = shape.left / W * width;
+              let y = shape.top / H * height;
+              let w = shape.width / W * width;
+              let c = extractColor(shape.borderColor);
+              let s = shape.from;
+              let e = shape.to;
+              // console.log("color = ", c, gname);
+              console.log("fname = ", fname);
+              console.log(gname, fname, x, y, w, c, s, e);
+              let h = w;
+              // execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
+              // console.log(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${x + w / 2},2)+pow(Y-${y + h / 2},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w + 5}x${h + 5},geq=lum='p(X+${x},Y+${y})':a='if(gt(X-Y, 3), 0, if(gt(Y-X,3),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              videoInfo = await (new Promise((resolve, reject) => {
+                ffmpeg.ffprobe(gname, (err, data) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    resolve(data.streams);
+                  }
+                });
+              }));
+              break;
             }
-        }
+          case 'LineToUp':
+            {
+              break;
+            }
+          }
         last = shape.to;
       }
       // console.log(segments.length);

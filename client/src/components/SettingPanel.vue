@@ -916,6 +916,8 @@ export default {
       var payload = {
         type: "shapes",
         value: {
+          screenWidth: this.$store.state.set.screenWidth,
+          screenHeight: this.$store.state.set.screenHeight,
           shapeFrom: { ...this.$store.state.set.shapeFrom },
           shapeTo: { ...this.$store.state.set.shapeTo },
           shapeContent: this.$store.state.set.shapeContent,
@@ -925,7 +927,7 @@ export default {
           shapeOffsetWidth: this.$store.state.set.shapeOffsetWidth,
           shapeOffsetHeight: this.$store.state.set.shapeOffsetHeight,
           shapeOffsetTop: this.$store.state.set.shapeOffsetTop,
-          shapeOffsetLeft: this.$store.state.set.shapeOffsetLeft - this.$store.state.set.toolSideBar - this.$store.state.set.settingBoxWidth - 45 - (this.$store.state.set.panelWidth - this.$store.state.set.screenWidth) / 2
+          shapeOffsetLeft: this.$store.state.set.shapeOffsetLeft
         }
       }
 

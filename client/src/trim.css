@@ -17,7 +17,7 @@
 .splitter {
   flex: 0 0 auto;
   width: 5px;
-  background: url(../assets/vsizegrip.png) center center no-repeat #535353;
+  /* background: url(../assets/vsizegrip.png) center center no-repeat #535353; */
   min-height: 200px;
   cursor: col-resize;
 }
@@ -45,7 +45,7 @@
 .splitter-horizontal {
   flex: 0 0 auto;
   height: 4px;
-  background: url(../assets/hsizegrip.png) center center no-repeat #535353;
+  /* background: url(../assets/hsizegrip.png) center center no-repeat #535353; */
   cursor: row-resize;
 }
 

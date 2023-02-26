@@ -93,7 +93,7 @@ export default {
     this.fileName = this.$store.state.set.fileName;
 
 
-    console.log(this.$refs.vid, this.$refs.screen);
+//    console.log(this.$refs.vid, this.$refs.screen);
 
     if (this.$refs.vid.offsetWidth * this.$store.state.set.screenRate > this.$refs.vid.offsetHeight) {
       this.screenHeight = this.$refs.vid.offsetHeight;
@@ -122,7 +122,7 @@ export default {
       value: this.screenHeight
     });
 
-    console.log(this.spaceTop, this.spaceLeft);
+//    console.log(this.spaceTop, this.spaceLeft);
 
     this.$store.dispatch('setData', {
       type: 'shapeOffsetLeft',
@@ -258,7 +258,7 @@ export default {
       }
       else {
         if (this.$store.state.set.shapeOffsetLeft < 0) {
-          console.log("this.$store.state.set.shapeOffsetLeft < 0");
+//          console.log("this.$store.state.set.shapeOffsetLeft < 0");
 
 
           this.$store.dispatch('setData', {
@@ -270,7 +270,7 @@ export default {
         }
 
         if (this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth) {
-          console.log("this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth");
+//          console.log("this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth");
 
 
           this.$store.dispatch('setData', {
@@ -283,7 +283,7 @@ export default {
 
 
         if (this.$store.state.set.shapeOffsetTop < 0) {
-          console.log("this.$store.state.set.shapeOffsetTop < 0");
+//          console.log("this.$store.state.set.shapeOffsetTop < 0");
 
 
           this.$store.dispatch('setData', {
@@ -296,7 +296,7 @@ export default {
 
 
         if (this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight) {
-          console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight", this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight, this.$store.state.set.screenWidth, this.$refs.shape.offsetHeight, this.$refs.shape.offsetWidth);
+//          console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight", this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight, this.$store.state.set.screenWidth, this.$refs.shape.offsetHeight, this.$refs.shape.offsetWidth);
 
 
           this.$store.dispatch('setData', {
@@ -311,7 +311,7 @@ export default {
 
 
 
-        console.log(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.shapeOffsetTop, this.$refs.vid.offsetWidth, this.$refs.vid.offsetHeight, this.$store.state.set.screenRate, this.screenWidth, this.screenHeight, this.spaceLeft, this.spaceTop);
+//        console.log(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.shapeOffsetTop, this.$refs.vid.offsetWidth, this.$refs.vid.offsetHeight, this.$store.state.set.screenRate, this.screenWidth, this.screenHeight, this.spaceLeft, this.spaceTop);
 
 
         if (this.$store.state.set.selectedSettingTool === 'shape' && this.$store.state.set.shapeContent === 'Rectangle') {
@@ -466,7 +466,7 @@ export default {
       this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
 
 
-      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
+//      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
 
 
       //screenwidth, screenheight, offsetx, offsety
@@ -505,7 +505,7 @@ export default {
       this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
 
 
-      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
+//      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
 
 
       //screenwidth, screenheight, offsetx, offsety

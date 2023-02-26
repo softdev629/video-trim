@@ -62,12 +62,12 @@ export default {
   watch: {
     "$store.state.set.curTime": function (newZoom, oldZoom) {
 
-      console.log('curtime changed', this.$store.state.set.curTime);
-      console.log('duration ', this.$store.state.set.duration);
+//      console.log('curtime changed', this.$store.state.set.curTime);
+//      console.log('duration ', this.$store.state.set.duration);
 
       if (this.$store.state.set.curTime.mm * 6000 + this.$store.state.set.curTime.ss * 100 + this.$store.state.set.curTime.ss1 >= this.$store.state.set.duration.mm * 6000 + this.$store.state.set.duration.ss * 100 + this.$store.state.set.duration.ss1) {
 
-        console.log('curtime = duration');
+//        console.log('curtime = duration');
 
         this.$store.dispatch("setData", {
           type: "curTime",

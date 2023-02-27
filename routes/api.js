@@ -40,7 +40,7 @@ router.post('/upload_audio', (req, res) => {
     .then(() => {
       let new_messageId = v4();
       execSync(`ffmpeg -i ${messageFolder + messageId} -c:a aac ${messageFolder + new_messageId}.aac`);
-      res.status(201).json({ fileName: new_messageId });
+      res.status(201).json({ fileName: new_messageId + ".aac" });
     })
     .catch(err => {
       console.log('Error writing message to file', err);
@@ -276,25 +276,24 @@ router.post('/save/:fname', async function (req, res, next) {
           execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${normalizeTimeFromFrontEnd(shape.from)} -c:v libx264 -c:a aac ${gname} -y`);
         }
         // console.log(shape);
-        console.log(shape.type);
+        let W = shape.screenWidth || 600;
+        let H = shape.screenHeight || 400;
+        // console.log(shape.left, W, width);
+        let x = Math.trunc(shape.left / W * width);
+        let y = Math.trunc(shape.top / H * height);
+        let w = Math.trunc(shape.width / W * width);
+        let h = Math.trunc(shape.height / H * height);
+        let c = extractColor(shape.borderColor);
+        let s = shape.from;
+        let e = shape.to;
+        console.log(x, y, w, h, c, s, e, W, H);
         switch (shape.type) {
           case 'Rectangle':
             {
               index++;
               let gname = "shape" + index.toString(10) + ".mp4";
               segments.push(gname);
-              let W = request.width || 600;
-              let H = request.height || 400;
-              // console.log(shape.type);
-              // console.log("okay");
-              let x = shape.left / W * width;
-              let y = shape.top / H * height;
-              let w = shape.width / W * width;
-              let h = shape.height / H * height;
-              let c = extractColor(shape.borderColor);
-              let s = shape.from;
-              let e = shape.to;
-              console.log("color = ", c, shape.borderColor, gname);
+              console.log(W, H, x, y, w, h, c, s, e);
               execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -vf "drawbox=x=${x}:y=${y}:w=${w}:h=${h}:color=${c}" -c:v libx264 -c:a aac ${gname} -y`);
               videoInfo = await (new Promise((resolve, reject) => {
                 ffmpeg.ffprobe(gname, (err, data) => {
@@ -313,81 +312,63 @@ router.post('/save/:fname', async function (req, res, next) {
               index++;
               let gname = "shape" + index.toString(10) + ".mp4";
               segments.push(gname);
-              // console.log(shape.type);
               // console.log("okay");
-              let W = request.width || 600;
-              let H = request.height || 400;
-              // console.log(shape.type);
-              // console.log("okay");
-              let x = shape.left / W * width;
-              let y = shape.top / H * height;
-              let w = shape.width / W * width;
-              let c = extractColor(shape.borderColor);
-              let s = shape.from;
-              let e = shape.to;
-              // console.log("color = ", c, gname);
-              console.log("fname = ", fname);
-              console.log(gname, fname, x, y, w, c, s, e);
-              let h = w;
-              // execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
-              // console.log(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${x + w / 2},2)+pow(Y-${y + h / 2},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
-              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w + 5}x${h + 5},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2 + 2.5},2)+pow(Y-${h / 2 + 2.5},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${w / 2 + 2.5},2)+pow(Y-${h / 2 + 2.5},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
-              videoInfo = await (new Promise((resolve, reject) => {
-                ffmpeg.ffprobe(gname, (err, data) => {
-                  if (err) {
-                    reject(err);
-                  } else {
-                    resolve(data.streams);
-                  }
-                });
-              }));
+              h = w;
+              // console.log("fname = ", fname);
+              // console.log(gname, fname, x, y, w, c, s, e);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${Math.max(w / 2 - 5, 0)}, 2)),0,if(gt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${w / 2},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
               break;
             }
           case 'LineToDown':
             {
+              // console.log("okay");
               index++;
               let gname = "shape" + index.toString(10) + ".mp4";
               segments.push(gname);
-              // console.log(shape.type);
-              // console.log("okay");
-              let W = shape.screenWidth || 600;
-              let H = shape.screenHeight || 400;
-              console.log(W, H);
-              // console.log(shape.type);
-              // console.log("okay");
-              let x = shape.left / W * width;
-              let y = shape.top / H * height;
-              let w = shape.width / W * width;
-              let c = extractColor(shape.borderColor);
-              let s = shape.from;
-              let e = shape.to;
-              // console.log("color = ", c, gname);
-              console.log("fname = ", fname);
-              console.log(gname, fname, x, y, w, c, s, e);
-              let h = w;
-              // execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
-              // console.log(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(lt(pow(X-${w / 2},2)+pow(Y-${h / 2},2),pow(${Math.max(w / 2 - 2.5, 0)}, 2)),0,if(gt(pow(X-${x + w / 2},2)+pow(Y-${y + h / 2},2),pow(${w / 2 + 2.5},2)),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
-              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w + 5}x${h + 5},geq=lum='p(X+${x},Y+${y})':a='if(gt(X-Y, 3), 0, if(gt(Y-X,3),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
-              videoInfo = await (new Promise((resolve, reject) => {
-                ffmpeg.ffprobe(gname, (err, data) => {
-                  if (err) {
-                    reject(err);
-                  } else {
-                    resolve(data.streams);
-                  }
-                });
-              }));
+              // console.log("okay2");
+              // console.log("here = ", x, y, h, w, c);
+              h = w;
+              y += h / Math.sqrt(2) - h / 2 / Math.sqrt(2);
+              h /= Math.sqrt(2);
+              w /= Math.sqrt(2);
+              // console.log(x, y, h, w, c);
+              y = Math.trunc(y);
+              h = Math.trunc(h);
+              w = Math.trunc(w);
+              // console.log("x = ", x, y, h, w, c);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(gt(X-Y, 3), 0, if(gt(Y-X,3),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
               break;
             }
           case 'LineToUp':
             {
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              w /= Math.sqrt(2);
+              w = Math.trunc(w);
+              h = w;
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x${h},geq=lum='p(X+${x},Y+${y})':a='if(gt(X+Y, ${w-10}), 0, if(lt(X+Y,${w-15}),0,255))'[c];[0][c]overlay=${x}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
               break;
             }
-          }
+          case 'Vertical':
+            {
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=5x${w},geq=lum='p(X+${x},Y+${y})':a=255[c];[0][c]overlay=${Math.max(x-2,0)}:${y}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              break;
+            }
+          case 'Horizontal':
+            {
+              index++;
+              let gname = "shape" + index.toString(10) + ".mp4";
+              segments.push(gname);
+              execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -filter_complex "color=${c}:s=${w}x5,geq=lum='p(X+${x},Y+${y})':a=255[c];[0][c]overlay=${x}:${Math.max(y-2,0)}:shortest=1" -c:v libx264 -c:a aac ${gname} -y`);
+              break;
+            }
+        }
         last = shape.to;
       }
-      // console.log(segments.length);
-      // console.log(length);
       if (timeInSeconds(last) < length) {
         index++;
         let gname = "shape" + index.toString(10) + ".mp4";
@@ -396,7 +377,6 @@ router.post('/save/:fname', async function (req, res, next) {
         gname = "shape" + Math.random() * 1e9 + ".mp4";
         index++;
       }
-      // console.log("segmentsize = ", index);
       let commandString = "ffmpeg";
       for (let name of segments) {
         commandString += ` -i ${name}`;
@@ -431,6 +411,7 @@ router.post('/save/:fname', async function (req, res, next) {
           index++;
           let gname = "audio" + index.toString(10) + ".mp4";
           segments.push(gname);
+          console.log("gname = ", gname);
           execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
           execSync(`ffmpeg -hide_banner -loglevel error -i temp.mp4 -i public/audios/${a} -c:v libx264 - filter_complex "[0:a][1:a] amix=inputs=2:duration=longest [audio_out]" ${gname} -y`);
         }
@@ -531,8 +512,12 @@ router.post('/save/:fname', async function (req, res, next) {
     if (fs.existsSync("output1.mp4")) {
       fs.unlinkSync('output1.mp4');
     }
-
-
+    if (fs.existsSync("shape.mp4")) {
+      fs.unlinkSync('shape.mp4');
+    }
+    if (fs.existsSync("audio.mp4")) {
+      fs.unlinkSync('audio.mp4');
+    }
     if (fs.existsSync("output2.mp4")) {
       fs.unlinkSync('output2.mp4');
     }

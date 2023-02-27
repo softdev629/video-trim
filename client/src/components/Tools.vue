@@ -89,14 +89,11 @@ export default {
         this.$store.dispatch("setData", payload);
       }
 
-      payload = { type: "settingBoxWidth", value: 260 };
-      this.$store.dispatch("setData", payload);
-      this.$emit("forceRendering");
 
-      var panelWidth = this.$store.state.set.windowOuterWidth - (this.$store.state.set.toolSideBar + 5 + 300 + 1);
 
-      payload = { type: "panelWidth", value: panelWidth };
-      this.$store.dispatch("setData", payload);
+
+
+
 
 
 

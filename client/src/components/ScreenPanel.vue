@@ -13,37 +13,37 @@
       </div>
   </div> -->
 
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape" id="Rectangle"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Rectangle`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape"  id="LineToDown"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToDown`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(-25px) translateX(15px) rotate(45deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape" id="Circle"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Circle`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};border-radius:50%`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape" id="Vertical"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Vertical`"
       :style="`height:${this.$store.state.set.shapeOffsetHeight}px; width:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape" id="LineToUp"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToUp`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(13px) translateX(15px) rotate(135deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"
+    <div class="shape-section" ref="shape" id="Horizontal"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `Horizontal`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:0px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border:solid 5px ${this.$store.state.set.shapeBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
@@ -181,15 +181,33 @@ export default {
       }
     },
     selectMove: async function (e) {
+      const makeSureInRange = (x, l, r) => {
+        if (x < l) return l;
+        if (x > r) return r;
+        return x;
+      };
       if (this.selectState == 0)
         return;
 
-      let offsetX = e.x - this.startPos.x;
-      let offsetY = e.y - this.startPos.y;
+      console.log("total width = ", this.$store.state.set.windowOuterWidth, "screenwidth = ", this.$refs.screen.offsetWidth, "space = ", this.spaceLeft);
+      let leftFrom = this.spaceLeft + this.$store.state.set.windowOuterWidth - this.$refs.screen.offsetWidth;
+      let leftTo = this.$store.state.set.windowOuterWidth - this.spaceLeft;
+
+      let topFrom = this.spaceTop;
+      let topTo = this.$refs.screen.offsetHeight - this.spaceTop;
+
+      let oldx = makeSureInRange(this.startPos.x, leftFrom, leftTo);
+      let oldy = makeSureInRange(this.startPos.y, topFrom, topTo);
+
+      let newx = makeSureInRange(e.x, leftFrom, leftTo);
+      let newy = makeSureInRange(e.y, topFrom, topTo);
+
+      let offsetX = newx - oldx;
+      let offsetY = newy - oldy;
 
       this.startPos = {
-        x: e.x,
-        y: e.y
+        x: newx,
+        y: newy
       }
 
 
@@ -304,6 +322,19 @@ export default {
         }
       }
       else {
+/*
+        let newLeft = Math.max(Math.min(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth), 0);
+        let newTop = Math.max(Math.min(this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight), 0);
+        this.$store.dispatch('setData', {
+            type: 'shapeOffsetLeft',
+            value: newLeft
+        });
+        this.$store.dispatch('setData', {
+            type: 'shapeOffsetTop',
+            value: newTop
+        });
+*/
+/*
         if (this.$store.state.set.shapeOffsetLeft < 0) {
           //          console.log("this.$store.state.set.shapeOffsetLeft < 0");
 
@@ -353,7 +384,7 @@ export default {
           this.selectState = 0;
           return;
         }
-
+*/
 
 
 
@@ -502,7 +533,14 @@ export default {
     "$store.state.set.fileName": function (val, oldVal) {
       this.fileName = this.$store.state.set.fileName;
     },
-    "$refs.vid.offsetWidth": function (val, oldVal) {
+    "$store.state.set.selectedSettingTool": function (val, oldVal) {
+
+//shape-section
+
+    if(this.$store.state.set.selectedSettingTool !== "shape")
+      return;
+
+
 
       if ((this.$refs.vid.offsetWidth - 40) * this.$store.state.set.screenRate > (this.$refs.vid.offsetHeight - 40)) {
         this.screenHeight = this.$refs.vid.offsetHeight - 40;
@@ -516,7 +554,7 @@ export default {
       this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
       this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
 
-
+/* 
       console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
 
 
@@ -540,47 +578,10 @@ export default {
         type: 'shapeOffsetTop',
         value: this.$refs.shape.offsetTop - this.spaceTop
       });
+*/
 
     },
-    "$refs.vid.offsetHeight": function (val, oldVal) {
 
-      if ((this.$refs.vid.offsetWidth - 40) * this.$store.state.set.screenRate > (this.$refs.vid.offsetHeight - 40)) {
-        this.screenHeight = this.$refs.vid.offsetHeight - 40;
-        this.screenWidth = (this.screenHeight) / this.$store.state.set.screenRate;
-      }
-      else {
-        this.screenWidth = this.$refs.vid.offsetWidth - 40;
-        this.screenHeight = (this.screenWidth) * this.$store.state.set.screenRate;
-      }
-
-      this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
-      this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
-
-
-      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
-
-
-      //screenwidth, screenheight, offsetx, offsety
-      this.$store.dispatch('setData', {
-        type: 'screenWidth',
-        value: this.screenWidth
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'screenHeight',
-        value: this.screenHeight
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'shapeOffsetLeft',
-        value: this.$refs.shape.offsetLeft - this.spaceLeft
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'shapeOffsetTop',
-        value: this.$refs.shape.offsetTop - this.spaceTop
-      });
-    }
   },
 
 

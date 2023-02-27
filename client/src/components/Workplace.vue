@@ -131,6 +131,8 @@ export default {
         tempShapes.push({
           from: timeToString(shape.value.shapeFrom),
           to: timeToString(shape.value.shapeTo),
+          screenWidth: shape.value.screenWidth,
+          screenHeight: shape.value.screenHeight,
           // color: shape.value.shapeColor,
           // borderWidth: shape.value.shapeBorderWidth,
           type: shape.value.shapeContent,

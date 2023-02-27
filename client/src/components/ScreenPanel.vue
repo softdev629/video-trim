@@ -4,6 +4,7 @@
     <video class="size1" @oncanplay="getDuration()" :src="`/videos/${this.fileName}`"
       :style="`width:600px; height:400px; min-width: 100%; min-height: 100%;`" type="video/mp4" ref="vid"
       @timeupdate="curTimeChange($event)"></video>
+    <video style="display:none" :src="`/videos/${this.fileName}`" ref="vid1" type="video/mp4"></video>
     <!-- <div class="text-section" v-if="this.$store.state.set.selectedSettingTool === `text`"
       :style="`width:${this.$store.state.set.textOffsetWidth}px; height:${this.$store.state.set.textOffsetHeight}px;display:absolute;z-index:10;position:absolute; left:${this.$store.state.set.textOffsetLeft}px;top:${this.$store.state.set.textOffsetTop}px; color:${this.$store.state.set.textColor};background-color: transparent; border:solid 0.5px ${this.$store.state.set.textBorderColor};`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)" style="text-align:center">
@@ -19,7 +20,7 @@
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
       <div class="text-resize" @mousedown="selectResizeText($event)" @mouseup="selectRelease($event)"></div>
     </div>
-    <div class="shape-section" ref="shape"  id="LineToDown"
+    <div class="shape-section" ref="shape" id="LineToDown"
       v-if="this.$store.state.set.selectedSettingTool === `shape` && this.$store.state.set.shapeContent === `LineToDown`"
       :style="`width:${this.$store.state.set.shapeOffsetWidth}px; height:${this.$store.state.set.shapeOffsetWidth}px;z-index:10;position:absolute; left:${this.$store.state.set.shapeOffsetLeft + this.spaceLeft}px;top:${this.$store.state.set.shapeOffsetTop + this.spaceTop}px; background-color: transparent; border-bottom: 5px solid ${this.$store.state.set.shapeBorderColor};-webkit-transform: translateY(-25px) translateX(15px) rotate(45deg);`"
       @mousedown="selectText($event)" @mouseup="selectRelease($event)">
@@ -322,69 +323,69 @@ export default {
         }
       }
       else {
-/*
-        let newLeft = Math.max(Math.min(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth), 0);
-        let newTop = Math.max(Math.min(this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight), 0);
-        this.$store.dispatch('setData', {
-            type: 'shapeOffsetLeft',
-            value: newLeft
-        });
-        this.$store.dispatch('setData', {
-            type: 'shapeOffsetTop',
-            value: newTop
-        });
-*/
-/*
-        if (this.$store.state.set.shapeOffsetLeft < 0) {
-          //          console.log("this.$store.state.set.shapeOffsetLeft < 0");
-
-
-          this.$store.dispatch('setData', {
-            type: 'shapeOffsetLeft',
-            value: this.$store.state.set.shapeOffsetLeft + 5
-          });
-          this.selectState = 0;
-          return;
-        }
-
-        if (this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth) {
-          //          console.log("this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth");
-
-
-          this.$store.dispatch('setData', {
-            type: 'shapeOffsetLeft',
-            value: this.$store.state.set.shapeOffsetLeft - 5
-          });
-          this.selectState = 0;
-          return;
-        }
-
-
-        if (this.$store.state.set.shapeOffsetTop < 0) {
-          //          console.log("this.$store.state.set.shapeOffsetTop < 0");
-
-
-          this.$store.dispatch('setData', {
-            type: 'shapeOffsetTop',
-            value: this.$store.state.set.shapeOffsetTop + 5
-          });
-          this.selectState = 0;
-          return;
-        }
-
-
-        if (this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight) {
-          //          console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight", this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight, this.$store.state.set.screenWidth, this.$refs.shape.offsetHeight, this.$refs.shape.offsetWidth);
-
-
-          this.$store.dispatch('setData', {
-            type: 'shapeOffsetTop',
-            value: this.$store.state.set.shapeOffsetTop - 5
-          });
-          this.selectState = 0;
-          return;
-        }
-*/
+        /*
+                let newLeft = Math.max(Math.min(this.$store.state.set.shapeOffsetLeft, this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth), 0);
+                let newTop = Math.max(Math.min(this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight), 0);
+                this.$store.dispatch('setData', {
+                    type: 'shapeOffsetLeft',
+                    value: newLeft
+                });
+                this.$store.dispatch('setData', {
+                    type: 'shapeOffsetTop',
+                    value: newTop
+                });
+        */
+        /*
+                if (this.$store.state.set.shapeOffsetLeft < 0) {
+                  //          console.log("this.$store.state.set.shapeOffsetLeft < 0");
+        
+        
+                  this.$store.dispatch('setData', {
+                    type: 'shapeOffsetLeft',
+                    value: this.$store.state.set.shapeOffsetLeft + 5
+                  });
+                  this.selectState = 0;
+                  return;
+                }
+        
+                if (this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth) {
+                  //          console.log("this.$store.state.set.shapeOffsetLeft > this.$store.state.set.screenWidth - this.$refs.shape.offsetWidth");
+        
+        
+                  this.$store.dispatch('setData', {
+                    type: 'shapeOffsetLeft',
+                    value: this.$store.state.set.shapeOffsetLeft - 5
+                  });
+                  this.selectState = 0;
+                  return;
+                }
+        
+        
+                if (this.$store.state.set.shapeOffsetTop < 0) {
+                  //          console.log("this.$store.state.set.shapeOffsetTop < 0");
+        
+        
+                  this.$store.dispatch('setData', {
+                    type: 'shapeOffsetTop',
+                    value: this.$store.state.set.shapeOffsetTop + 5
+                  });
+                  this.selectState = 0;
+                  return;
+                }
+        
+        
+                if (this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight) {
+                  //          console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight", this.$store.state.set.shapeOffsetTop, this.$store.state.set.screenHeight, this.$store.state.set.screenWidth, this.$refs.shape.offsetHeight, this.$refs.shape.offsetWidth);
+        
+        
+                  this.$store.dispatch('setData', {
+                    type: 'shapeOffsetTop',
+                    value: this.$store.state.set.shapeOffsetTop - 5
+                  });
+                  this.selectState = 0;
+                  return;
+                }
+        */
 
 
 
@@ -512,6 +513,15 @@ export default {
     },
   },
   watch: {
+    "$store.state.set.isPlay": function (val, oldVal) {
+      if (this.$store.state.set.isPlay) {
+        this.$refs.vid1.play();
+      }
+      else {
+        this.$refs.vid1.pause();
+      }
+
+    },
     "$store.state.set.curTime": function (val, oldVal) {
       if (val === oldVal) return;
       const currentTime = this.$refs.vid.currentTime;
@@ -529,16 +539,17 @@ export default {
         return;
 
       this.$refs.vid.currentTime = (val.mm * 100 * 60 + val.ss * 100 + val.ss1) / 100;
+      //      this.$refs.vid1.currentTime = (val.mm * 100 * 60 + val.ss * 100 + val.ss1) / 100;
     },
     "$store.state.set.fileName": function (val, oldVal) {
       this.fileName = this.$store.state.set.fileName;
     },
     "$store.state.set.selectedSettingTool": function (val, oldVal) {
 
-//shape-section
+      //shape-section
 
-    if(this.$store.state.set.selectedSettingTool !== "shape")
-      return;
+      if (this.$store.state.set.selectedSettingTool !== "shape")
+        return;
 
 
 
@@ -554,31 +565,31 @@ export default {
       this.spaceLeft = Math.trunc((this.$refs.vid.offsetWidth - this.screenWidth) / 2);
       this.spaceTop = Math.trunc((this.$refs.vid.offsetHeight - this.screenHeight) / 2);
 
-/* 
-      console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
-
-
-      //screenwidth, screenheight, offsetx, offsety
-      this.$store.dispatch('setData', {
-        type: 'screenWidth',
-        value: this.screenWidth
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'shapeOffsetLeft',
-        value: this.screenHeight
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'shapeOffsetLeft',
-        value: this.$refs.shape.offsetLeft - this.spaceLeft
-      });
-
-      this.$store.dispatch('setData', {
-        type: 'shapeOffsetTop',
-        value: this.$refs.shape.offsetTop - this.spaceTop
-      });
-*/
+      /* 
+            console.log("(this.$store.state.set.shapeOffsetTop > this.$store.state.set.screenHeight - this.$refs.shape.offsetHeight");
+      
+      
+            //screenwidth, screenheight, offsetx, offsety
+            this.$store.dispatch('setData', {
+              type: 'screenWidth',
+              value: this.screenWidth
+            });
+      
+            this.$store.dispatch('setData', {
+              type: 'shapeOffsetLeft',
+              value: this.screenHeight
+            });
+      
+            this.$store.dispatch('setData', {
+              type: 'shapeOffsetLeft',
+              value: this.$refs.shape.offsetLeft - this.spaceLeft
+            });
+      
+            this.$store.dispatch('setData', {
+              type: 'shapeOffsetTop',
+              value: this.$refs.shape.offsetTop - this.spaceTop
+            });
+      */
 
     },
 

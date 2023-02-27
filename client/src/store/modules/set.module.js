@@ -94,6 +94,7 @@ export default {
       state.videoTo = { mm: 0, ss: 12, ss1: 77 };
       state.delay = { mm: 0, ss: 0, ss1: 0 };
 
+
       state.cutFrom = { mm: 0, ss: 0, ss1: 0 };
       state.cutTo = { mm: 0, ss: 0, ss1: 0 };
       state.cutDelay = { mm: 0, ss: 0, ss1: 0 };
@@ -194,6 +195,7 @@ export default {
         case "videoTo":
           state.videoTo = payload.value;
           return;
+
         case "delay":
           state.delay = payload.value;
           return;
@@ -381,6 +383,7 @@ export default {
         case "delay":
           state.to = { mm: 0, ss: 0, ss1: 0 };
           return;
+
 
 
         case "cutFrom":

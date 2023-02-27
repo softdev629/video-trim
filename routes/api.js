@@ -412,8 +412,32 @@ router.post('/save/:fname', async function (req, res, next) {
           let gname = "audio" + index.toString(10) + ".mp4";
           segments.push(gname);
           console.log("gname = ", gname);
-          execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
-          execSync(`ffmpeg -hide_banner -loglevel error -i temp.mp4 -i public/audios/${a} -c:v libx264 - filter_complex "[0:a][1:a] amix=inputs=2:duration=longest [audio_out]" ${gname} -y`);
+          execSync(`ffmpeg -i ${fname} -ss ${normalizeTimeFromFrontEnd(s)} -to ${normalizeTimeFromFrontEnd(e)} -c:v libx264 -c:a aac temp.mp4 -y`);
+          // console.log("okay");
+          let audioInfo = await (new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(`public/audios/${a}`, (err, data) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(data.streams);
+              }
+            });
+          }));
+          console.log("audio = ", audioInfo);
+          execSync(`ffmpeg -i temp.mp4 -i public/audios/${a} -c:v libx264 -filter_complex "[0:a][1:a] amix=inputs=2:duration=longest [audio_out]" -map 0:v -map "[audio_out]" ${gname} -y`);
+          // console.log(`ffmpeg -i temp.mp4 -i public/audios/${a} -c:v libx264 -map 0:v:0 -map 1:a:0 -c:a aac ${gname} -y`);
+          // execSync(`ffmpeg -i temp.mp4 -i 'public/audios/${a}' -c:v copy -map 0:v:0 -map 1:a:0 -c:a aac ${gname} -y`);
+          console.log("okay adsfasdfasdf");
+          videoInfo = await (new Promise((resolve, reject) => {
+            ffmpeg.ffprobe(gname, (err, data) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(data.streams);
+              }
+            });
+          }));
+          console.log(videoInfo);
         }
         last = audio.to;
       }
@@ -421,19 +445,42 @@ router.post('/save/:fname', async function (req, res, next) {
         index++;
         let gname = "audio" + index.toString(10) + ".mp4";
         segments.push(gname);
-        execSync(`ffmpeg - hide_banner - loglevel error - i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${timeSecondsToString(length)} -c:v libx264 - c:a aac ${gname} -y`);
+        console.log(gname);
+        execSync(`ffmpeg -hide_banner -loglevel error -i ${fname} -ss ${normalizeTimeFromFrontEnd(last)} -to ${timeSecondsToString(length)} -c:v libx264 -c:a aac ${gname} -y`);
         index++;
       }
+      console.log("asdfasdfasdfasdfasdf");
+      console.log("adsfasdfasdfasdfasdf");
+      console.log("asdfasdfasdfasdfasdf");
+      console.log("asdfasdfasdfasdf");
+      console.log("asdfasdfasdasfdasdfasdff");
+      console.log("asdfasdfasdfasdfasdf");
+      console.log("asdfasdfasdfadsfasdfads");
+      console.log("asdfasdfasdfasdfasdf");
+      console.log("asdfasdfasdasdfasfdf");
+      console.log("asdfasdfasdasfdasdff");
+      console.log("asdfasdfasdadfsasdff");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
+      console.log("asdfasdfasdf");
       // console.log("segmentsize = ", index);
       let commandString = "ffmpeg";
       for (let name of segments) {
-        commandString += ` - i ${name} `;
+        commandString += ` -i ${name} `;
       }
       commandString += ' -filter_complex "';
       for (let i in segments) {
-        commandString += `[${i}:v][${i}: a]`;
+        commandString += `[${i}:v][${i}:a]`;
       }
-      commandString += ` concat = ${segments.length}: v = 1: a = 1[v][a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac shape.mp4 -y`;
+      commandString += `concat=${segments.length}:v=1:a=1[v][a]" -map "[v]" -map "[a]" -c:v libx264 -c:a aac audio.mp4 -y`;
       execSync(commandString);
       for (let name of segments) {
         fs.unlinkSync(name);

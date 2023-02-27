@@ -175,7 +175,7 @@ export default {
         },
         "subtitles": tempTitles,
         "shapes": tempShapes,
-        //"audios":tempAudios
+        "audios":tempAudios
       };
 
       console.log(data, 'uploading');

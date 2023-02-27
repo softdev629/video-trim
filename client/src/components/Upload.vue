@@ -52,6 +52,9 @@ const selectedFile = () => {
       payload = { type: "screenRate", value: data.data.height / data.data.width };
       store.dispatch("setData", payload);
 
+      console.log("data.data.height / data.data.width", data.data.height / data.data.width);
+
+
       payload = {
         type: "duration", value: {
           mm: Math.trunc(duration / 6000),

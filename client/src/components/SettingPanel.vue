@@ -439,6 +439,14 @@ export default {
       //audioItem.active == "audio-active", fileName, duration
       let activeFlag = 0;
 
+      if (this.$store.state.upload.audios.length) {
+        alert("Audio data is already added.");
+        return;
+      }
+
+
+
+
       for (let audioItem of this.audioList) {
 
         if (audioItem.active === "audio-active") {

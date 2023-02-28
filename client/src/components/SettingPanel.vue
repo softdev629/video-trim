@@ -439,11 +439,6 @@ export default {
       //audioItem.active == "audio-active", fileName, duration
       let activeFlag = 0;
 
-      if (this.$store.state.upload.audios.length) {
-        alert("Audio data is already added.");
-        return;
-      }
-
 
 
 
@@ -494,6 +489,7 @@ export default {
 
       if (!activeFlag) {
         alert("Nothing is data to add.");
+        return;
       }
 
 

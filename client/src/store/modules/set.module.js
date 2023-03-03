@@ -196,6 +196,7 @@ export default {
           state.videoTo = payload.value;
           return;
 
+
         case "delay":
           state.delay = payload.value;
           return;
@@ -303,6 +304,7 @@ export default {
           state.all = payload.value;
           break;
         case "isPlay":
+          console.log(payload.value, "set.module.js");
           state.isPlay = payload.value;
           break;
         case "comment":

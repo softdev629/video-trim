@@ -96,6 +96,10 @@ export default {
     curPosSelected(e) {
       //      this.selectedPos = this.curPos;
       if (this.isPlay) this.onPlayPause();
+
+
+
+
       var curTime = parseInt((((this.curPos - 100) / 100) * 100) * ((-1) * (this.zoom - 6)));
 
       this.$store.dispatch("setData", {
@@ -114,7 +118,12 @@ export default {
       });
     },
     onPlayPause() {
+      console.log(this.isPlay);
+
       this.$store.dispatch("setData", { type: "isPlay", value: !this.isPlay });
+
+      console.log(this.$store.state.set.isPlay);
+
       if (this.isPlay) {
         this.timerId = setInterval(this.onPlaying, 100);
 

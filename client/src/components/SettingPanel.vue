@@ -35,7 +35,7 @@
                       `}}&nbsp;&nbsp;&nbsp;&nbsp;</label>
         </div>
         <div class="record-btn-group">
-          <button class="btn btn-danger btn-tool btn-record" ref="stop" @click="stop()"><i
+          <button class="btn btn-danger btn-tool btn-record" style="display:none" ref="stop" @click="stop()"><i
               class="fa fa-stop"></i></button>
           <button class="btn btn-primary btn-tool btn-record" ref="play" @click="play()"><i
               class="fa fa-play"></i></button>
@@ -45,12 +45,12 @@
         <div id="saved-audio-messages" ref="savedAudioMessagesContainer">
           <div class="audio-div" v-for="(audioItem, index) in this.audioList" :key="index"
             @click="audio_select($event, index)" :class="`${audioItem.active}`">
+            <input v-if="audioItem.active === `audio-active`" type="radio" name="audio-group" checked />
+            <input v-if="audioItem.active !== `audio-active`" type="radio" name="audio-group" />
             <audio v-if="audioItem.active === `audio-active`" :src="`/audios/${audioItem.fileName}`" controls
               class="my-audio" ref="myAudio"></audio>
             <audio v-if="audioItem.active !== `audio-active`" :src="`/audios/${audioItem.fileName}`" controls
               class="my-audio"></audio>
-            <input v-if="audioItem.active === `audio-active`" type="radio" name="audio-group" checked />
-            <input v-if="audioItem.active !== `audio-active`" type="radio" name="audio-group" />
           </div>
         </div>
         <div>
@@ -236,6 +236,7 @@ export default {
       recorder: null,
       audio: null,
       audioList: [],
+      playOrPause: false,
 
       btnType: 'Pause',
       shapeColor: "rgb(16,16,16)",
@@ -300,15 +301,40 @@ export default {
     payload = { type: "shapeTo", value: { mm: 0, ss: 5, ss1: 0 } };
     this.$store.dispatch("setData", payload);
 
+
+
   },
   setup() {
     const router = useRouter();
     const route = useRoute();
 
   },
+  watch: {
+    "$store.state.upload.audios.length": function (val, oldVal) {
+
+      //      console.log("----------------length:---------------", this.$store.state.upload.audios.length);
+      if (!this.$store.state.upload.audios.length) {
+        this.audioList = [];
+      }
+
+    },
+    "$store.state.set.selectedSettingTool": function (val, oldVal) {
+
+      //      console.log("----------------length:---------------", this.$store.state.upload.audios.length);
+      if (!this.$store.state.set.selectedSettingTool === "audio") {
+        this.$refs.stop.setAttribute('disabled', true);
+      }
+
+    },
+  },
   methods: {
     record: async function () {
       this.recordMTime = 0;
+
+      this.playOrPause = false;
+      this.$refs.play.style.display = "none";
+      this.$refs.stop.style.display = "block";
+
 
       if (this.polling)
         window.clearInterval(this.polling);
@@ -355,7 +381,7 @@ export default {
 
       this.$refs.record.setAttribute('disabled', true);
       this.$refs.stop.removeAttribute('disabled');
-      this.$refs.play.setAttribute('disabled', true);
+      //      this.$refs.play.setAttribute('disabled', true);
       this.$refs.save.setAttribute('disabled', true);
 
       if (!this.recorder) {
@@ -369,11 +395,18 @@ export default {
       if (this.polling)
         window.clearInterval(this.polling);
 
+      this.playOrPause = true;
+      this.$refs.play.style.display = "block";
+      this.$refs.stop.style.display = "none";
+
 
       this.$refs.record.removeAttribute('disabled');
       this.$refs.stop.setAttribute('disabled', true);
-      this.$refs.play.removeAttribute('disabled');
+      //      this.$refs.play.removeAttribute('disabled');
       this.$refs.save.removeAttribute('disabled');
+
+      console.log(this.recorder);
+
       this.audio = await this.recorder.stop();
 
     },
@@ -381,6 +414,9 @@ export default {
       if (this.polling)
         window.clearInterval(this.polling);
 
+      this.playOrPause = false;
+      this.$refs.play.style.display = "none";
+      this.$refs.stop.style.display = "block";
 
       this.audio.play();
     },
@@ -389,7 +425,13 @@ export default {
         window.clearInterval(this.polling);
 
 
+      if (!this.recordMTime)
+        return;
 
+
+      this.playOrPause = false;
+      this.$refs.play.style.display = "none";
+      this.$refs.stop.style.display = "block";
 
       const reader = new FileReader();
 
@@ -1408,7 +1450,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type="radio"] {
   cursor: pointer;
-  margin-left: 15px;
+  margin-left: 5px;
+  margin-right: 10px;
   border: none;
 }
 
